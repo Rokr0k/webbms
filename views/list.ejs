@@ -1,28 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="h-100">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
     <title>WebBMS</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cover/">
+    <link rel="stylesheet" href="cover.css">
 </head>
 
-<body>
-    <h1>Web BMS Streaming</h1>
-    <ul>
-        <% for(i of Object.keys(bms)) { %>
-            <li>
-                <a href="<%= i %>">
-                    <% if(bms[i].subtitle) { %>
-                        <%= `[${bms[i].playlevel}] ${bms[i].artist} - ${bms[i].title} ${bms[i].subtitle}` %>
-                            <% } else { %>
-                                <%= `[${bms[i].playlevel}] ${bms[i].artist} - ${bms[i].title}` %>
-                                    <% } %>
+<style>
+    .songs {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .songs:hover {
+        color: rgb(255, 161, 161);
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
+<body class="d-flex h-100 text-center text-white bg-dark">
+
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <header class="mb-auto">
+            <div>
+                <a href="/" style="text-decoration: none; color: inherit;">
+                    <h3 class="float-md-start mb-0">WebBMS</h3>
                 </a>
-            </li>
-            <% } %>
-    </ul>
+                <nav class="nav nav-masthead justify-content-center float-md-end">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link" href="/license">License</a>
+                    <a class="nav-link" href="https://github.com/rokr0k/webbms" target="_blank"
+                        rel="noopener">Github</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="px-3">
+            <h1>Song List</h1>
+            <p class="lead">
+            <ul>
+                <% for(i of Object.keys(bms)) { %>
+                    <li>
+                        <a href="<%= i %>" class="songs">
+                            <% if(bms[i].subtitle) { %>
+                                <%= `[${bms[i].playlevel}] ${bms[i].artist} - ${bms[i].title} ${bms[i].subtitle}` %>
+                                    <% } else { %>
+                                        <%= `[${bms[i].playlevel}] ${bms[i].artist} - ${bms[i].title}` %>
+                                            <% } %>
+                        </a>
+                    </li>
+                    <% } %>
+            </ul>
+            </p>
+        </main>
+
+        <footer class="mt-auto text-white-50">
+            <p>Made with 🔥 by <a href="https://github.com/rokr0k" class="text-white" target="_blank"
+                    rel="noopener">Rokr0k</a>, <a href="https://github.com/d3vle0" class="text-white" target="_blank"
+                    rel="noopener">D3vle0</a>.</p>
+        </footer>
+    </div>
+
+
+
 </body>
 
 </html>
