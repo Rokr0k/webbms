@@ -16,7 +16,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.listen(3000);
+app.listen(3004);
 
 const data = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => file.substr(7)).reduce((prev, file) => {
     prev[file.split('/').pop()] = file;
