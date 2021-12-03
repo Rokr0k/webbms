@@ -14,7 +14,7 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.static('public'));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.listen(3000);
 
@@ -24,7 +24,7 @@ const data = readDirR('public/bms').filter(file => file.split('.').pop().match(/
 }, {});
 
 const bms = Object.keys(data).map(key => {
-    return { key: key, data: require('./parse')(data[key]) };
+    return { key: encodeURI(key), data: require('./parse')(data[key]) };
 }).reduce((prev, d) => {
     prev[d.key] = d.data;
     return prev;
