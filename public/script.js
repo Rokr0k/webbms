@@ -13,8 +13,9 @@ let indexC;
 cvs.width = window.innerWidth;
 cvs.height = window.innerHeight;
 ctx.font = "50px serif";
-ctx.textBaseline = "top";
-ctx.fillText("Press Space to Start", 0, 0);
+ctx.textBaseline = "middle";
+ctx.textAlign = "center";
+ctx.fillText("Press Space to Start", cvs.width / 2, cvs.height / 2);
 
 window.addEventListener('keydown', e => {
     if (!playing && e.code == 'Space') {
@@ -69,6 +70,8 @@ function update() {
 
 const scrollSpeed = 2000;
 
+const bgaSize = 700;
+
 function draw() {
     cvs.width = window.innerWidth;
     cvs.height = window.innerHeight;
@@ -76,6 +79,7 @@ function draw() {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     requestAnimationFrame(draw);
     const fraction = stopC ? offsetC : (audioCtx.currentTime - startTime - timeC) * bpmC / 240 + offsetC;
+    const videoRatio = bmp.videoWidth / bmp.videoHeight;
     switch (bms.player) {
         case 1:
             for (let i = Math.ceil(fraction); i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
@@ -198,12 +202,12 @@ function draw() {
                         break;
                 }
             }
-            ctx.drawImage(bmp, (cvs.width - 530 - 500) / 2 + 530, (cvs.height - 500) / 2, 500, 500);
+            ctx.drawImage(bmp, (cvs.width - 530 - bgaSize * videoRatio) / 2 + 530, (cvs.height - bgaSize) / 2, bgaSize * videoRatio, bgaSize);
             ctx.fillStyle = "white";
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + 500) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
             break;
         case 3:
             for (let i = Math.ceil(fraction); i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
@@ -391,12 +395,12 @@ function draw() {
                         break;
                 }
             }
-            ctx.drawImage(bmp, (cvs.width - 500) / 2, (cvs.height - 500) / 2, 500, 500);
+            ctx.drawImage(bmp, (cvs.width - bgaSize * videoRatio) / 2, (cvs.height - bgaSize) / 2, bgaSize * videoRatio, bgaSize);
             ctx.fillStyle = "white";
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + 500) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize) / 2);
             break;
     }
 }
