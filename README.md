@@ -12,7 +12,7 @@ npm start
 ```
 in terminal.
 
-Then, the server will be open in port 3000.
+Then, the server will be open in port 3004.
 
 You may need to modify your BMS files for these problems
 - Some BMS files have `.ogg` files even though they use `.wav` files or vice versa. Most BMS players seem to automatically fix this, but we don't do that here. Modify the `#WAV` commands.

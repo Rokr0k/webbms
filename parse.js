@@ -8,6 +8,7 @@ module.exports = function (filename) {
         title: "",
         artist: "",
         subtitle: "",
+        stagefile: "",
         playlevel: 0,
         wavs: {},
         bmps: {},
@@ -84,6 +85,11 @@ module.exports = function (filename) {
                 return;
             }
             bms.subtitle = match[1];
+        }).when(/^#STAGEFILE (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
+            bms.stagefile = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
         }).when(/^#WAV([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
