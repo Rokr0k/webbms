@@ -11,11 +11,11 @@
 
 <body>
     <canvas id="cvs">No supported</canvas>
-    <video id="video" src="<%= bms.bmp %>" muted>No supported</video>
+    <div id="bga"></div>
 </body>
 
 <script>
-    const bms = <%- JSON.stringify(bms) %>;
+    let bmsC = <%- JSON.stringify(bms) %>;
 </script>
 <script lang="text/javascript" src="script.js">
     

@@ -4,12 +4,13 @@ module.exports = function (filename) {
     const text = fs.readFileSync('public/' + filename, { encoding: 'utf-8' }).toString();
     const bms = {
         player: 1,
+        genre: "",
         title: "",
         artist: "",
         subtitle: "",
         playlevel: 0,
         wavs: {},
-        bmp: "",
+        bmps: {},
         bpm: 130,
         signatures: Array(1000).fill(1),
         notes: [],
@@ -63,6 +64,11 @@ module.exports = function (filename) {
                 return;
             }
             bms.playlevel = parseInt(match[1]);
+        }).when(/^#GENRE (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
+            bms.genre = match[1];
         }).when(/^#TITLE (.*)$/i, match => {
             if (skipped) {
                 return;
@@ -83,11 +89,11 @@ module.exports = function (filename) {
                 return;
             }
             bms.wavs[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
-        }).when(/^#BMP01 (.*)$/i, match => {
+        }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.bmp = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
+            bms.bmps[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;
@@ -134,7 +140,7 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 3, time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 3, bmp: key, time: 0 });
                         break;
                     case '08':
                         if (key == '00') {

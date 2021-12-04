@@ -9,6 +9,7 @@ let bpmC;
 let offsetC;
 let timeC;
 let indexC;
+let bmpC;
 
 cvs.width = window.innerWidth;
 cvs.height = window.innerHeight;
@@ -21,11 +22,11 @@ window.addEventListener('keydown', e => {
     if (!playing && e.code == 'Space') {
         playing = true;
         ctx.fillRect(0, 0, cvs.width, cvs.height);
-        loadBMS(bms).then(bmsResult => {
-            bms.wavs = bmsResult.wavs;
+        loadBMS(bmsC).then(bms => {
+            bmsC = bms;
             offsetC = 0;
             fractionC = 0;
-            bpmC = bms.bpm;
+            bpmC = bmsC.bpm;
             timeC = 0
             indexC = 0;
             startTime = audioCtx.currentTime + 1;
@@ -41,17 +42,20 @@ function update() {
     if (stopC && timeC < audioCtx.currentTime - startTime) {
         stopC = false;
     }
-    while (!stopC && indexC < bms.notes.length && bms.notes[indexC].time <= audioCtx.currentTime - startTime) {
-        const note = bms.notes[indexC++];
+    while (!stopC && indexC < bmsC.notes.length && bmsC.notes[indexC].time <= audioCtx.currentTime - startTime) {
+        const note = bmsC.notes[indexC++];
         switch (note.type) {
             case 0:
-                play(bms.wavs[note.key]);
+                play(bmsC.wavs[note.key]);
                 break;
             case 1:
-                play(bms.wavs[note.key]);
+                play(bmsC.wavs[note.key]);
                 break;
             case 3:
-                video.play();
+                bmpC = bmsC.bmps[note.bmp];
+                if (bmpC instanceof HTMLVideoElement) {
+                    bmpC.play();
+                }
                 break;
             case 4:
                 bpmC = note.bpm;
@@ -80,17 +84,22 @@ function draw() {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     requestAnimationFrame(draw);
     const fraction = stopC ? offsetC : (audioCtx.currentTime - startTime - timeC) * bpmC / 240 + offsetC;
-    const videoRatio = video.videoHeight / video.videoWidth;
-    switch (bms.player) {
+    let bgaRatio = 0;
+    if (bmpC instanceof HTMLVideoElement) {
+        bgaRatio = bmpC.videoHeight / bmpC.videoWidth;
+    } else if (bmpC instanceof HTMLImageElement) {
+        bgaRatio = bmpC.height / bmpC.width;
+    }
+    switch (bmsC.player) {
         case 1:
             ctx.fillStyle = "gray";
             ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
-            for (let i = 0; i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
+            for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
                 let y = (fractionDiff(0, i) - fraction) * scrollSpeed;
                 ctx.fillStyle = "gray";
                 ctx.fillRect(0, cvs.height - y, 530, 5);
             }
-            for (note of bms.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > audioCtx.currentTime - startTime) || note.type == 2)) {
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > audioCtx.currentTime - startTime) || note.type == 2)) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
                     let y2 = y1 + noteSize;
@@ -164,7 +173,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bms.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > audioCtx.currentTime - startTime)) {
+            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > audioCtx.currentTime - startTime)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
                 let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed + noteSize;
                 if (y1 > cvs.height) {
@@ -205,24 +214,26 @@ function draw() {
                         break;
                 }
             }
-            ctx.drawImage(video, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * videoRatio) / 2, bgaSize, bgaSize * videoRatio);
+            if (bmpC) {
+                ctx.drawImage(bmpC, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+            }
             ctx.fillStyle = "white";
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize * videoRatio) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize * bgaRatio) / 2);
             break;
         case 3:
             ctx.fillStyle = "gray";
             ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
             ctx.fillRect(cvs.width - 530, cvs.height - noteSize, 530, noteSize);
-            for (let i = 0; i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
+            for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
                 let y = (fractionDiff(0, i) - fraction) * scrollSpeed;
                 ctx.fillStyle = "gray";
                 ctx.fillRect(0, cvs.height - y, 530, 5);
                 ctx.fillRect(cvs.width - 530, cvs.height - y, 530, 5);
             }
-            for (note of bms.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > audioCtx.currentTime - startTime) || note.type == 2)) {
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > audioCtx.currentTime - startTime) || note.type == 2)) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
                     let y2 = y1 + noteSize;
@@ -328,7 +339,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bms.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > audioCtx.currentTime - startTime)) {
+            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > audioCtx.currentTime - startTime)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
                 let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed + noteSize;
                 if (y1 > cvs.height) {
@@ -401,22 +412,24 @@ function draw() {
                         break;
                 }
             }
-            ctx.drawImage(video, (cvs.width - bgaSize) / 2, (cvs.height - bgaSize * videoRatio) / 2, bgaSize, bgaSize * videoRatio);
+            if (bmpC) {
+                ctx.drawImage(bmpC, (cvs.width - bgaSize) / 2, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+            }
             ctx.fillStyle = "white";
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize * videoRatio) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize * bgaRatio) / 2);
             break;
     }
 }
 
 function loadBMS(bms) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         audioCtx = new AudioContext();
         Promise.all(Object.keys(bms.wavs).map(wav => {
             if (wav.length > 0) {
-                return new Promise((res) => {
+                return new Promise(res => {
                     fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => audioCtx.decodeAudioData(buffer)).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 })
             }
@@ -425,8 +438,29 @@ function loadBMS(bms) {
             return prev;
         }, {})).then(wavs => {
             bms.wavs = wavs;
-            return bms;
-        }).then(bms => resolve(bms)).catch(reason => reject(reason));
+        }).then(() => {
+            for (const key of Object.keys(bms.bmps)) {
+                switch (bms.bmps[key].split('.').pop()) {
+                    case 'mp4':
+                    case 'webm': {
+                        const video = bms.bmps[key];
+                        bms.bmps[key] = document.createElement('video');
+                        bms.bmps[key].src = video;
+                        document.getElementById('bga').appendChild(bms.bmps[key]);
+                        break;
+                    }
+                    case 'bmp':
+                    case 'png':
+                    case 'jpg': {
+                        const image = bms.bmps[key];
+                        bms.bmps[key] = document.createElement('img');
+                        bms.bmps[key].src = image;
+                        document.getElementById('bga').appendChild(bms.bmps[key]);
+                        break;
+                    }
+                }
+            }
+        }).then(() => resolve(bms));
     });
 }
 
@@ -442,11 +476,11 @@ function fractionDiff(a, b) {
     const bF = b - bM;
     let sum;
     if (aM == bM) {
-        sum = (bF - aF) * bms.signatures[aM];
+        sum = (bF - aF) * bmsC.signatures[aM];
     } else {
-        sum = (1 - aF) * bms.signatures[aM] + bF * bms.signatures[bM];
+        sum = (1 - aF) * bmsC.signatures[aM] + bF * bmsC.signatures[bM];
         for (let i = aM + 1; i < bM; i++) {
-            sum += bms.signatures[i];
+            sum += bmsC.signatures[i];
         }
     }
     if (negative) {

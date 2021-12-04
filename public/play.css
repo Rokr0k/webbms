@@ -13,8 +13,6 @@ body {
   height: 100%;
 }
 
-#video {
-  z-index: -1;
-  width: 0;
-  height: 0;
+#bga {
+  display: none;
 }
