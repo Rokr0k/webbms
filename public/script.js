@@ -1,6 +1,6 @@
 let cvs = document.getElementById('cvs');
 let ctx = cvs.getContext('2d');
-let bmp = document.getElementById('bmp');
+let video = document.getElementById('video');
 
 let audioCtx;
 let playing = false;
@@ -21,8 +21,8 @@ window.addEventListener('keydown', e => {
     if (!playing && e.code == 'Space') {
         playing = true;
         ctx.fillRect(0, 0, cvs.width, cvs.height);
-        loadBMS(bms).then(bms => {
-            bms = bms;
+        loadBMS(bms).then(bmsResult => {
+            bms.wavs = bmsResult.wavs;
             offsetC = 0;
             fractionC = 0;
             bpmC = bms.bpm;
@@ -51,8 +51,7 @@ function update() {
                 play(bms.wavs[note.key]);
                 break;
             case 3:
-                bmp.src = bms.bmp;
-                bmp.play();
+                video.play();
                 break;
             case 4:
                 bpmC = note.bpm;
@@ -72,6 +71,8 @@ const scrollSpeed = 2000;
 
 const bgaSize = 700;
 
+const noteSize = 15;
+
 function draw() {
     cvs.width = window.innerWidth;
     cvs.height = window.innerHeight;
@@ -79,10 +80,12 @@ function draw() {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     requestAnimationFrame(draw);
     const fraction = stopC ? offsetC : (audioCtx.currentTime - startTime - timeC) * bpmC / 240 + offsetC;
-    const videoRatio = bmp.videoWidth / bmp.videoHeight;
+    const videoRatio = video.videoHeight / video.videoWidth;
     switch (bms.player) {
         case 1:
-            for (let i = Math.ceil(fraction); i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
+            ctx.fillStyle = "gray";
+            ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
+            for (let i = 0; i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
                 let y = (fractionDiff(0, i) - fraction) * scrollSpeed;
                 ctx.fillStyle = "gray";
                 ctx.fillRect(0, cvs.height - y, 530, 5);
@@ -90,7 +93,7 @@ function draw() {
             for (note of bms.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > audioCtx.currentTime - startTime) || note.type == 2)) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                    let y2 = y1 + 20;
+                    let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
@@ -131,7 +134,7 @@ function draw() {
                 }
                 else if (note.type == 2) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                    let y2 = y1 + 20;
+                    let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
@@ -161,9 +164,9 @@ function draw() {
                     }
                 }
             }
-            for (note of bms.notes.filter(note => note.type == 1 && note.endFraction >= 0)) {
+            for (note of bms.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > audioCtx.currentTime - startTime)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed + noteSize;
                 if (y1 > cvs.height) {
                     break;
                 }
@@ -202,15 +205,18 @@ function draw() {
                         break;
                 }
             }
-            ctx.drawImage(bmp, (cvs.width - 530 - bgaSize * videoRatio) / 2 + 530, (cvs.height - bgaSize) / 2, bgaSize * videoRatio, bgaSize);
+            ctx.drawImage(video, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * videoRatio) / 2, bgaSize, bgaSize * videoRatio);
             ctx.fillStyle = "white";
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize * videoRatio) / 2);
             break;
         case 3:
-            for (let i = Math.ceil(fraction); i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
+            ctx.fillStyle = "gray";
+            ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
+            ctx.fillRect(cvs.width - 530, cvs.height - noteSize, 530, noteSize);
+            for (let i = 0; i <= Math.ceil(bms.notes[bms.notes.length - 1].fraction); i++) {
                 let y = (fractionDiff(0, i) - fraction) * scrollSpeed;
                 ctx.fillStyle = "gray";
                 ctx.fillRect(0, cvs.height - y, 530, 5);
@@ -219,7 +225,7 @@ function draw() {
             for (note of bms.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > audioCtx.currentTime - startTime) || note.type == 2)) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                    let y2 = y1 + 20;
+                    let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
@@ -292,7 +298,7 @@ function draw() {
                 }
                 else if (note.type == 2) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                    let y2 = y1 + 20;
+                    let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
@@ -322,9 +328,9 @@ function draw() {
                     }
                 }
             }
-            for (note of bms.notes.filter(note => note.type == 1 && note.endFraction >= 0)) {
+            for (note of bms.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > audioCtx.currentTime - startTime)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed + noteSize;
                 if (y1 > cvs.height) {
                     break;
                 }
@@ -395,12 +401,12 @@ function draw() {
                         break;
                 }
             }
-            ctx.drawImage(bmp, (cvs.width - bgaSize * videoRatio) / 2, (cvs.height - bgaSize) / 2, bgaSize * videoRatio, bgaSize);
+            ctx.drawImage(video, (cvs.width - bgaSize) / 2, (cvs.height - bgaSize * videoRatio) / 2, bgaSize, bgaSize * videoRatio);
             ctx.fillStyle = "white";
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize * videoRatio) / 2);
             break;
     }
 }

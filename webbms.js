@@ -18,16 +18,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.listen(3004);
 
-const data = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => file.substr(7)).reduce((prev, file) => {
-    prev[file.split('/').pop()] = file;
-    return prev;
-}, {});
+function parseBMS() {
+    const data = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => file.substr(7)).reduce((prev, file) => {
+        prev[file.substr(4).replace(/\//g, '@')] = file;
+        return prev;
+    }, {});
+    
+    const bms = Object.keys(data).map(key => {
+        return { key: encodeURI(key), data: require('./parse')(data[key]) };
+    }).reduce((prev, d) => {
+        prev[d.key] = d.data;
+        return prev;
+    }, {});
 
-const bms = Object.keys(data).map(key => {
-    return { key: encodeURI(key), data: require('./parse')(data[key]) };
-}).reduce((prev, d) => {
-    prev[d.key] = d.data;
-    return prev;
-}, {});
+    return bms;
+}
 
-require('./router')(app, bms);
+const router = require('./router');
+
+router.setBMS(parseBMS());
+
+router.route(app);
+
+setInterval(() => router.setBMS(parseBMS()), 10000);

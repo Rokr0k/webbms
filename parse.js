@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = function (filename) {
-    const text = fs.readFileSync('public/' + filename, {encoding: 'utf-8'}).toString();
+    const text = fs.readFileSync('public/' + filename, { encoding: 'utf-8' }).toString();
     const bms = {
         player: 1,
         title: "",
@@ -13,6 +13,7 @@ module.exports = function (filename) {
         bpm: 130,
         signatures: Array(1000).fill(1),
         notes: [],
+        randoms: [],
     };
     let lntype = 1;
     let lnobj = '00';
@@ -22,35 +23,95 @@ module.exports = function (filename) {
         '11': '00', '12': '00', '13': '00', '14': '00', '15': '00', '16': '00', '18': '00', '19': '00',
         '21': '00', '22': '00', '23': '00', '24': '00', '25': '00', '26': '00', '28': '00', '29': '00',
     };
+    let randomGenerated = 0;
+    const ifStack = [false];
     text.split(/\r?\n/g).forEach(line => {
-        matchCascade(line).when(/^#LNTYPE (1|2)$/i, match => {
+        const skipped = ifStack[ifStack.length - 1];
+        matchCascade(line).when(/^#RANDOM (\d+)$/i, match => {
+            if(skipped) {
+                return;
+            }
+            randomGenerated = Math.floor(Math.random() * parseInt(match[1])) + 1;
+            bms.randoms.push(randomGenerated);
+        }).when(/^#IF (\d+)$/i, match => {
+            if(skipped) {
+                return;
+            }
+            ifStack.push(randomGenerated != parseInt(match[1]));
+        }).when(/^#ELSE$/i, () => {
+            ifStack.push(!ifStack.pop());
+        }).when(/^#ENDIF$/i, () => {
+            ifStack.pop();
+        }).when(/^#LNTYPE (1|2)$/i, match => {
+            if (skipped) {
+                return;
+            }
             lntype = parseInt(match[1]);
         }).when(/^#LNOBJ ([0-9A-Z]{2})$/i, match => {
+            if (skipped) {
+                return;
+            }
             lntype = 3;
             lnobj = match[1];
         }).when(/^#PLAYER (\d)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.player = parseInt(match[1]);
         }).when(/^#PLAYLEVEL (\d+)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.playlevel = parseInt(match[1]);
         }).when(/^#TITLE (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.title = match[1];
         }).when(/^#ARTIST (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.artist = match[1];
         }).when(/^#SUBTITLE (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.subtitle = match[1];
         }).when(/^#WAV([0-9A-Z]{2}) (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.wavs[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
         }).when(/^#BMP01 (.*)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.bmp = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.bpm = parseFloat(match[1]);
         }).when(/^#BPM([0-9A-Z]{2}) (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bpms[match[1]] = parseFloat(match[2]);
         }).when(/^#STOP([0-9A-Z]{2}) (\d+)$/i, match => {
+            if (skipped) {
+                return;
+            }
             stops[match[1]] = parseInt(match[2]) / 192;
         }).when(/^#(\d{3})02:(\d+(\.\d+)?(E\+\d+)?)$/i, match => {
+            if (skipped) {
+                return;
+            }
             bms.signatures[parseInt(match[1])] = parseFloat(match[2]);
         }).when(/^#(\d{3})([0-9A-Z]{2}):(([0-9A-Z]{2})+)$/i, match => {
+            if (skipped) {
+                return;
+            }
             const measure = parseInt(match[1]);
             for (let i = 0; i < match[3].length; i += 2) {
                 const fraction = i / match[3].length;

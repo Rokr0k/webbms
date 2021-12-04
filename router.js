@@ -1,27 +1,34 @@
-module.exports = function (app, bms) {
+let bmsV;
+
+function setBMS(bms) {
+    bmsV = bms;
+}
+
+function route(app) {
     app.get('/', (req, res) => {
-        res.render('main', {
-            bms: bms,
-        });
+        res.render('main');
     });
 
     app.get('/list', (req, res) => {
         res.render('list', {
-            bms: bms,
+            bms: bmsV,
         });
     });
 
     app.get('/license', (req, res) => {
-        res.render('license', {
-            bms: bms,
-        });
+        res.render('license');
     });
 
-    Object.keys(bms).forEach(key => {
-        app.get('/' + key, (req, res) => {
+    app.get('/*', (req, res) => {
+        const key = req.url.split('/').pop();
+        if (bmsV[key]) {
             res.render('play', {
-                bms: bms[key],
+                bms: bmsV[key],
             });
-        });
+        } else {
+            res.sendStatus(404);
+        }
     });
 }
+
+module.exports = { setBMS: setBMS, route: route };
