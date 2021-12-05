@@ -20,12 +20,12 @@ app.listen(3004);
 
 function parseBMS() {
     const data = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => file.substr(7)).reduce((prev, file) => {
-        prev[file.substr(4).replace(/\//g, '@')] = file;
+        prev[file.substr(4)] = file;
         return prev;
     }, {});
     
     const bms = Object.keys(data).map(key => {
-        return { key: encodeURI(key), data: require('./parse')(data[key]) };
+        return { key: encodeURI('/' + key), data: require('./parse')(data[key]) };
     }).reduce((prev, d) => {
         prev[d.key] = d.data;
         return prev;

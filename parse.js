@@ -30,13 +30,13 @@ module.exports = function (filename) {
     text.split(/\r?\n/g).forEach(line => {
         const skipped = ifStack[ifStack.length - 1];
         matchCascade(line).when(/^#RANDOM (\d+)$/i, match => {
-            if(skipped) {
+            if (skipped) {
                 return;
             }
             randomGenerated = Math.floor(Math.random() * parseInt(match[1])) + 1;
             bms.randoms.push(randomGenerated);
         }).when(/^#IF (\d+)$/i, match => {
-            if(skipped) {
+            if (skipped) {
                 return;
             }
             ifStack.push(randomGenerated != parseInt(match[1]));
@@ -89,17 +89,17 @@ module.exports = function (filename) {
             if (skipped) {
                 return;
             }
-            bms.stagefile = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
+            bms.stagefile = encodeURI('/' + filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
         }).when(/^#WAV([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.wavs[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
+            bms.wavs[match[1]] = encodeURI('/' + filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
         }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.bmps[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
+            bms.bmps[match[1]] = encodeURI('/' + filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;

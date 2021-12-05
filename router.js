@@ -20,7 +20,7 @@ function route(app) {
     });
 
     app.get('/*', (req, res) => {
-        const key = req.url.split('/').pop();
+        const key = req.url;
         if (bmsV[key]) {
             res.render('play', {
                 bms: bmsV[key],
