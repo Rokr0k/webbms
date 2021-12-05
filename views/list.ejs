@@ -52,27 +52,30 @@
             <p class="lead">
             <div style="display: grid; grid-template-columns: repeat(4, 370px); justify-content: center;">
                 <% for(i of Object.keys(bms)) { %>
-                    <a href="<%= i %>" style="background-color: rgb(255, 255, 255); margin: 25px; display: block; border-radius: 20px; text-align: center; color: #333; text-decoration: none; width: 320px;">
+                    <a href="/play<%= i %>"
+                        style="background-color: rgb(255, 255, 255); margin: 25px; display: block; border-radius: 20px; text-align: center; color: #333; text-decoration: none; width: 320px;">
                         <% if(bms[i].stagefile) { %>
-                        <img src="<%= bms[i].stagefile %>" style="display: block; border-radius: 20px 20px 0 0; width: 320px;">
-                        <% } %>
-                        <div style="font-size: 20px;">
-                            <%= bms[i].genre %>
-                        </div>
-                        <div style="font-size: 25px;">
-                            <%= bms[i].artist %>
-                        </div>
-                        <div style="font-size: 30px;">
-                            <%= bms[i].title %>
-                        </div>
-                        <% if(bms[i].subtitle) { %>
-                            <div style="font-size: 20px;">
-                                <%= bms[i].subtitle %>
-                            </div>
+                            <img src="<%= bms[i].stagefile %>"
+                                style="display: block; border-radius: 20px 20px 0 0; width: 320px;">
                             <% } %>
+                                <div style="font-size: 15px;">
+                                    <%= bms[i].genre %>
+                                </div>
+                                <div style="font-size: 20px;">
+                                    <%= bms[i].artist %>
+                                </div>
+                                <div style="font-size: 25px;">
+                                    [<%= bms[i].playlevel %>]
+                                        <%= bms[i].title %>
+                                </div>
+                                <% if(bms[i].subtitle) { %>
+                                    <div style="font-size: 15px;">
+                                        <%= bms[i].subtitle %>
+                                    </div>
+                                    <% } %>
                     </a>
                     <% } %>
-                </div>
+            </div>
             </p>
         </main>
 

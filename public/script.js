@@ -82,17 +82,16 @@ const colorScheme = {
     slide: "#FF0000",
     lower: "#FFFFFF",
     higher: "#0000FF",
-    mine: "#AA0000",
-    indicate: "#00FFFF88",
+    mine: "#DD0000",
+    indicate: "#00FFFFC0",
 }
 
-const scrollSpeed = 2000;
+const scrollSpeed = 3000;
 
-const bgaSize = 700;
+const bgaSize = 500;
 
 const noteSize = 15;
 
-const pressIndicateHeight = 1000;
 const pressIndicateDuration = 0.2;
 
 function draw() {
@@ -130,9 +129,9 @@ function draw() {
                 let height = 0;
                 if (currentTime < pressTimeC[line] + pressIndicateDuration) {
                     if (currentTime < pressTimeC[line]) {
-                        height = pressIndicateHeight;
+                        height = cvs.height;
                     } else {
-                        height = pressIndicateHeight * (pressTimeC[line] + pressIndicateDuration - currentTime) / pressIndicateDuration;
+                        height = cvs.height * (pressTimeC[line] + pressIndicateDuration - currentTime) / pressIndicateDuration;
                     }
                 }
                 if (height > 0) {
@@ -167,7 +166,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || note.type == 2)) {
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || (note.type == 2 && note.time > currentTime))) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
                     let y2 = y1 + noteSize;
@@ -322,9 +321,9 @@ function draw() {
                 let height = 0;
                 if (currentTime < pressTimeC[line] + pressIndicateDuration) {
                     if (currentTime < pressTimeC[line]) {
-                        height = pressIndicateHeight;
+                        height = cvs.height;
                     } else {
-                        height = pressIndicateHeight * (pressTimeC[line] + pressIndicateDuration - currentTime) / pressIndicateDuration;
+                        height = cvs.height * (pressTimeC[line] + pressIndicateDuration - currentTime) / pressIndicateDuration;
                     }
                 }
                 if (height > 0) {
@@ -383,7 +382,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || note.type == 2)) {
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || (note.type == 2 && note.time > currentTime))) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
                     let y2 = y1 + noteSize;

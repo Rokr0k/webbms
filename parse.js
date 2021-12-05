@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = function (filename) {
-    const text = fs.readFileSync('public/' + filename, { encoding: 'utf-8' }).toString();
+    const text = fs.readFileSync('public' + filename, { encoding: 'utf-8' }).toString();
     const bms = {
         player: 1,
         genre: "",
@@ -89,17 +89,17 @@ module.exports = function (filename) {
             if (skipped) {
                 return;
             }
-            bms.stagefile = encodeURI('/' + filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
+            bms.stagefile = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[1]));
         }).when(/^#WAV([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.wavs[match[1]] = encodeURI('/' + filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
+            bms.wavs[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
         }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.bmps[match[1]] = encodeURI('/' + filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
+            bms.bmps[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf("/") + 1).concat(match[2]));
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;

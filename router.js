@@ -19,8 +19,8 @@ function route(app) {
         res.render('license');
     });
 
-    app.get('/*', (req, res) => {
-        const key = req.url;
+    app.get('/play/*', (req, res) => {
+        const key = req.url.substr(5);
         if (bmsV[key]) {
             res.render('play', {
                 bms: bmsV[key],
