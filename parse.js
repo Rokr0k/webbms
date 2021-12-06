@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = function (filename) {
-    const text = fs.readFileSync('public' + filename, { encoding: 'utf-8' }).toString();
+    const text = fs.readFileSync('public/' + filename, { encoding: 'utf-8' }).toString();
     const bms = {
         player: 1,
         genre: "",

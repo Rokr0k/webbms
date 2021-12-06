@@ -82,7 +82,7 @@ const colorScheme = {
     slide: "#FF0000",
     lower: "#FFFFFF",
     higher: "#0000FF",
-    mine: "#DD0000",
+    mine: "#FF0000",
     indicate: "#00FFFFC0",
 }
 
@@ -288,7 +288,7 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize * bgaRatio) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
             break;
         case 3:
             ctx.fillStyle = colorScheme.gear;
@@ -568,7 +568,7 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize * bgaRatio) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize) / 2);
             break;
     }
 }
