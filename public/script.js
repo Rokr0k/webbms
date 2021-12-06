@@ -76,7 +76,7 @@ function update() {
 }
 
 const colorScheme = {
-    background: "#000000",
+    background: "#303030",
     gear: "#808080",
     text: "#FFFFFF",
     slide: "#FF0000",

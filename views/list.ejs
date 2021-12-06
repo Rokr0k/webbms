@@ -50,13 +50,11 @@
         <main class="px-3">
             <h1>Song List</h1>
             <p class="lead">
-            <div style="display: grid; grid-template-columns: repeat(4, 370px); justify-content: center;">
+            <div class="list-grid">
                 <% for(i of Object.keys(bms)) { %>
-                    <a href="/play?key=<%= i %>"
-                        style="background-color: rgb(255, 255, 255); margin: 25px; display: block; border-radius: 20px; text-align: center; color: #333; text-decoration: none; width: 320px;">
+                    <a href="/play?key=<%= i %>" class="list-grid-item">
                         <% if(bms[i].stagefile) { %>
-                            <img src="<%= bms[i].stagefile %>"
-                                style="border-radius: 20px 20px 0 0; width: 320px;">
+                            <img src="<%= bms[i].stagefile %>" class="list-stagefile">
                             <% } %>
                                 <div style="font-size: 15px;"><%= bms[i].genre %></div>
                                 <div style="font-size: 20px;"><%= bms[i].artist %></div>

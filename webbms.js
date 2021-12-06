@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.listen(3004);
 
 function parseBMS() {
-    const bms = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => ({ key: encodeURI(file.substr(11)), data: require('./parse')(file.substr(7)) })).reduce((prev, d) => {
+    const bms = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => ({ key: file.substr(11), data: require('./parse')(file.substr(7)) })).reduce((prev, d) => {
         prev[d.key] = d.data;
         return prev;
     }, {});

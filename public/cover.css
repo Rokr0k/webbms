@@ -9893,7 +9893,7 @@ body {
 }
 
 .cover-container {
-  max-width: 42em;
+  max-width: 70em;
 }
 
 
@@ -9921,4 +9921,24 @@ body {
 .nav-masthead .active {
   color: #fff;
   border-bottom-color: #fff;
+}
+
+/* Custom */
+.list-grid {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, 320px);
+  gap: 25px;
+}
+.list-grid-item {
+  display: block;
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  text-align: center; color: #333;
+  text-decoration: none;
+  min-height: 330px;
+}
+.list-grid-item .list-stagefile {
+  border-radius: 20px 20px 0 0;
+  width: 320px;
 }
