@@ -198,11 +198,10 @@ module.exports = function (filename) {
                             if (lineNotes) {
                                 const note = lineNotes[lineNotes.length - 1];
                                 note.endFraction = measure + fraction;
-                                bms.noteCnt++;
                             }
                             bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0, executed: false });
                         } else {
-                            bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: match[2], key: key, time: 0, endTime: 0, node: undefined, judge: false, executed: false });
+                            bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: match[2], key: key, time: 0, endTime: 0, node: undefined, judge: 0, executed: false });
                             bms.noteCnt++;
                         }
                         break;
@@ -228,7 +227,7 @@ module.exports = function (filename) {
                                 break;
                             }
                             if (lastObj[lineNum] == '00') {
-                                bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: false, executed: false });
+                                bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: 0, executed: false });
                                 bms.noteCnt++;
                                 lastObj[lineNum] = key;
                             } else {
@@ -236,7 +235,6 @@ module.exports = function (filename) {
                                 if (lineNotes) {
                                     const note = lineNotes[lineNotes.length - 1];
                                     note.endFraction = measure + fraction;
-                                    bms.noteCnt++;
                                 }
                                 lastObj[lineNum] = '00';
                             }
@@ -247,11 +245,10 @@ module.exports = function (filename) {
                                     if (lineNotes) {
                                         const note = lineNotes[lineNotes.length - 1];
                                         note.endFraction = measure + fraction;
-                                        bms.noteCnt++;
                                     }
                                 }
                                 if (key != '00') {
-                                    bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: false, executed: false });
+                                    bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: 0, executed: false });
                                     bms.noteCnt++;
                                 }
                             }
@@ -265,10 +262,18 @@ module.exports = function (filename) {
                     case 'D6':
                     case 'D8':
                     case 'D9':
+                    case 'E1':
+                    case 'E2':
+                    case 'E3':
+                    case 'E4':
+                    case 'E5':
+                    case 'E6':
+                    case 'E8':
+                    case 'E9':
                         if (key == '00') {
                             break;
                         }
-                        lineNum = '1' + match[2][1];
+                        lineNum = String.fromCharCode(match[2][0].charCodeAt() - 19) + match[2][1];
                         bms.notes.push({ fraction: measure + fraction, type: 2, line: lineNum, time: 0, executed: false });
                         break;
                 }

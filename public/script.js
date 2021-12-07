@@ -209,18 +209,18 @@ function update() {
                 break;
             case 1:
                 if (autoC) {
-                    if (!note.judge) {
+                    if (note.judge == 0) {
                         keyPress(note.line);
                     }
                     if (note.endFraction < 0 || (note.endFraction >= 0 && note.endTime < currentTime)) {
                         keyRelease(note.line);
                     }
                 } else {
-                    if (!note.judge && currentTime - note.time > judgeRange[bmsC.rank][1]) {
-                        note.judge = true;
+                    if (note.judge == 0 && currentTime - note.time > judgeRange[bmsC.rank][1]) {
+                        note.judge = 1;
                         note.executed = true;
                         exeJudge(1);
-                    } else if (note.endFraction >= 0 && note.judge && currentTime - note.endTime > judgeRange[bmsC.rank][1]) {
+                    } else if (note.endFraction >= 0 && note.judge > 0 && currentTime - note.endTime > judgeRange[bmsC.rank][1]) {
                         note.executed = true;
                         exeJudge(1);
                     }
@@ -254,7 +254,7 @@ function update() {
 
 function keyPress(line) {
     const currentTime = audioCtx.currentTime - startTime;
-    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && !note.executed && !note.judge)[0];
+    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && !note.executed && note.judge == 0)[0];
 
     pressC[line] = { pressed: true, time: currentTime };
 
@@ -280,12 +280,17 @@ function keyPress(line) {
             }
         }
         if (judge != 0) {
-            exeJudge(judge);
-            note.judge = true;
+            note.judge = judge;
             if (note.endFraction < 0) {
+                exeJudge(judge);
                 note.executed = true;
             } else {
-                note.node = play(bmsC.wavs[note.key]);
+                if (judge > 1) {
+                    note.node = play(bmsC.wavs[note.key]);
+                } else {
+                    exeJudge(judge);
+                    note.executed = true;
+                }
             }
         }
     }
@@ -293,7 +298,7 @@ function keyPress(line) {
 
 function keyRelease(line) {
     const currentTime = audioCtx.currentTime - startTime;
-    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && note.endFraction >= 0 && !note.executed && note.judge)[0];
+    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && note.endFraction >= 0 && !note.executed && note.judge > 0)[0];
 
     pressC[line] = { pressed: false, time: currentTime };
 
@@ -314,7 +319,7 @@ function keyRelease(line) {
                 judge = 1;
             }
         }
-        exeJudge(judge);
+        exeJudge(Math.min(note.judge, judge));
         if (judge < 3) {
             note.node.stop();
         }
@@ -792,6 +797,27 @@ function draw() {
                             break;
                         case '19':
                             ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '21':
+                            ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '22':
+                            ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '23':
+                            ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '24':
+                            ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '25':
+                            ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '28':
+                            ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '29':
+                            ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
                             break;
                     }
                 }
