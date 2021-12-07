@@ -11,7 +11,43 @@ let timeC;
 let indexC;
 let bmpC;
 
-let pressTimeC = {};
+let prevJudge = 0;
+let prevJudgeTime = 0;
+let combo = 0;
+let gauge = 2;
+
+const pressC = {};
+
+const judgeRange = {
+    0: {
+        5: 0.008,
+        4: 0.024,
+        3: 0.040,
+        2: 0.200,
+        1: 1.000,
+    },
+    1: {
+        5: 0.015,
+        4: 0.030,
+        3: 0.060,
+        2: 0.200,
+        1: 1.000,
+    },
+    2: {
+        5: 0.018,
+        4: 0.040,
+        3: 0.100,
+        2: 0.200,
+        1: 1.000,
+    },
+    3: {
+        5: 0.021,
+        4: 0.060,
+        3: 0.120,
+        2: 0.200,
+        1: 1.000,
+    },
+}
 
 cvs.width = window.innerWidth;
 cvs.height = window.innerHeight;
@@ -32,11 +68,127 @@ window.addEventListener('keydown', e => {
             timeC = 0
             indexC = 0;
             startTime = audioCtx.currentTime + 1;
-            setInterval(update, 10);
+            setInterval(update, 1);
             draw();
         });
+    } else if (playing) {
+        if (!autoC && !e.repeat) {
+            switch (e.code) {
+                case 'KeyZ':
+                    keyPress('11');
+                    break;
+                case 'KeyS':
+                    keyPress('12');
+                    break;
+                case 'KeyX':
+                    keyPress('13');
+                    break;
+                case 'KeyD':
+                    keyPress('14');
+                    break;
+                case 'KeyC':
+                    keyPress('15');
+                    break;
+                case 'ShiftLeft':
+                    keyPress('16');
+                    break;
+                case 'KeyF':
+                    keyPress('18');
+                    break;
+                case 'KeyV':
+                    keyPress('19');
+                    break;
+                case 'KeyM':
+                    keyPress('21');
+                    break;
+                case 'KeyK':
+                    keyPress('22');
+                    break;
+                case 'Comma':
+                    keyPress('23');
+                    break;
+                case 'KeyL':
+                    keyPress('24');
+                    break;
+                case 'Period':
+                    keyPress('25');
+                    break;
+                case 'ShiftRight':
+                    keyPress('26');
+                    break;
+                case 'Semicolon':
+                    keyPress('28');
+                    break;
+                case 'Slash':
+                    keyPress('29');
+                    break;
+            }
+        }
+        switch (e.code) {
+            case 'Digit1':
+                scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
+                break;
+            case 'Digit2':
+                scrollSpeedVar = Math.min(50, scrollSpeedVar + 1);
+                break;
+        }
     }
 });
+
+window.addEventListener('keyup', e => {
+    if (playing && !autoC) {
+        switch (e.code) {
+            case 'KeyZ':
+                keyRelease('11');
+                break;
+            case 'KeyS':
+                keyRelease('12');
+                break;
+            case 'KeyX':
+                keyRelease('13');
+                break;
+            case 'KeyD':
+                keyRelease('14');
+                break;
+            case 'KeyC':
+                keyRelease('15');
+                break;
+            case 'ShiftLeft':
+                keyRelease('16');
+                break;
+            case 'KeyF':
+                keyRelease('18');
+                break;
+            case 'KeyV':
+                keyRelease('19');
+                break;
+            case 'KeyM':
+                keyRelease('21');
+                break;
+            case 'KeyK':
+                keyRelease('22');
+                break;
+            case 'Comma':
+                keyRelease('23');
+                break;
+            case 'KeyL':
+                keyRelease('24');
+                break;
+            case 'Period':
+                keyRelease('25');
+                break;
+            case 'ShiftRight':
+                keyRelease('26');
+                break;
+            case 'Semicolon':
+                keyRelease('28');
+                break;
+            case 'Slash':
+                keyRelease('29');
+                break;
+        }
+    }
+})
 
 let stopC = false;
 
@@ -45,33 +197,154 @@ function update() {
     if (stopC && timeC < currentTime) {
         stopC = false;
     }
-    while (!stopC && indexC < bmsC.notes.length && bmsC.notes[indexC].time <= currentTime) {
-        const note = bmsC.notes[indexC++];
+    for (const note of bmsC.notes.filter(note => !note.executed && note.time < currentTime)) {
+        if (stopC) {
+            break;
+        }
         switch (note.type) {
             case 0:
                 play(bmsC.wavs[note.key]);
+                note.executed = true;
                 break;
             case 1:
-                play(bmsC.wavs[note.key]);
-                pressTimeC[note.line] = note.endFraction < 0 ? note.time : note.endTime;
+                if (autoC) {
+                    if (!note.judge) {
+                        keyPress(note.line);
+                    }
+                    if (note.endFraction < 0 || (note.endFraction >= 0 && note.endTime < currentTime)) {
+                        keyRelease(note.line);
+                    }
+                } else {
+                    if (!note.judge && currentTime - note.time > 0.1) {
+                        note.judge = true;
+                        note.executed = true;
+                        exeJudge(1);
+                    } else if (note.endFraction >= 0 && note.judge && currentTime - note.endTime > 0.1) {
+                        note.executed = true;
+                        exeJudge(1);
+                    }
+                }
+                break;
+            case 2:
+                note.executed = true;
                 break;
             case 3:
                 bmpC = bmsC.bmps[note.bmp];
                 if (bmpC instanceof HTMLVideoElement) {
                     bmpC.play();
                 }
+                note.executed = true;
                 break;
             case 4:
                 bpmC = note.bpm;
                 offsetC = fractionDiff(0, note.fraction);
                 timeC = note.time;
+                note.executed = true;
                 break;
             case 5:
                 stopC = true;
                 offsetC = fractionDiff(0, note.fraction);
                 timeC = note.time + note.stop;
+                note.executed = true;
                 break;
         }
+    }
+}
+
+function keyPress(line) {
+    const currentTime = audioCtx.currentTime - startTime;
+    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && !note.executed && !note.judge)[0];
+
+    pressC[line] = { pressed: true, time: currentTime };
+
+    if (note) {
+        const node = play(bmsC.wavs[note.key]);
+
+        let judge = 0;
+        if (autoC) {
+            judge = 5;
+        } else {
+            if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][5]) {
+                judge = 5;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
+                judge = 4;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
+                judge = 3;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
+                judge = 2;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][1]) {
+                judge = 1;
+            }
+        }
+        if (judge != 0) {
+            exeJudge(judge);
+            note.judge = true;
+            if (note.endFraction < 0) {
+                note.executed = true;
+            } else {
+                note.node = node;
+            }
+        }
+    }
+}
+
+function keyRelease(line) {
+    const currentTime = audioCtx.currentTime - startTime;
+    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && note.endFraction >= 0 && !note.executed && note.judge)[0];
+
+    pressC[line] = { pressed: false, time: currentTime };
+
+    if (note) {
+        let judge = 0;
+        if (autoC) {
+            judge = 5;
+        } else {
+            if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][5]) {
+                judge = 5;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
+                judge = 4;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
+                judge = 3;
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
+                judge = 2;
+            } else {
+                judge = 1;
+            }
+        }
+        exeJudge(judge);
+        if (judge < 3) {
+            note.node.stop();
+        }
+        note.executed = true;
+        note.node = undefined;
+    }
+}
+
+function exeJudge(judge) {
+    prevJudge = judge;
+    prevJudgeTime = audioCtx.currentTime - startTime;
+
+    switch (judge) {
+        case 5:
+            combo++;
+            gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt);
+            break;
+        case 4:
+            combo++;
+            gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt);
+            break;
+        case 3:
+            combo++;
+            gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt / 2);
+            break;
+        case 2:
+            combo = 0;
+            gauge = Math.max(0, gauge - 2);
+            break;
+        case 1:
+            combo = 0;
+            gauge = Math.max(0, gauge - 6);
+            break;
     }
 }
 
@@ -84,9 +357,11 @@ const colorScheme = {
     higher: "#0000FF",
     mine: "#FF0000",
     indicate: "#00FFFFC0",
+    gauge: "#FFFF00",
 }
 
-const scrollSpeed = 3000;
+const scrollSpeed = 100;
+let scrollSpeedVar = 25;
 
 const bgaSize = 500;
 
@@ -113,26 +388,24 @@ function draw() {
             ctx.fillStyle = colorScheme.gear;
             ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
             for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
-                let y = (fractionDiff(0, i) - fraction) * scrollSpeed;
+                let y = (fractionDiff(0, i) - fraction) * scrollSpeed * scrollSpeedVar;
                 ctx.fillRect(0, cvs.height - y, 530, 5);
             }
-            ctx.fillRect(0 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(100 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(170 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(220 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(290 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(340 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(410 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(460 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(530 - 5/2, 0, 5, cvs.height);
-            for (line of Object.keys(pressTimeC)) {
+            ctx.fillRect(0 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(100 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(170 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(220 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(290 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(340 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(410 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(460 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(530 - 5 / 2, 0, 5, cvs.height);
+            for (line of Object.keys(pressC)) {
                 let height = 0;
-                if (currentTime < pressTimeC[line] + pressIndicateDuration) {
-                    if (currentTime < pressTimeC[line]) {
-                        height = cvs.height;
-                    } else {
-                        height = cvs.height * (pressTimeC[line] + pressIndicateDuration - currentTime) / pressIndicateDuration;
-                    }
+                if (pressC[line].pressed) {
+                    height = cvs.height;
+                } else if (currentTime < pressC[line].time + pressIndicateDuration) {
+                    height = cvs.height * (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
                 }
                 if (height > 0) {
                     ctx.fillStyle = ctx.createLinearGradient(0, cvs.height - height, 0, cvs.height);
@@ -168,7 +441,7 @@ function draw() {
             }
             for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || (note.type == 2 && note.time > currentTime))) {
                 if (note.type == 1) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -209,12 +482,12 @@ function draw() {
                     }
                 }
                 else if (note.type == 2) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
-                    ctx.fillStyle = colorScheme.mine;
+                    ctx.fillStyle = colorScheme.mine; audioCtx.currentTime - startTime
                     switch (note.line) {
                         case '11':
                             ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
@@ -241,8 +514,8 @@ function draw() {
                 }
             }
             for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > currentTime)) {
-                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed + noteSize;
+                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
                 if (y1 > cvs.height) {
                     break;
                 }
@@ -278,6 +551,33 @@ function draw() {
                     case '19':
                         ctx.fillStyle = colorScheme.lower;
                         ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                        break;
+                }
+            }
+            if (prevJudgeTime + 1 > currentTime) {
+                ctx.font = "60px monospaced";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
+                switch (prevJudge) {
+                    case 1:
+                        ctx.fillStyle = "red";
+                        ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 2:
+                        ctx.fillStyle = "blue";
+                        ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 3:
+                        ctx.fillStyle = "green";
+                        ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 4:
+                        ctx.fillStyle = "yellow";
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 5:
+                        ctx.fillStyle = "silver";
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
                         break;
                 }
             }
@@ -289,42 +589,47 @@ function draw() {
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
             ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            ctx.fillStyle = colorScheme.gauge;
+            ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
+            ctx.fillStyle = colorScheme.text;
+            ctx.font = "30px monospaced";
+            ctx.textBaseline = "bottom";
+            ctx.textAlign = "left";
+            ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 530, cvs.height / 6);
+            ctx.fillText(`x${scrollSpeedVar}`, 530, cvs.height);
             break;
         case 3:
             ctx.fillStyle = colorScheme.gear;
-            ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
-            ctx.fillRect(cvs.width - 530, cvs.height - noteSize, 530, noteSize);
+            ctx.fillRect(0, cvs.height - noteSize, 1110, noteSize);
             for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
-                let y = (fractionDiff(0, i) - fraction) * scrollSpeed;
-                ctx.fillRect(0, cvs.height - y, 530, 5);
-                ctx.fillRect(cvs.width - 530, cvs.height - y, 530, 5);
+                let y = (fractionDiff(0, i) - fraction) * scrollSpeed * scrollSpeedVar;
+                ctx.fillRect(0, cvs.height - y, 1110, 5);
             }
-            ctx.fillRect(0 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(100 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(170 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(220 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(290 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(340 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(410 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(460 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(530 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 100 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 170 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 220 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 290 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 340 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 410 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 460 - 5/2, 0, 5, cvs.height);
-            ctx.fillRect(cvs.width - 530 - 5/2, 0, 5, cvs.height);
-            for (line of Object.keys(pressTimeC)) {
+            ctx.fillRect(0 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(100 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(170 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(220 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(290 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(340 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(410 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(460 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(530 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(530, 0, 50, cvs.height);
+            ctx.fillRect(580 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(650 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(700 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(770 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(820 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(890 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(940 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(1010 - 5 / 2, 0, 5, cvs.height);
+            ctx.fillRect(1110 - 5 / 2, 0, 5, cvs.height);
+            for (line of Object.keys(pressC)) {
                 let height = 0;
-                if (currentTime < pressTimeC[line] + pressIndicateDuration) {
-                    if (currentTime < pressTimeC[line]) {
-                        height = cvs.height;
-                    } else {
-                        height = cvs.height * (pressTimeC[line] + pressIndicateDuration - currentTime) / pressIndicateDuration;
-                    }
+                if (pressC[line].pressed) {
+                    height = cvs.height;
+                } else if (currentTime < pressC[line].time + pressIndicateDuration) {
+                    height = cvs.height * (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
                 }
                 if (height > 0) {
                     ctx.fillStyle = ctx.createLinearGradient(0, cvs.height - height, 0, cvs.height);
@@ -355,36 +660,36 @@ function draw() {
                         case '19':
                             ctx.fillRect(460, cvs.height - height, 70, height);
                             break;
-                        case '26':
-                            ctx.fillRect(cvs.width - 100, cvs.height - height, 100, height);
-                            break;
-                        case '29':
-                            ctx.fillRect(cvs.width - 170, cvs.height - height, 70, height);
-                            break;
-                        case '28':
-                            ctx.fillRect(cvs.width - 220, cvs.height - height, 50, height);
-                            break;
-                        case '25':
-                            ctx.fillRect(cvs.width - 290, cvs.height - height, 70, height);
-                            break;
-                        case '24':
-                            ctx.fillRect(cvs.width - 340, cvs.height - height, 50, height);
-                            break;
-                        case '23':
-                            ctx.fillRect(cvs.width - 410, cvs.height - height, 70, height);
+                        case '21':
+                            ctx.fillRect(580, cvs.height - height, 70, height);
                             break;
                         case '22':
-                            ctx.fillRect(cvs.width - 460, cvs.height - height, 50, height);
+                            ctx.fillRect(650, cvs.height - height, 50, height);
                             break;
-                        case '21':
-                            ctx.fillRect(cvs.width - 530, cvs.height - height, 70, height);
+                        case '23':
+                            ctx.fillRect(700, cvs.height - height, 70, height);
+                            break;
+                        case '24':
+                            ctx.fillRect(770, cvs.height - height, 50, height);
+                            break;
+                        case '25':
+                            ctx.fillRect(820, cvs.height - height, 70, height);
+                            break;
+                        case '28':
+                            ctx.fillRect(890, cvs.height - height, 50, height);
+                            break;
+                        case '29':
+                            ctx.fillRect(940, cvs.height - height, 70, height);
+                            break;
+                        case '26':
+                            ctx.fillRect(1010, cvs.height - height, 100, height);
                             break;
                     }
                 }
             }
             for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || (note.type == 2 && note.time > currentTime))) {
                 if (note.type == 1) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -422,42 +727,42 @@ function draw() {
                             ctx.fillStyle = colorScheme.lower;
                             ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
                             break;
-                        case '26':
-                            ctx.fillStyle = colorScheme.slide;
-                            ctx.fillRect(cvs.width - 100, cvs.height - y2, 100, y2 - y1);
-                            break;
-                        case '29':
+                        case '21':
                             ctx.fillStyle = colorScheme.lower;
-                            ctx.fillRect(cvs.width - 170, cvs.height - y2, 70, y2 - y1);
-                            break;
-                        case '28':
-                            ctx.fillStyle = colorScheme.higher;
-                            ctx.fillRect(cvs.width - 220, cvs.height - y2, 50, y2 - y1);
-                            break;
-                        case '25':
-                            ctx.fillStyle = colorScheme.lower;
-                            ctx.fillRect(cvs.width - 290, cvs.height - y2, 70, y2 - y1);
-                            break;
-                        case '24':
-                            ctx.fillStyle = colorScheme.higher;
-                            ctx.fillRect(cvs.width - 340, cvs.height - y2, 50, y2 - y1);
-                            break;
-                        case '23':
-                            ctx.fillStyle = colorScheme.lower;
-                            ctx.fillRect(cvs.width - 410, cvs.height - y2, 70, y2 - y1);
+                            ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
                             break;
                         case '22':
                             ctx.fillStyle = colorScheme.higher;
-                            ctx.fillRect(cvs.width - 460, cvs.height - y2, 50, y2 - y1);
+                            ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
                             break;
-                        case '21':
+                        case '23':
                             ctx.fillStyle = colorScheme.lower;
-                            ctx.fillRect(cvs.width - 530, cvs.height - y2, 70, y2 - y1);
+                            ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '24':
+                            ctx.fillStyle = colorScheme.higher;
+                            ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '25':
+                            ctx.fillStyle = colorScheme.lower;
+                            ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '28':
+                            ctx.fillStyle = colorScheme.higher;
+                            ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '29':
+                            ctx.fillStyle = colorScheme.lower;
+                            ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '26':
+                            ctx.fillStyle = colorScheme.slide;
+                            ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
                             break;
                     }
                 }
                 else if (note.type == 2) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -489,8 +794,8 @@ function draw() {
                 }
             }
             for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > currentTime)) {
-                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed + noteSize;
+                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
                 if (y1 > cvs.height) {
                     break;
                 }
@@ -527,48 +832,88 @@ function draw() {
                         ctx.fillStyle = colorScheme.lower;
                         ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
                         break;
-                    case '26':
-                        ctx.fillStyle = colorScheme.slide;
-                        ctx.fillRect(cvs.width - 100, cvs.height - y2, 100, y2 - y1);
-                        break;
-                    case '29':
+                    case '21':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(cvs.width - 170, cvs.height - y2, 70, y2 - y1);
-                        break;
-                    case '28':
-                        ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(cvs.width - 220, cvs.height - y2, 50, y2 - y1);
-                        break;
-                    case '25':
-                        ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(cvs.width - 290, cvs.height - y2, 70, y2 - y1);
-                        break;
-                    case '24':
-                        ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(cvs.width - 340, cvs.height - y2, 50, y2 - y1);
-                        break;
-                    case '23':
-                        ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(cvs.width - 410, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
                         break;
                     case '22':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(cvs.width - 460, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
                         break;
-                    case '21':
+                    case '23':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(cvs.width - 530, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '24':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '25':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '28':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '29':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '26':
+                        ctx.fillStyle = colorScheme.slide;
+                        ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
+                        break;
+                }
+            }
+            if (prevJudgeTime + 1 > currentTime) {
+                ctx.font = "60px monospaced";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
+                switch (prevJudge) {
+                    case 1:
+                        ctx.fillStyle = "red";
+                        ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`POOR ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 2:
+                        ctx.fillStyle = "blue";
+                        ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`BAD ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 3:
+                        ctx.fillStyle = "green";
+                        ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GOOD ${combo}`, 1950 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 4:
+                        ctx.fillStyle = "yellow";
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 5:
+                        ctx.fillStyle = "silver";
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
                         break;
                 }
             }
             if (bmpC) {
-                ctx.drawImage(bmpC, (cvs.width - bgaSize) / 2, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+                ctx.drawImage(bmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
             }
             ctx.fillStyle = colorScheme.text;
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width) / 2, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            ctx.fillStyle = colorScheme.gauge;
+            ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
+            ctx.fillStyle = colorScheme.text;
+            ctx.font = "30px monospaced";
+            ctx.textBaseline = "bottom";
+            ctx.textAlign = "left";
+            ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 1110, cvs.height / 6);
+            ctx.fillText(`x${scrollSpeedVar}`, 1110, cvs.height);
             break;
     }
 }
@@ -645,5 +990,6 @@ function play(buffer) {
         node.connect(audioCtx.destination);
         node.start();
         setTimeout(node => node.disconnect(), buffer.duration * 1000, node);
+        return node;
     }
 }

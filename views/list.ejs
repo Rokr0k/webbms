@@ -23,11 +23,33 @@
         color: rgb(255, 161, 161);
     }
 
-    ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
+    .list-grid {
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(auto-fill, 320px);
+        gap: 25px;
     }
+    .list-grid-item {
+        display: block;
+        background-color: rgb(255, 255, 255);
+        border-radius: 20px;
+        text-align: center;
+        min-height: 378px;
+    }
+    .list-grid-item a {
+        text-decoration: none;
+        color: #333;
+    }
+    .list-grid-item a .list-stagefile {
+        border-radius: 20px 20px 0 0;
+        width: 320px;
+    }
+    .list-grid-item .list-grid-auto {
+        background-color: rgb(var(--bs-dark-rgb));
+        color: rgb(var(--bs-white-rgb));
+        margin: 5px;
+    }
+
 </style>
 
 <body class="d-flex h-100 text-center text-white bg-dark">
@@ -52,18 +74,21 @@
             <p class="lead">
             <div class="list-grid">
                 <% for(i of Object.keys(bms)) { %>
-                    <a href="/play?key=<%= i %>" class="list-grid-item">
-                        <% if(bms[i].stagefile) { %>
-                            <img src="<%= bms[i].stagefile %>" class="list-stagefile">
+                    <div class="list-grid-item">
+                        <a href="/play?key=<%= i %>">
+                            <% if(bms[i].stagefile) { %>
+                                <img src="<%= bms[i].stagefile %>" class="list-stagefile">
                             <% } %>
-                                <div style="font-size: 15px;"><%= bms[i].genre %></div>
-                                <div style="font-size: 20px;"><%= bms[i].artist %></div>
-                                <div style="font-size: 25px;">[<%= bms[i].playlevel %>] <%= bms[i].title %></div>
-                                <% if(bms[i].subtitle) { %>
-                                    <div style="font-size: 15px;"><%= bms[i].subtitle %></div>
-                                    <% } %>
-                    </a>
-                    <% } %>
+                            <div style="font-size: 15px;"><%= bms[i].genre %></div>
+                            <div style="font-size: 20px;"><%= bms[i].artist %></div>
+                            <div style="font-size: 25px;">[<%= bms[i].playlevel %>] <%= bms[i].title %></div>
+                            <% if(bms[i].subtitle) { %>
+                                <div style="font-size: 15px;"><%= bms[i].subtitle %></div>
+                            <% } %>
+                        </a>
+                        <a href="/play?key=<%= i %>&auto=true" class="btn list-grid-auto">Auto</a>
+                    </div>
+                <% } %>
             </div>
             </p>
         </main>

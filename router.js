@@ -21,9 +21,11 @@ function route(app) {
 
     app.get('/play', (req, res) => {
         const key = req.query.key;
+        const auto = req.query.auto || "false";
         if (bmsV[key]) {
             res.render('play', {
                 bms: bmsV[key],
+                auto: auto,
             });
         } else {
             res.sendStatus(404);

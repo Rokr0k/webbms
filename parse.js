@@ -10,6 +10,9 @@ module.exports = function (filename) {
         subtitle: "",
         stagefile: "",
         playlevel: 0,
+        total: 0,
+        noteCnt: 0,
+        rank: 2,
         wavs: {},
         bmps: {},
         bpm: 130,
@@ -65,6 +68,16 @@ module.exports = function (filename) {
                 return;
             }
             bms.playlevel = parseInt(match[1]);
+        }).when(/^#RANK (\d+)$/i, match => {
+            if (skipped) {
+                return;
+            }
+            bms.rank = parseInt(match[1]);
+        }).when(/^#TOTAL (\d+)$/i, match => {
+            if (skipped) {
+                return;
+            }
+            bms.total = parseInt(match[1]);
         }).when(/^#GENRE (.*)$/i, match => {
             if (skipped) {
                 return;
@@ -134,31 +147,31 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0, executed: false });
                         break;
                     case '03':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 4, bpm: parseInt(key, 16), time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 4, bpm: parseInt(key, 16), time: 0, executed: false });
                         break;
                     case '04':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 3, bmp: key, time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 3, bmp: key, time: 0, executed: false });
                         break;
                     case '08':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 4, bpm: bpms[key], time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 4, bpm: bpms[key], time: 0, executed: false });
                         break;
                     case '09':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 5, stop: stops[key], time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 5, stop: stops[key], time: 0, executed: false });
                         break;
                     case '11':
                     case '12':
@@ -185,10 +198,12 @@ module.exports = function (filename) {
                             if (lineNotes) {
                                 const note = lineNotes[lineNotes.length - 1];
                                 note.endFraction = measure + fraction;
+                                bms.noteCnt++;
                             }
-                            bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0 });
+                            bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0, executed: false });
                         } else {
-                            bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: match[2], key: key, time: 0, endTime: 0 });
+                            bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: match[2], key: key, time: 0, endTime: 0, node: undefined, judge: false, executed: false });
+                            bms.noteCnt++;
                         }
                         break;
                     case '51':
@@ -213,13 +228,15 @@ module.exports = function (filename) {
                                 break;
                             }
                             if (lastObj[lineNum] == '00') {
-                                bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0 });
+                                bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: false, executed: false });
+                                bms.noteCnt++;
                                 lastObj[lineNum] = key;
                             } else {
                                 const lineNotes = bms.notes.filter(note => note.type == 1 && note.line == lineNum && note.fraction < measure + fraction);
                                 if (lineNotes) {
                                     const note = lineNotes[lineNotes.length - 1];
                                     note.endFraction = measure + fraction;
+                                    bms.noteCnt++;
                                 }
                                 lastObj[lineNum] = '00';
                             }
@@ -230,10 +247,12 @@ module.exports = function (filename) {
                                     if (lineNotes) {
                                         const note = lineNotes[lineNotes.length - 1];
                                         note.endFraction = measure + fraction;
+                                        bms.noteCnt++;
                                     }
                                 }
                                 if (key != '00') {
-                                    bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0 });
+                                    bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: false, executed: false });
+                                    bms.noteCnt++;
                                 }
                             }
                         }
@@ -250,7 +269,7 @@ module.exports = function (filename) {
                             break;
                         }
                         lineNum = '1' + match[2][1];
-                        bms.notes.push({ fraction: measure + fraction, type: 2, line: lineNum, time: 0 });
+                        bms.notes.push({ fraction: measure + fraction, type: 2, line: lineNum, time: 0, executed: false });
                         break;
                 }
             }
