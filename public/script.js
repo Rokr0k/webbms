@@ -68,8 +68,9 @@ window.addEventListener('keydown', e => {
             timeC = 0
             indexC = 0;
             startTime = audioCtx.currentTime + 1;
-            setInterval(update, 1);
+            setInterval(update, 0);
             draw();
+            cvs.requestFullscreen();
         });
     } else if (playing) {
         if (!autoC && !e.repeat) {
@@ -133,7 +134,7 @@ window.addEventListener('keydown', e => {
                 break;
         }
     }
-});
+}, true);
 
 window.addEventListener('keyup', e => {
     if (playing && !autoC) {
@@ -188,7 +189,7 @@ window.addEventListener('keyup', e => {
                 break;
         }
     }
-})
+}, true);
 
 let stopC = false;
 
@@ -215,11 +216,11 @@ function update() {
                         keyRelease(note.line);
                     }
                 } else {
-                    if (!note.judge && currentTime - note.time > 0.1) {
+                    if (!note.judge && currentTime - note.time > judgeRange[bmsC.rank][1]) {
                         note.judge = true;
                         note.executed = true;
                         exeJudge(1);
-                    } else if (note.endFraction >= 0 && note.judge && currentTime - note.endTime > 0.1) {
+                    } else if (note.endFraction >= 0 && note.judge && currentTime - note.endTime > judgeRange[bmsC.rank][1]) {
                         note.executed = true;
                         exeJudge(1);
                     }
@@ -258,7 +259,9 @@ function keyPress(line) {
     pressC[line] = { pressed: true, time: currentTime };
 
     if (note) {
-        const node = play(bmsC.wavs[note.key]);
+        if (note.endFraction < 0) {
+            play(bmsC.wavs[note.key]);
+        }
 
         let judge = 0;
         if (autoC) {
@@ -282,7 +285,7 @@ function keyPress(line) {
             if (note.endFraction < 0) {
                 note.executed = true;
             } else {
-                note.node = node;
+                note.node = play(bmsC.wavs[note.key]);
             }
         }
     }
@@ -299,13 +302,13 @@ function keyRelease(line) {
         if (autoC) {
             judge = 5;
         } else {
-            if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][5]) {
+            if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][5]) {
                 judge = 5;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
+            } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][4]) {
                 judge = 4;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
+            } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][3]) {
                 judge = 3;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
+            } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
             } else {
                 judge = 1;
@@ -439,7 +442,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || (note.type == 2 && note.time > currentTime))) {
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                     let y2 = y1 + noteSize;
@@ -513,7 +516,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > currentTime)) {
+            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                 let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
                 if (y1 > cvs.height) {
@@ -687,7 +690,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && note.time > currentTime) || (note.type == 2 && note.time > currentTime))) {
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
                 if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                     let y2 = y1 + noteSize;
@@ -793,7 +796,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && note.endTime > currentTime)) {
+            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
                 let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
                 if (y1 > cvs.height) {
