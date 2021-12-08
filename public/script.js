@@ -10,11 +10,13 @@ let offsetC;
 let timeC;
 let indexC;
 let bmpC;
+let poorBmpC;
 
 let prevJudge = 0;
 let prevJudgeTime = 0;
 let combo = 0;
-let gauge = 2;
+let gauge = 20;
+let exScore = 0;
 
 const pressC = {};
 
@@ -68,6 +70,7 @@ window.addEventListener('keydown', e => {
             timeC = 0
             indexC = 0;
             startTime = audioCtx.currentTime + 1;
+            poorBmpC = bmsC.bmps['00'];
             setInterval(update, 0);
             draw();
             cvs.requestFullscreen();
@@ -117,14 +120,15 @@ window.addEventListener('keydown', e => {
                 case 'ShiftRight':
                     keyPress('26');
                     break;
-                case 'Escape':
-                    window.location.href = '/list';
-                    break;
                 case 'Semicolon':
                     keyPress('28');
                     break;
                 case 'Slash':
                     keyPress('29');
+                    break;
+                case 'Escape':
+                    document.exitFullscreen();
+                    window.location.href = '/list';
                     break;
             }
         }
@@ -133,7 +137,7 @@ window.addEventListener('keydown', e => {
                 scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
                 break;
             case 'Digit2':
-                scrollSpeedVar = Math.min(50, scrollSpeedVar + 1);
+                scrollSpeedVar = Math.min(20, scrollSpeedVar + 1);
                 break;
         }
     }
@@ -219,11 +223,11 @@ function update() {
                         keyRelease(note.line);
                     }
                 } else {
-                    if (note.judge == 0 && currentTime - note.time > judgeRange[bmsC.rank][1]) {
+                    if (note.judge == 0 && currentTime - note.time > judgeRange[bmsC.rank][2]) {
                         note.judge = 1;
                         note.executed = true;
                         exeJudge(1);
-                    } else if (note.endFraction >= 0 && note.judge > 0 && currentTime - note.endTime > judgeRange[bmsC.rank][1]) {
+                    } else if (note.endFraction >= 0 && note.judge > 0 && currentTime - note.endTime > judgeRange[bmsC.rank][2]) {
                         note.executed = true;
                         exeJudge(1);
                     }
@@ -240,12 +244,16 @@ function update() {
                 note.executed = true;
                 break;
             case 4:
+                poorBmpC = bmsC.bmps[note.bmp];
+                note.executed = true;
+                break;
+            case 5:
                 bpmC = note.bpm;
                 offsetC = fractionDiff(0, note.fraction);
                 timeC = note.time;
                 note.executed = true;
                 break;
-            case 5:
+            case 6:
                 stopC = true;
                 offsetC = fractionDiff(0, note.fraction);
                 timeC = note.time + note.stop;
@@ -268,18 +276,18 @@ function keyPress(line) {
 
         let judge = 0;
         if (autoC) {
-            judge = 5;
+            judge = 6;
         } else {
             if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][5]) {
-                judge = 5;
+                judge = 6;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
-                judge = 4;
+                judge = 5;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
-                judge = 3;
+                judge = 4;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
-                judge = 2;
+                judge = 3;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][1]) {
-                judge = 1;
+                judge = 2;
             }
         }
         if (judge != 0) {
@@ -288,7 +296,7 @@ function keyPress(line) {
                 exeJudge(judge);
                 note.executed = true;
             } else {
-                if (judge > 1) {
+                if (judge > 3) {
                     note.node = play(bmsC.wavs[note.key]);
                 } else {
                     exeJudge(judge);
@@ -308,18 +316,18 @@ function keyRelease(line) {
     if (note) {
         let judge = 0;
         if (autoC) {
-            judge = 5;
+            judge = 6;
         } else {
             if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][5]) {
-                judge = 5;
+                judge = 6;
             } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][4]) {
-                judge = 4;
+                judge = 5;
             } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][3]) {
-                judge = 3;
+                judge = 4;
             } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][2]) {
-                judge = 2;
+                judge = 3;
             } else {
-                judge = 1;
+                judge = 2;
             }
         }
         exeJudge(Math.min(note.judge, judge));
@@ -336,43 +344,53 @@ function exeJudge(judge) {
     prevJudgeTime = audioCtx.currentTime - startTime;
 
     switch (judge) {
+        case 6:
+            combo++;
+            gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt);
+            exScore += 2;
+            break;
         case 5:
             combo++;
             gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt);
+            exScore++;
             break;
         case 4:
             combo++;
-            gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt);
-            break;
-        case 3:
-            combo++;
             gauge = Math.min(100, gauge + bmsC.total / bmsC.noteCnt / 2);
             break;
-        case 2:
+        case 3:
             combo = 0;
-            gauge = Math.max(0, gauge - 2);
+            gauge = Math.max(2, gauge - 4);
+            break;
+        case 2:
+            gauge = Math.max(2, gauge - 2);
             break;
         case 1:
             combo = 0;
-            gauge = Math.max(0, gauge - 6);
+            gauge = Math.max(2, gauge - 6);
             break;
     }
 }
 
 const colorScheme = {
-    background: "#303030",
-    gear: "#808080",
-    text: "#FFFFFF",
+    background: "#1F2F2F",
+    gear: "#DCDCDC",
+    text: "#FFFFF0",
     slide: "#FF0000",
     lower: "#FFFFFF",
-    higher: "#0000FF",
-    mine: "#FF0000",
-    indicate: "#00FFFFC0",
-    gauge: "#FFFF00",
+    higher: "#00BFFF",
+    mine: "#DC143C",
+    indicate: "#FFA500C0",
+    gauge: "#00BFFF",
+    pgreat: "#C0C0C0",
+    great: "#FFD700",
+    good: "#ADFF2F",
+    bad: "#8A2BE2",
+    poor: "#8B0000",
 }
 
-const scrollSpeed = 100;
-let scrollSpeedVar = 25;
+const scrollSpeed = 200;
+let scrollSpeedVar = 10;
 
 const bgaSize = 500;
 
@@ -565,33 +583,6 @@ function draw() {
                         break;
                 }
             }
-            if (prevJudgeTime + 1 > currentTime) {
-                ctx.font = "60px monospaced";
-                ctx.textBaseline = "middle";
-                ctx.textAlign = "center";
-                switch (prevJudge) {
-                    case 1:
-                        ctx.fillStyle = "red";
-                        ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 2:
-                        ctx.fillStyle = "blue";
-                        ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 3:
-                        ctx.fillStyle = "green";
-                        ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 4:
-                        ctx.fillStyle = "yellow";
-                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 5:
-                        ctx.fillStyle = "silver";
-                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        break;
-                }
-            }
             if (bmpC) {
                 ctx.drawImage(bmpC, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
             }
@@ -600,6 +591,7 @@ function draw() {
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
             ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`EXSCORE ${exScore}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
             ctx.fillStyle = colorScheme.text;
@@ -608,6 +600,40 @@ function draw() {
             ctx.textAlign = "left";
             ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 530, cvs.height / 6);
             ctx.fillText(`x${scrollSpeedVar}`, 530, cvs.height);
+            if (prevJudgeTime + 1 > currentTime) {
+                ctx.font = "60px monospaced";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
+                switch (prevJudge) {
+                    case 1:
+                    case 2:
+                        ctx.fillStyle = colorScheme.poor;
+                        ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        if (poorBmpC) {
+                            ctx.drawImage(poorBmpC, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * poorBmpC.height / poorBmpC.width) / 2, bgaSize, bgaSize * poorBmpC.height / poorBmpC.width);
+                        }
+                        break;
+                    case 3:
+                        ctx.fillStyle = colorScheme.bad;
+                        ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        if (poorBmpC) {
+                            ctx.drawImage(poorBmpC, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * poorBmpC.height / poorBmpC.width) / 2, bgaSize, bgaSize * poorBmpC.height / poorBmpC.width);
+                        }
+                        break;
+                    case 4:
+                        ctx.fillStyle = colorScheme.good;
+                        ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 5:
+                        ctx.fillStyle = colorScheme.great;
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 6:
+                        ctx.fillStyle = colorScheme.pgreat;
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        break;
+                }
+            }
             break;
         case 3:
             ctx.fillStyle = colorScheme.gear;
@@ -898,38 +924,6 @@ function draw() {
                         break;
                 }
             }
-            if (prevJudgeTime + 1 > currentTime) {
-                ctx.font = "60px monospaced";
-                ctx.textBaseline = "middle";
-                ctx.textAlign = "center";
-                switch (prevJudge) {
-                    case 1:
-                        ctx.fillStyle = "red";
-                        ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`POOR ${combo}`, 1590 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 2:
-                        ctx.fillStyle = "blue";
-                        ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`BAD ${combo}`, 1590 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 3:
-                        ctx.fillStyle = "green";
-                        ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`GOOD ${combo}`, 1950 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 4:
-                        ctx.fillStyle = "yellow";
-                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
-                        break;
-                    case 5:
-                        ctx.fillStyle = "silver";
-                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
-                        break;
-                }
-            }
             if (bmpC) {
                 ctx.drawImage(bmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
             }
@@ -938,6 +932,7 @@ function draw() {
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
             ctx.fillText(`BPM ${bpmC}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`EXSCORE ${exScore}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
             ctx.fillStyle = colorScheme.text;
@@ -946,6 +941,45 @@ function draw() {
             ctx.textAlign = "left";
             ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 1110, cvs.height / 6);
             ctx.fillText(`x${scrollSpeedVar}`, 1110, cvs.height);
+            if (prevJudgeTime + 1 > currentTime) {
+                ctx.font = "60px monospaced";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
+                switch (prevJudge) {
+                    case 1:
+                    case 2:
+                        ctx.fillStyle = colorScheme.poor;
+                        ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`POOR ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        if (poorBmpC) {
+                            ctx.drawImage(poorBmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * poorBmpC.height / poorBmpC.width) / 2, bgaSize, bgaSize * poorBmpC.height / poorBmpC.width);
+                        }
+                        break;
+                    case 3:
+                        ctx.fillStyle = colorScheme.bad;
+                        ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`BAD ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        if (poorBmpC) {
+                            ctx.drawImage(poorBmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * poorBmpC.height / poorBmpC.width) / 2, bgaSize, bgaSize * poorBmpC.height / poorBmpC.width);
+                        }
+                        break;
+                    case 4:
+                        ctx.fillStyle = colorScheme.good;
+                        ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GOOD ${combo}`, 1950 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 5:
+                        ctx.fillStyle = colorScheme.great;
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        break;
+                    case 6:
+                        ctx.fillStyle = colorScheme.pgreat;
+                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        break;
+                }
+            }
             break;
     }
 }

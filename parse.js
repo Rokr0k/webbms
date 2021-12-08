@@ -153,7 +153,7 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 4, bpm: parseInt(key, 16), time: 0, executed: false });
+                        bms.notes.push({ fraction: measure + fraction, type: 5, bpm: parseInt(key, 16), time: 0, executed: false });
                         break;
                     case '04':
                         if (key == '00') {
@@ -161,17 +161,23 @@ module.exports = function (filename) {
                         }
                         bms.notes.push({ fraction: measure + fraction, type: 3, bmp: key, time: 0, executed: false });
                         break;
+                    case '06':
+                        if (key == '00') {
+                            break;
+                        }
+                        bms.notes.push({ fraction: measure + fraction, type: 4, bmp: key, time: 0, executed: false });
+                        break;
                     case '08':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 4, bpm: bpms[key], time: 0, executed: false });
+                        bms.notes.push({ fraction: measure + fraction, type: 5, bpm: bpms[key], time: 0, executed: false });
                         break;
                     case '09':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 5, stop: stops[key], time: 0, executed: false });
+                        bms.notes.push({ fraction: measure + fraction, type: 6, stop: stops[key], time: 0, executed: false });
                         break;
                     case '11':
                     case '12':
@@ -303,6 +309,9 @@ module.exports = function (filename) {
                 bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
                 break;
             case 4:
+                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
+                break;
+            case 5:
                 stack = stack.reduce((prev, n) => {
                     if (bms.notes[n].endFraction < bms.notes[i].fraction) {
                         bms.notes[n].endTime = fractionDiff(bms, fractionV, bms.notes[n].endFraction) * 240 / bpmV + offsetV;
@@ -316,7 +325,7 @@ module.exports = function (filename) {
                 fractionV = bms.notes[i].fraction;
                 offsetV = bms.notes[i].time;
                 break;
-            case 5:
+            case 6:
                 stack = stack.reduce((prev, n) => {
                     if (bms.notes[n].endFraction < bms.notes[i].fraction) {
                         bms.notes[n].endTime = fractionDiff(bms, fractionV, bms.notes[n].endFraction) * 240 / bpmV + offsetV;
