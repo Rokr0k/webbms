@@ -2,8 +2,6 @@
 
 BMS streaming application based on Web Audio API and HTML5 Canvas.
 
-Not playable, just listening and watching :)
-
 # How to run
 
 Put BMS files in `public/bms/` directory, and type
