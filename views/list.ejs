@@ -9,11 +9,22 @@
     <meta name="generator" content="Hugo 0.88.1">
     <title>WebBMS</title>
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cover/">
-    <link rel="stylesheet" href="cover.css">
+    <!-- <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cover/"> -->
+    <!-- <link rel="stylesheet" href="cover.css"> -->
 </head>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap');
+
+    body {
+        background: linear-gradient(rgba(0, 0, 0, 0.3),
+                rgba(0, 0, 0, 0.3)), url(/bg2.jpeg) no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+
     .songs {
         text-decoration: none;
         color: inherit;
@@ -23,39 +34,44 @@
         color: rgb(255, 161, 161);
     }
 
-    .list-grid {
-        display: grid;
-        justify-content: center;
-        grid-template-columns: repeat(auto-fill, 320px);
-        gap: 25px;
-    }
     .list-grid-item {
-        display: block;
-        background-color: rgb(255, 255, 255);
-        border-radius: 10px;
-        text-align: center;
-        min-height: 378px;
-    }
-    .list-grid-item a {
-        text-decoration: none;
-        color: #333;
-    }
-    .list-grid-item a .list-stagefile {
-        border-radius: 10px 10px 0 0;
-        width: 320px;
-    }
-    .list-grid-item .list-grid-auto {
-        background-color: rgb(var(--bs-dark-rgb));
-        color: rgb(var(--bs-white-rgb));
-        margin: 5px;
+        background: rgba(5, 5, 5, 0.363);
+        backdrop-filter: blur(10px);
+        border-radius: 8px;
+        min-height: 200px;
+        width: 700px;
+        margin: 0 auto;
+        font-family: 'IBM Plex Sans KR', sans-serif;
     }
 
+    .list-grid-item a {
+        text-decoration: none;
+        color: rgb(228, 228, 228);
+    }
+
+    .list-stagefile {
+        width: 200px;
+        height: 200px;
+        border-radius: 8px 0 0 8px;
+        float: left;
+    }
+
+    .list-grid-item .list-grid-auto {
+        /* background-color: rgb(var(--bs-dark-rgb));
+        color: rgb(var(--bs-white-rgb)); */
+        color: rgb(228, 228, 228);
+        margin: 50px;
+    }
+
+    button {
+        font-family: 'IBM Plex Sans KR', sans-serif;
+    }
 </style>
 
 <body class="d-flex h-100 text-center text-white bg-dark">
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <header class="mb-auto">
+        <!-- <header class="mb-auto">
             <div>
                 <a href="/" style="text-decoration: none; color: inherit;">
                     <h3 class="float-md-start mb-0">WebBMS</h3>
@@ -67,29 +83,37 @@
                         rel="noopener">Github</a>
                 </nav>
             </div>
-        </header>
+        </header> -->
 
         <main class="px-3">
             <h1>Song List</h1>
             <p class="lead">
-            <div class="list-grid">
                 <% for(i of Object.keys(bms)) { %>
                     <div class="list-grid-item">
                         <a href="/play?key=<%= i %>">
                             <% if(bms[i].stagefile) { %>
                                 <img src="<%= bms[i].stagefile %>" class="list-stagefile">
-                            <% } %>
-                            <div style="font-size: 15px;"><%= bms[i].genre %></div>
-                            <div style="font-size: 20px;"><%= bms[i].artist %></div>
-                            <div style="font-size: 25px;">[<%= bms[i].playlevel %>] <%= bms[i].title %></div>
-                            <% if(bms[i].subtitle) { %>
-                                <div style="font-size: 15px;"><%= bms[i].subtitle %></div>
-                            <% } %>
+                                <% } %>
+                                    <div class="song-info">
+                                        <p style="font-size: 15px;">
+                                            <%= bms[i].genre %>
+                                        </p>
+                                        <p style="font-size: 20px">
+                                            <%= bms[i].artist %>
+                                        </p>
+                                        <p style="font-size: 25px">[<%= bms[i].playlevel %>] <%= bms[i].title %>
+                                        </p>
+                                        <% if(bms[i].subtitle) { %>
+                                            <p style="font-size: 15px">
+                                                <%= bms[i].subtitle %>
+                                            </p>
+                                            <% } %>
+                                    </div>
                         </a>
-                        <a href="/play?key=<%= i %>&auto=true" class="btn list-grid-auto">Auto</a>
+                        <a href="/play?key=<%= i %>&auto=true" class="list-grid-auto"><button>Auto</button></a>
                     </div>
-                <% } %>
-            </div>
+                    <br><br>
+                    <% } %>
             </p>
         </main>
 
