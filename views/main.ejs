@@ -1,53 +1,56 @@
-<!doctype html>
-<html lang="en" class="h-100">
+<!DOCTYPE html>
+<html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.88.1">
-    <title>WebBMS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap');
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cover/">
-    <link rel="stylesheet" href="cover.css">
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.3),
+                    rgba(0, 0, 0, 0.3)), url(/bg.jpeg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            min-height: 300px;
+            background: rgba(5, 5, 5, 0.363);
+            backdrop-filter: blur(10px);
+            font-family: 'IBM Plex Sans KR', sans-serif;
+        }
+
+        .center:hover {
+            /* background: rgba(131, 35, 35, 0.363); */
+            backdrop-filter: blur(30px);
+        }
+
+        .center p {
+            font-size: 40px;
+            font-weight: bold;
+            color: rgb(255, 255, 255);
+            margin-top: 3em;
+        }
+    </style>
 </head>
 
-<body class="d-flex h-100 text-center text-white bg-dark">
+<body>
 
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <header class="mb-auto">
-            <div>
-                <a href="/" style="text-decoration: none; color: inherit;">
-                    <h3 class="float-md-start mb-0">WebBMS</h3>
-                </a>
-                <nav class="nav nav-masthead justify-content-center float-md-end">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    <a class="nav-link" href="/license">License</a>
-                    <a class="nav-link" href="https://github.com/rokr0k/webbms" target="_blank"
-                        rel="noopener">Github</a>
-                </nav>
-            </div>
-        </header>
-
-        <main class="px-3">
-            <h1>Play BMS files on your browser.</h1>
-            <p class="lead">BMS is a file format for rhythm action games, devised by Urao Yane in 1998. The format was
-                originally developed as a format specific for a simulator of the game Beatmania by KONAMI, and currently
-                the term BMS is widely used to describe the whole Beatmania simulating game system.</p>
-            <p class="lead">
-                <a href="/list" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Play</a>
-            </p>
-        </main>
-
-        <footer class="mt-auto text-white-50">
-            <p>Made with 🔥 by <a href="https://github.com/rokr0k" class="text-white" target="_blank"
-                    rel="noopener">Rokr0k</a>, <a href="https://github.com/d3vle0" class="text-white" target="_blank"
-                    rel="noopener">D3vle0</a>.</p>
-        </footer>
-    </div>
-
-
+    <a href="/list">
+        <div class="center">
+            <p>PLAY</p>
+        </div>
+    </a>
 
 </body>
 
