@@ -75,6 +75,8 @@ window.addEventListener('keydown', e => {
             draw();
             cvs.requestFullscreen();
         });
+    } else if (!playing && e.code == 'Escape') {
+        window.location.href = "/list";
     } else if (playing) {
         if (!autoC && !e.repeat) {
             switch (e.code) {
