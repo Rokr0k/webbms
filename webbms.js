@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 
+const port = parseInt(process.argv[2]) || 80;
+
 function readDirR(dir) {
     return fs.statSync(dir).isDirectory() ? Array.prototype.concat(...fs.readdirSync(dir).map(f => readDirR(path.join(dir, f)))) : dir;
 }
@@ -16,7 +18,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.listen(80);
+app.listen(port);
 
 function parseBMS() {
     const bms = readDirR('public/bms').filter(file => file.split('.').pop().match(/^bm[sel]$/)).map(file => ({ key: file.substr(11), data: require('./parse')(file.substr(7)) })).reduce((prev, d) => {

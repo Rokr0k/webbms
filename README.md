@@ -6,7 +6,7 @@ BMS streaming application based on Web Audio API and HTML5 Canvas.
 
 Put BMS files in `public/bms/` directory, and type
 ```sh
-npm start
+npm start [port number]
 ```
 in terminal.
 
