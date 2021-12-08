@@ -117,6 +117,9 @@ window.addEventListener('keydown', e => {
                 case 'ShiftRight':
                     keyPress('26');
                     break;
+                case 'Escape':
+                    window.location.href = '/list';
+                    break;
                 case 'Semicolon':
                     keyPress('28');
                     break;
