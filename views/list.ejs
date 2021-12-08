@@ -5,12 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.88.1">
     <title>WebBMS</title>
-
-    <!-- <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cover/"> -->
-    <!-- <link rel="stylesheet" href="cover.css"> -->
 </head>
 
 <style>
@@ -57,8 +52,6 @@
     }
 
     .list-grid-item .list-grid-auto {
-        /* background-color: rgb(var(--bs-dark-rgb));
-        color: rgb(var(--bs-white-rgb)); */
         color: rgb(228, 228, 228);
         margin: 50px;
     }
@@ -68,64 +61,41 @@
     }
 </style>
 
-<body class="d-flex h-100 text-center text-white bg-dark">
-
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <!-- <header class="mb-auto">
-            <div>
-                <a href="/" style="text-decoration: none; color: inherit;">
-                    <h3 class="float-md-start mb-0">WebBMS</h3>
+<body>
+    <h1>Song List</h1>
+    <p class="lead">
+        <% for(i of Object.keys(bms)) { %>
+            <div class="list-grid-item">
+                <a href="/play?key=<%= i %>">
+                    <% if(bms[i].stagefile) { %>
+                        <img src="<%= bms[i].stagefile %>" class="list-stagefile">
+                        <% } %>
+                            <div class="song-info">
+                                <p style="font-size: 15px;">
+                                    <%= bms[i].genre %>
+                                </p>
+                                <p style="font-size: 20px">
+                                    <%= bms[i].artist %>
+                                </p>
+                                <p style="font-size: 25px">[<%= bms[i].playlevel %>] <%= bms[i].title %>
+                                </p>
+                                <% if(bms[i].subtitle) { %>
+                                    <p style="font-size: 15px">
+                                        <%= bms[i].subtitle %>
+                                    </p>
+                                    <% } %>
+                            </div>
                 </a>
-                <nav class="nav nav-masthead justify-content-center float-md-end">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    <a class="nav-link" href="/license">License</a>
-                    <a class="nav-link" href="https://github.com/rokr0k/webbms" target="_blank"
-                        rel="noopener">Github</a>
-                </nav>
+                <a href="/play?key=<%= i %>&auto=true" class="list-grid-auto"><button>Auto</button></a>
             </div>
-        </header> -->
+            <br><br>
+            <% } %>
+    </p>
 
-        <main class="px-3">
-            <h1>Song List</h1>
-            <p class="lead">
-                <% for(i of Object.keys(bms)) { %>
-                    <div class="list-grid-item">
-                        <a href="/play?key=<%= i %>">
-                            <% if(bms[i].stagefile) { %>
-                                <img src="<%= bms[i].stagefile %>" class="list-stagefile">
-                                <% } %>
-                                    <div class="song-info">
-                                        <p style="font-size: 15px;">
-                                            <%= bms[i].genre %>
-                                        </p>
-                                        <p style="font-size: 20px">
-                                            <%= bms[i].artist %>
-                                        </p>
-                                        <p style="font-size: 25px">[<%= bms[i].playlevel %>] <%= bms[i].title %>
-                                        </p>
-                                        <% if(bms[i].subtitle) { %>
-                                            <p style="font-size: 15px">
-                                                <%= bms[i].subtitle %>
-                                            </p>
-                                            <% } %>
-                                    </div>
-                        </a>
-                        <a href="/play?key=<%= i %>&auto=true" class="list-grid-auto"><button>Auto</button></a>
-                    </div>
-                    <br><br>
-                    <% } %>
-            </p>
-        </main>
-
-        <footer class="mt-auto text-white-50">
-            <p>Made with 🔥 by <a href="https://github.com/rokr0k" class="text-white" target="_blank"
-                    rel="noopener">Rokr0k</a>, <a href="https://github.com/d3vle0" class="text-white" target="_blank"
-                    rel="noopener">D3vle0</a>.</p>
-        </footer>
-    </div>
-
-
-
+    <footer>
+        <p>Made with 🔥 by <a href="https://github.com/rokr0k" target="_blank" rel="noopener">Rokr0k</a>, <a
+                href="https://github.com/d3vle0" target="_blank" rel="noopener">D3vle0</a>.</p>
+    </footer>
 </body>
 
 </html>
