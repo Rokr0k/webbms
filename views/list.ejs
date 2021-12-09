@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <title>WebBMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 </head>
 
 <style>
@@ -98,7 +99,7 @@
                                     <% } %>
                             </div>
                 </a>
-                <a href="/play?key=<%= i %>&auto=true" class="list-grid-auto"><button>Auto</button></a>
+                <a href="/play?key=<%= i %>&auto=true" class="list-grid-auto"><button type="button" class="btn btn-dark">Auto</button></a>
             </div>
             <br><br>
             <% } %>
