@@ -159,7 +159,7 @@ window.addEventListener('keydown', e => {
                 scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
                 break;
             case 'Digit2':
-                scrollSpeedVar = Math.min(20, scrollSpeedVar + 1);
+                scrollSpeedVar = Math.min(30, scrollSpeedVar + 1);
                 break;
         }
     }
@@ -439,7 +439,7 @@ function setColor() {
 }
 
 const scrollSpeed = 200;
-let scrollSpeedVar = 10;
+let scrollSpeedVar = 15;
 
 const bgaSize = 500;
 
@@ -448,11 +448,11 @@ const noteSize = 15;
 const pressIndicateDuration = 0.2;
 
 function draw() {
-    cvs.width = window.innerWidth;
-    cvs.height = window.innerHeight;
+    cvs.width = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
+    cvs.height = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
     ctx.fillStyle = colorScheme.background;
     ctx.fillRect(0, 0, cvs.width, cvs.height);
-    requestAnimationFrame(draw);
+    window.requestAnimationFrame(draw);
     const currentTime = audioCtx.currentTime - startTime;
     const fraction = stopC ? offsetC : (currentTime - timeC) * bpmC / 240 + offsetC;
     let bgaRatio = 0;
@@ -651,7 +651,13 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            if (bpmC < 1000) {
+                ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            } else if (bpmC.toString().substring(bpmC.toString().length - 3) != '000') {
+                ctx.fillText(`BPM ${bpmC.toString().substring(bpmC.toString().length - 3)}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            } else {
+                ctx.fillText(`BPM ${bpmC.toString().substring(0, 3)}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            }
             ctx.fillText(`EXSCORE ${exScore}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
@@ -660,7 +666,7 @@ function draw() {
             ctx.textBaseline = "bottom";
             ctx.textAlign = "left";
             ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 530, cvs.height / 6);
-            ctx.fillText(`x${scrollSpeedVar}`, 530, cvs.height);
+            ctx.fillText(`x${scrollSpeedVar / 10}`, 530, cvs.height);
             if (prevJudgeTime + 1 > currentTime) {
                 ctx.font = "80px monospaced";
                 ctx.textBaseline = "middle";
@@ -1009,7 +1015,13 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${bpmC}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            if (bpmC < 1000) {
+                ctx.fillText(`BPM ${bpmC}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            } else if (bpmC.toString().substring(bpmC.toString().length - 3) != '000') {
+                ctx.fillText(`BPM ${bpmC.toString().substring(bpmC.toString().length - 3)}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            } else {
+                ctx.fillText(`BPM ${bpmC.toString().substring(0, 3)}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            }
             ctx.fillText(`EXSCORE ${exScore}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
@@ -1018,7 +1030,7 @@ function draw() {
             ctx.textBaseline = "bottom";
             ctx.textAlign = "left";
             ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 1110, cvs.height / 6);
-            ctx.fillText(`x${scrollSpeedVar}`, 1110, cvs.height);
+            ctx.fillText(`x${scrollSpeedVar / 10}`, 1110, cvs.height);
             if (prevJudgeTime + 1 > currentTime) {
                 ctx.font = "80px monospaced";
                 ctx.textBaseline = "middle";
@@ -1073,10 +1085,7 @@ function loadBMS(bms) {
                     fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => audioCtx.decodeAudioData(buffer)).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 })
             }
-        })).then(wavs => wavs.reduce((prev, wav) => {
-            prev[wav.key] = wav.buffer;
-            return prev;
-        }, {})).then(wavs => {
+        })).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
             bms.wavs = wavs;
         }).then(() => {
             for (const key of Object.keys(bms.bmps)) {

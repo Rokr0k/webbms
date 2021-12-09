@@ -140,7 +140,7 @@ module.exports = function (filename) {
             const measure = parseInt(match[1]);
             for (let i = 0; i < match[3].length; i += 2) {
                 const fraction = i / match[3].length;
-                const key = match[3].substr(i, 2);
+                const key = match[3].substring(i, i + 2);
                 let lineNum;
                 switch (match[2]) {
                     case '01':
