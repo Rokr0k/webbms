@@ -71,7 +71,8 @@
         padding-top: 50px;
     }
 
-    footer a {
+    footer a,
+    .search-reset {
         color: inherit;
     }
 
@@ -97,14 +98,16 @@
     input::-webkit-search-results-decoration {
         display: none;
     }
-
 </style>
 
 <body>
-    <h1>Song List</h1>
+    <a href="/list" class="search-reset">
+        <h1>Song List</h1>
+    </a>
     <div class="search-container">
         <form action="/list" method="get">
-            <input type="search" class="search" name="q" placeholder="Input Song Name" spellcheck="false" autocomplete="off">
+            <input type="search" class="search" name="q" placeholder="Input Song Name" spellcheck="false"
+                autocomplete="off">
         </form>
     </div>
     <p class="lead">
