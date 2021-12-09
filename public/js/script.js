@@ -64,17 +64,26 @@ const result = {
     0: 'F',
 };
 
-cvs.width = window.innerWidth;
-cvs.height = window.innerHeight;
-ctx.font = "50px serif";
-ctx.textBaseline = "middle";
-ctx.textAlign = "center";
-ctx.fillText("Press Space to Start", cvs.width / 2, cvs.height / 2);
+cvs.width = 4200;
+cvs.height = 2552;
+var background = new Image();
+background.src = "./img/bg3.jpeg";
+background.onload = function () {
+    ctx.drawImage(background, 0, 0);
+    ctx.fillRect(1600, 1176, 1000, 200);
+    ctx.font = "100px serif";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.fillText("Press Space to Start", cvs.width / 2, cvs.height / 2);
+}
 
 window.addEventListener('keydown', e => {
     if (e.code == 'Escape') {
         window.history.back();
     } else if (!playing && e.code == 'Space') {
+        cvs.width = window.innerWidth;
+        cvs.height = window.innerHeight;
         playing = true;
         ctx.fillRect(0, 0, cvs.width, cvs.height);
         cvs.requestPointerLock();
