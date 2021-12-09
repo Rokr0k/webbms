@@ -7,15 +7,17 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  height: 100vh;
 }
 
-.center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+button {
   border-radius: 10px;
   width: 300px;
   text-align: center;
@@ -23,14 +25,22 @@ body {
   background: rgba(5, 5, 5, 0.363);
   backdrop-filter: blur(10px);
   font-family: "IBM Plex Sans KR", sans-serif;
+  margin: 50px;
+  outline: none;
+  border: none;
+  font-size: 80px;
+  color: #fff;
 }
 
-.center:hover {
-  /* background: rgba(131, 35, 35, 0.363); */
+button:hover {
   backdrop-filter: blur(30px);
 }
 
-.center p {
+button:focus {
+  outline: none;
+}
+
+button p {
   font-size: 40px;
   font-weight: bold;
   color: rgb(255, 255, 255);
