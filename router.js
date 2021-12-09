@@ -16,6 +16,15 @@ function route(app) {
                 if (bmsV[i].title.indexOf(req.query.q) != -1) {
                     search.push(bmsV[i]);
                 }
+                else if (bmsV[i].subtitle.indexOf(req.query.q) != -1) {
+                    search.push(bmsV[i]);
+                }
+                else if (bmsV[i].genre.indexOf(req.query.q) != -1) {
+                    search.push(bmsV[i]);
+                }
+                else if (bmsV[i].artist.indexOf(req.query.q) != -1) {
+                    search.push(bmsV[i]);
+                }
             }
             res.render('list', {
                 bms: search,
