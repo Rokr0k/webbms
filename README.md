@@ -1,4 +1,4 @@
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/rokr0k/webbms) ![GitHub contributors](https://img.shields.io/github/contributors/rokr0k/webbms) ![GitHub](https://img.shields.io/github/license/rokr0k/webbms) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/rokr0k/webbms)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/rokr0k/webbms) ![GitHub contributors](https://img.shields.io/github/contributors/rokr0k/webbms) ![GitHub](https://img.shields.io/github/license/rokr0k/webbms) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/rokr0k/webbms) [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FRokr0k%2Fwebbms&count_bg=%2300A0FF&title_bg=%23555555&icon=github.svg&icon_color=%23FFFFFF&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 # Web BMS
 
 BMS streaming application based on Web Audio API and HTML5 Canvas.
