@@ -7,7 +7,14 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  height: 100vh;
+  height: 85vh;
+}
+
+h1 {
+  color: #fff;
+  text-align: center;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  /* margin: 0; */
 }
 
 .container {
@@ -45,4 +52,16 @@ button p {
   font-weight: bold;
   color: rgb(255, 255, 255);
   margin-top: 3em;
+}
+
+footer {
+  color: #fff;
+  text-align: center;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  text-decoration: none;
+  outline: none;
+}
+
+footer a {
+  color: inherit;
 }
