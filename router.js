@@ -10,24 +10,9 @@ function route(app) {
     });
 
     app.get('/list', (req, res) => {
-        if (req.query.q) {
-            search = new Array();
-            for (i of Object.keys(bmsV)) {
-                if (bmsV[i].title.toLowerCase().includes(req.query.q.toLowerCase())) {
-                    search.push(bmsV[i]);
-                }
-                else if (bmsV[i].subtitle.toLowerCase().includes(req.query.q.toLowerCase())) {
-                    search.push(bmsV[i]);
-                }
-                else if (bmsV[i].genre.toLowerCase().includes(req.query.q.toLowerCase())) {
-                    search.push(bmsV[i]);
-                }
-                else if (bmsV[i].artist.toLowerCase().includes(req.query.q.toLowerCase())) {
-                    search.push(bmsV[i]);
-                }
-            }
+        if (req.query.query) {
             res.render('list', {
-                bms: search,
+                bms: Object.keys(bmsV).filter(key => bmsV[key].title.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].subtitle.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].genre.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].artist.toLowerCase().includes(req.query.query.toLowerCase())).reduce((prev, curr) => (prev[curr] = bmsV[curr], prev), {}),
             });
         }
         else {

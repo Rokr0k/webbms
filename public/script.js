@@ -77,6 +77,8 @@ window.addEventListener('keydown', e => {
     } else if (!playing && e.code == 'Space') {
         playing = true;
         ctx.fillRect(0, 0, cvs.width, cvs.height);
+        cvs.requestPointerLock();
+        cvs.requestFullscreen();
         loadBMS(bmsC).then(bms => {
             bmsC = bms;
             offsetC = 0;
@@ -89,8 +91,6 @@ window.addEventListener('keydown', e => {
             setInterval(update, 0);
             setInterval(setColor, 50);
             draw();
-            cvs.requestPointerLock();
-            cvs.requestFullscreen();
         });
     } else if (playing) {
         if (!autoC && !e.repeat) {
@@ -157,7 +157,6 @@ window.addEventListener('keydown', e => {
 }, true);
 
 window.addEventListener('keyup', e => {
-    cvs.requestFullscreen();
     if (playing && !autoC) {
         switch (e.code) {
             case 'KeyZ':
