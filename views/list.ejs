@@ -98,6 +98,12 @@
     input::-webkit-search-results-decoration {
         display: none;
     }
+
+    .length {
+        text-align: center;
+        font-size: 20px;
+        color: white;
+    }
 </style>
 
 <body>
@@ -111,6 +117,15 @@
         </form>
     </div>
     <p class="lead">
+        <p class="length">
+            <% if (!length) { %>
+                Not found.
+            <% } else if (length == 1){ %>
+                <%= length %> song found.
+            <% } else { %>
+                <%= length %> songs found.
+            <% } %>
+        </p>
         <% for(i of Object.keys(bms)) { %>
             <div class="list-grid-item">
                 <a href="/play?key=<%= i %>">
