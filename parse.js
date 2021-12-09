@@ -280,7 +280,7 @@ module.exports = function (filename) {
                             break;
                         }
                         lineNum = String.fromCharCode(match[2][0].charCodeAt() - 19) + match[2][1];
-                        bms.notes.push({ fraction: measure + fraction, type: 2, line: lineNum, time: 0, executed: false });
+                        bms.notes.push({ fraction: measure + fraction, type: 2, line: lineNum, damage: parseInt(key, 36), time: 0, executed: false });
                         break;
                 }
             }

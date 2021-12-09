@@ -87,7 +87,9 @@ window.addEventListener('keydown', e => {
             startTime = audioCtx.currentTime + 1;
             poorBmpC = bmsC.bmps['00'];
             setInterval(update, 0);
+            setInterval(setColor, 50);
             draw();
+            cvs.requestPointerLock();
             cvs.requestFullscreen();
         });
     } else if (playing) {
@@ -155,6 +157,7 @@ window.addEventListener('keydown', e => {
 }, true);
 
 window.addEventListener('keyup', e => {
+    cvs.requestFullscreen();
     if (playing && !autoC) {
         switch (e.code) {
             case 'KeyZ':
@@ -245,7 +248,9 @@ function update() {
                 }
                 break;
             case 2:
-                note.executed = true;
+                if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
+                    note.executed = true;
+                }
                 break;
             case 3:
                 bmpC = bmsC.bmps[note.bmp];
@@ -315,6 +320,12 @@ function keyPress(line) {
                 }
             }
         }
+    } else {
+        const note = bmsC.notes.filter(note => note.type == 2 && note.line == line && !note.executed)[0];
+        if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
+            note.executed = true;
+            gauge = Math.max(2, gauge - note.damage / 1296 * 100);
+        }
     }
 }
 
@@ -338,12 +349,13 @@ function keyRelease(line) {
             } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][2]) {
                 judge = 3;
             } else {
-                judge = 2;
+                judge = 1;
             }
         }
         exeJudge(Math.min(note.judge, judge));
         if (judge < 3) {
             note.node.stop();
+            combo = 0;
         }
         note.executed = true;
         note.node = undefined;
@@ -393,7 +405,7 @@ const colorScheme = {
     mine: "#DC143C",
     indicate: "#FFA500C0",
     gauge: "#00BFFF",
-    pgreat: "#C0C0C0",
+    pgreat: "#FFFFFF",
     great: "#FFD700",
     good: "#ADFF2F",
     bad: "#8A2BE2",
@@ -409,6 +421,13 @@ const colorScheme = {
         e: "#FF1493",
         f: "#DC143C",
     },
+};
+
+let greatPulse = false;
+
+function setColor() {
+    colorScheme.pgreat = `rgb(${Math.floor(Math.random() * 192 + 64)}, ${Math.floor(Math.random() * 192 + 64)}, ${Math.floor(Math.random() * 192 + 64)})`;
+    greatPulse = !greatPulse;
 }
 
 const scrollSpeed = 200;
@@ -615,7 +634,7 @@ function draw() {
                 ctx.font = "200px monospaced";
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
-                ctx.fillText(`${r}`, (cvs.width - 530) / 2 + 530, (cvs.height - bgaSize) / 4);
+                ctx.fillText(`${r}`, (cvs.width + 530) / 2, (cvs.height - bgaSize) / 4);
             }
             if (bmpC) {
                 ctx.drawImage(bmpC, (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
@@ -659,8 +678,10 @@ function draw() {
                         ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
                         break;
                     case 5:
-                        ctx.fillStyle = colorScheme.great;
-                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        if (greatPulse) {
+                            ctx.fillStyle = colorScheme.great;
+                            ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                        }
                         break;
                     case 6:
                         ctx.fillStyle = colorScheme.pgreat;
@@ -971,7 +992,7 @@ function draw() {
                 ctx.font = "200px monospaced";
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
-                ctx.fillText(`${r}`, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize) / 4);
+                ctx.fillText(`${r}`, (cvs.width + 1110) / 2, (cvs.height - bgaSize) / 4);
             }
             if (bmpC) {
                 ctx.drawImage(bmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
@@ -999,7 +1020,7 @@ function draw() {
                     case 2:
                         ctx.fillStyle = colorScheme.poor;
                         ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`POOR ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`POOR ${combo}`, 1690 / 2, cvs.height * 3 / 4);
                         if (poorBmpC) {
                             ctx.drawImage(poorBmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * poorBmpC.height / poorBmpC.width) / 2, bgaSize, bgaSize * poorBmpC.height / poorBmpC.width);
                         }
@@ -1007,7 +1028,7 @@ function draw() {
                     case 3:
                         ctx.fillStyle = colorScheme.bad;
                         ctx.fillText(`BAD ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`BAD ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`BAD ${combo}`, 1690 / 2, cvs.height * 3 / 4);
                         if (poorBmpC) {
                             ctx.drawImage(poorBmpC, (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * poorBmpC.height / poorBmpC.width) / 2, bgaSize, bgaSize * poorBmpC.height / poorBmpC.width);
                         }
@@ -1015,17 +1036,19 @@ function draw() {
                     case 4:
                         ctx.fillStyle = colorScheme.good;
                         ctx.fillText(`GOOD ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`GOOD ${combo}`, 1950 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GOOD ${combo}`, 1650 / 2, cvs.height * 3 / 4);
                         break;
                     case 5:
-                        ctx.fillStyle = colorScheme.great;
-                        ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        if (greatPulse) {
+                            ctx.fillStyle = colorScheme.great;
+                            ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
+                            ctx.fillText(`GREAT ${combo}`, 1690 / 2, cvs.height * 3 / 4);
+                        }
                         break;
                     case 6:
                         ctx.fillStyle = colorScheme.pgreat;
                         ctx.fillText(`GREAT ${combo}`, 530 / 2, cvs.height * 3 / 4);
-                        ctx.fillText(`GREAT ${combo}`, 1590 / 2, cvs.height * 3 / 4);
+                        ctx.fillText(`GREAT ${combo}`, 1690 / 2, cvs.height * 3 / 4);
                         break;
                 }
             }
