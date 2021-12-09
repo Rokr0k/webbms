@@ -13,16 +13,16 @@ function route(app) {
         if (req.query.q) {
             search = new Array();
             for (i of Object.keys(bmsV)) {
-                if (bmsV[i].title.indexOf(req.query.q) != -1) {
+                if (bmsV[i].title.toLowerCase().includes(req.query.q.toLowerCase())) {
                     search.push(bmsV[i]);
                 }
-                else if (bmsV[i].subtitle.indexOf(req.query.q) != -1) {
+                else if (bmsV[i].subtitle.toLowerCase().includes(req.query.q.toLowerCase())) {
                     search.push(bmsV[i]);
                 }
-                else if (bmsV[i].genre.indexOf(req.query.q) != -1) {
+                else if (bmsV[i].genre.toLowerCase().includes(req.query.q.toLowerCase())) {
                     search.push(bmsV[i]);
                 }
-                else if (bmsV[i].artist.indexOf(req.query.q) != -1) {
+                else if (bmsV[i].artist.toLowerCase().includes(req.query.q.toLowerCase())) {
                     search.push(bmsV[i]);
                 }
             }
