@@ -1,3 +1,5 @@
+const request = require('request');
+
 let bmsV;
 
 function setBMS(bms) {
@@ -6,7 +8,7 @@ function setBMS(bms) {
 
 function route(app) {
     app.get('/', (req, res) => {
-        res.render('main');
+        res.render('index');
     });
 
     app.get('/list', (req, res) => {
@@ -25,7 +27,16 @@ function route(app) {
     });
 
     app.get('/license', (req, res) => {
-        res.render('license');
+        const options = {
+            url: 'https://raw.githubusercontent.com/Rokr0k/webbms/main/LICENSE'
+        };
+
+        function callback(error, response, body) {
+            if (!error && response.statusCode == 200)
+                res.send(`<pre>${body.replace(/</gi, "&lt;").replace(/>/gi, "&gt;")}</pre>`);
+        }
+
+        request(options, callback);
     });
 
     app.get('/play', (req, res) => {
