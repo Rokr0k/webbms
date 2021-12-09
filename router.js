@@ -10,9 +10,22 @@ function route(app) {
     });
 
     app.get('/list', (req, res) => {
-        res.render('list', {
-            bms: bmsV,
-        });
+        if (req.query.q) {
+            search = new Array();
+            for (i of Object.keys(bmsV)) {
+                if (bmsV[i].title.indexOf(req.query.q) != -1) {
+                    search.push(bmsV[i]);
+                }
+            }
+            res.render('list', {
+                bms: search,
+            });
+        }
+        else {
+            res.render('list', {
+                bms: bmsV,
+            });
+        }
     });
 
     app.get('/license', (req, res) => {
