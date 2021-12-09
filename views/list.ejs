@@ -85,12 +85,10 @@
                         <% } %>
                             <div class="song-info">
                                 <p style="font-size: 15px;">
-                                    <%= bms[i].genre %>
+                                    Genre: <%= bms[i].genre %>
                                 </p>
                                 <p style="font-size: 20px">
-                                    <%= bms[i].artist %>
-                                </p>
-                                <p style="font-size: 25px">[<%= bms[i].playlevel %>] <%= bms[i].title %>
+                                    <%= bms[i].artist %> - [<%= bms[i].playlevel %>] <%= bms[i].title %>
                                 </p>
                                 <% if(bms[i].subtitle) { %>
                                     <p style="font-size: 15px">
