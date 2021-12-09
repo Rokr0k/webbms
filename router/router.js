@@ -51,6 +51,10 @@ function route(app) {
             res.sendStatus(404);
         }
     });
+
+    app.get('/setting', (req, res) => {
+        res.render('setting');
+    });
 }
 
 module.exports = { setBMS: setBMS, route: route };
