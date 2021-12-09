@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-const router = require('./router');
-const init = require('./init');
+const router = require('./router/router');
+const init = require('./js/init');
 const bodyParser = require('body-parser');
 
 const port = parseInt(process.argv[2]) || 80;
