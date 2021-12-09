@@ -1,3 +1,4 @@
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/rokr0k/webbms)
 # Web BMS
 
 BMS streaming application based on Web Audio API and HTML5 Canvas.
