@@ -14,8 +14,8 @@ function route(app) {
     app.get('/list', (req, res) => {
         if (req.query.query) {
             res.render('list', {
-                bms: Object.keys(bmsV).filter(key => bmsV[key].title.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].subtitle.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].genre.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].artist.toLowerCase().includes(req.query.query.toLowerCase())).reduce((prev, curr) => (prev[curr] = bmsV[curr], prev), {}),
-                length: Object.keys(bmsV).filter(key => bmsV[key].title.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].subtitle.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].genre.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].artist.toLowerCase().includes(req.query.query.toLowerCase())).length
+                bms: Object.keys(bmsV).filter(key => bmsV[key].title.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].subtitle.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].genre.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].artist.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].playlevel == req.query.query.toLowerCase()).reduce((prev, curr) => (prev[curr] = bmsV[curr], prev), {}),
+                length: Object.keys(bmsV).filter(key => bmsV[key].title.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].subtitle.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].genre.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].artist.toLowerCase().includes(req.query.query.toLowerCase()) || bmsV[key].playlevel == req.query.query.toLowerCase()).length
             });
         }
         else {
