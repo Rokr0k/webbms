@@ -49,7 +49,6 @@ button {
   font-family: "IBM Plex Sans KR", sans-serif;
 }
 
-footer,
 h1 {
   text-align: center;
   color: white;
@@ -58,8 +57,19 @@ h1 {
   padding-top: 50px;
 }
 
-footer a,
-.search-reset {
+footer {
+  color: #fff;
+  text-align: center;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  outline: none;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+footer a:hover {
   color: inherit;
 }
 

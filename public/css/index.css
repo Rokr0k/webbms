@@ -58,10 +58,14 @@ footer {
   color: #fff;
   text-align: center;
   font-family: "IBM Plex Sans KR", sans-serif;
-  text-decoration: none;
   outline: none;
 }
 
 footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+footer a:hover {
   color: inherit;
 }
