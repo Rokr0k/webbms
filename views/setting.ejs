@@ -7,17 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setting</title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/setting.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 </head>
 
 <body>
     <h1>Setting</h1>
-    <input type="button" onclick=reset() value="reset"><br><br>
-    <label>Background Color: <span id="bg-val"></span> <input type="color" name="bg-color"
-            id="bg-color"></label><br><br>
-    <label>Effect Color: <span id="effect-val"></span> <input type="color" name="effect-color"
-            id="effect-color"></label><br><br>
-    <label>Gauge Color: <span id="gauge-val"></span> <input type="color" name="gauge-color"
-            id="gauge-color"></label><br><br>
+    <div>
+        <input type="button" class="btn btn-danger reset setting-btn" value="Reset" onclick=reset()></input>
+        <input type="button" class="btn btn-success success" value="Save And Exit" onclick=save()></input><br><br>
+        <div class="container">
+            <label>Background Color: <span id="bg-val"></span> <input type="color" name="bg-color"
+                    id="bg-color"></label><br><br>
+            <label>Effect Color: <span id="effect-val"></span> <input type="color" name="effect-color"
+                    id="effect-color"></label><br><br>
+            <label>Gauge Color: <span id="gauge-val"></span> <input type="color" name="gauge-color"
+                    id="gauge-color"></label><br><br>
+        </div>
+    </div>
+    <footer>&copy; 2021 Rokr0k, All rights reserved.<br>Made with 🔥 by <a href="https://github.com/rokr0k"
+            target="_blank" rel="noopener">Rokr0k</a>, <a href="https://github.com/D3vle0" target="_blank"
+            rel="noopener">D3vle0</a></footer>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="/js/setting.js"></script>

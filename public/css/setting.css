@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&family=M+PLUS+Rounded+1c&display=swap");
+
+body {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url(/img/bg4.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100vh;
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+  font-family: "IBM Plex Sans KR", "M PLUS Rounded 1c", sans-serif;
+  text-decoration: none;
+  padding-top: 50px;
+}
+
+div {
+  text-align: center;
+  width: 380px;
+  padding: 10px;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+input[type="color"],
+div label {
+  color: white;
+}
+
+.container {
+  background: rgba(5, 5, 5, 0.363);
+  backdrop-filter: blur(10px);
+  /* max-width: 380px; */
+}
+
+footer {
+  color: #fff;
+  text-align: center;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  outline: none;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+footer a:hover {
+  color: inherit;
+}

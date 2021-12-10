@@ -44,3 +44,7 @@ function reset() {
         location.reload();
     }
 }
+
+function save() {
+    window.location.href = "/";
+}
