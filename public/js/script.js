@@ -394,20 +394,20 @@ function exeJudge(judge) {
 }
 
 const colorScheme = {
-    background: localStorage["bg-color"], // bg color
-    gear: "#DCDCDC",
-    text: "#FFFFF0",
-    scratch: "#FF0000",
-    lower: "#FFFFFF",
-    higher: "#00BFFF",
-    mine: "#DC143C",
+    background: localStorage["bg-color"],
+    gear: localStorage["gear-color"],
+    text: localStorage["text-color"],
+    scratch: localStorage["scratch-color"],
+    lower: localStorage["lower-color"],
+    higher: localStorage["higher-color"],
+    mine: localStorage["mine-color"],
     indicate: localStorage["effect-color"], // color when i press key
-    gauge: localStorage["gauge-color"], // gauge color
-    pgreat: "#FFFFFF",
-    great: "#FFD700",
-    good: "#ADFF2F",
-    bad: "#8A2BE2",
-    poor: "#8B0000",
+    gauge: localStorage["gauge-color"],
+    pgreat: localStorage["pgreat-color"],
+    great: localStorage["great-color"],
+    good: localStorage["good-color"],
+    bad: localStorage["bad-color"],
+    poor: localStorage["poor-color"],
     result: {
         s: "#7FFFDA",
         aaa: "#FFD700",
