@@ -36,6 +36,7 @@ div label {
   background: rgba(5, 5, 5, 0.363);
   backdrop-filter: blur(10px);
   /* max-width: 380px; */
+  font-family: "IBM Plex Sans KR", "M PLUS Rounded 1c", sans-serif;
 }
 
 footer {
@@ -55,5 +56,9 @@ footer a:hover {
 }
 
 input[type="range"] {
-    width: 200px;
+  width: 200px;
+}
+
+.setting-btn {
+  font-family: "IBM Plex Sans KR", "M PLUS Rounded 1c", sans-serif;
 }
