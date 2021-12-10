@@ -1067,6 +1067,27 @@ function draw() {
 
 function loadBMS(bms) {
     return new Promise(resolve => {
+        for (const key of Object.keys(bms.bmps)) {
+            switch (bms.bmps[key].split('.').pop()) {
+                case 'mp4':
+                case 'webm': {
+                    const video = bms.bmps[key];
+                    bms.bmps[key] = document.createElement('video');
+                    bms.bmps[key].src = video;
+                    document.getElementById('bga').appendChild(bms.bmps[key]);
+                    break;
+                }
+                case 'bmp':
+                case 'png':
+                case 'jpg': {
+                    const image = bms.bmps[key];
+                    bms.bmps[key] = document.createElement('img');
+                    bms.bmps[key].src = image;
+                    document.getElementById('bga').appendChild(bms.bmps[key]);
+                    break;
+                }
+            }
+        }
         audioCtx = new AudioContext();
         Promise.all(Object.keys(bms.wavs).map(wav => {
             if (wav.length > 0) {
@@ -1076,28 +1097,6 @@ function loadBMS(bms) {
             }
         })).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
             bms.wavs = wavs;
-        }).then(() => {
-            for (const key of Object.keys(bms.bmps)) {
-                switch (bms.bmps[key].split('.').pop()) {
-                    case 'mp4':
-                    case 'webm': {
-                        const video = bms.bmps[key];
-                        bms.bmps[key] = document.createElement('video');
-                        bms.bmps[key].src = video;
-                        document.getElementById('bga').appendChild(bms.bmps[key]);
-                        break;
-                    }
-                    case 'bmp':
-                    case 'png':
-                    case 'jpg': {
-                        const image = bms.bmps[key];
-                        bms.bmps[key] = document.createElement('img');
-                        bms.bmps[key].src = image;
-                        document.getElementById('bga').appendChild(bms.bmps[key]);
-                        break;
-                    }
-                }
-            }
         }).then(() => resolve(bms));
     });
 }
