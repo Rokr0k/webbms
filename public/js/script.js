@@ -83,7 +83,6 @@ window.addEventListener('keydown', e => {
         playing = true;
         ctx.fillRect(0, 0, cvs.width, cvs.height);
         cvs.requestPointerLock();
-        cvs.requestFullscreen();
         loadBMS(bmsC).then(bms => {
             bmsC = bms;
             offsetC = 0;
