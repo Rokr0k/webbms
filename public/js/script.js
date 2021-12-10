@@ -395,15 +395,15 @@ function exeJudge(judge) {
 }
 
 const colorScheme = {
-    background: "#1F2F2F", // bg color
+    background: localStorage["bg-color"], // bg color
     gear: "#DCDCDC",
     text: "#FFFFF0",
     scratch: "#FF0000",
     lower: "#FFFFFF",
     higher: "#00BFFF",
     mine: "#DC143C",
-    indicate: "#FFA500C0", // color when i press key
-    gauge: "#00BFFF", // gauge color
+    indicate: localStorage["effect-color"], // color when i press key
+    gauge: localStorage["gauge-color"], // gauge color
     pgreat: "#FFFFFF",
     great: "#FFD700",
     good: "#ADFF2F",
