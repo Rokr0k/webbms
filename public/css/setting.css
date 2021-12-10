@@ -21,7 +21,7 @@ h1 {
 
 div {
   text-align: center;
-  width: 380px;
+  width: 700px;
   padding: 10px;
   margin: 0 auto;
   border-radius: 10px;
@@ -52,4 +52,8 @@ footer a {
 
 footer a:hover {
   color: inherit;
+}
+
+input[type="range"] {
+    width: 200px;
 }

@@ -16,6 +16,24 @@ document.getElementById('gauge-color').addEventListener('change', function () {
     localStorage["gauge-color"] = gaugeColor;
 });
 
+document.getElementById('bg-t').addEventListener('change', function () {
+    var gaugeColor = document.getElementById('bg-t').value;
+    document.getElementById('bg-t-val').innerHTML = gaugeColor;
+    localStorage["bg-color-t"] = gaugeColor;
+});
+
+document.getElementById('effect-t').addEventListener('change', function () {
+    var gaugeColor = document.getElementById('effect-t').value;
+    document.getElementById('effect-t-val').innerHTML = gaugeColor;
+    localStorage["effect-color-t"] = gaugeColor;
+});
+
+document.getElementById('gauge-t').addEventListener('change', function () {
+    var gaugeColor = document.getElementById('gauge-t').value;
+    document.getElementById('gauge-t-val').innerHTML = gaugeColor;
+    localStorage["gauge-color-t"] = gaugeColor;
+});
+
 $(document).ready(function () {
     document.getElementById('bg-val').innerHTML = localStorage["bg-color"];
     document.getElementById('effect-val').innerHTML = localStorage["effect-color"];
@@ -32,6 +50,12 @@ $(document).ready(function () {
         document.getElementById('gauge-color').value = localStorage["gauge-color"].substring(0, 7);
     else
         document.getElementById('gauge-color').value = localStorage["gauge-color"];
+    document.getElementById('bg-t-val').innerHTML = localStorage["bg-color-t"];
+    document.getElementById('effect-t-val').innerHTML = localStorage["effect-color-t"];
+    document.getElementById('gauge-t-val').innerHTML = localStorage["gauge-color-t"];
+    document.getElementById('bg-t').value = localStorage["bg-color-t"];
+    document.getElementById('effect-t').value = localStorage["effect-color-t"];
+    document.getElementById('gauge-t').value = localStorage["gauge-color-t"];
 });
 
 function reset() {
@@ -39,8 +63,11 @@ function reset() {
     if (reset) {
         localStorage.clear();
         localStorage["bg-color"] = "#1F2F2F";
-        localStorage["effect-color"] = "#FFA500C0";
+        localStorage["effect-color"] = "#FFA500";
         localStorage["gauge-color"] = "#00BFFF";
+        localStorage["bg-color-t"] = 0;
+        localStorage["effect-color-t"] = 192;
+        localStorage["gauge-color-t"] = 0;
         location.reload();
     }
 }
