@@ -311,7 +311,7 @@ function keyPress(line) {
         if (judge != 0) {
             note.judge = judge;
             if (note.endFraction < 0) {
-                exeJudge(judge);contains
+                exeJudge(judge);
                 note.executed = true;
             } else {
                 if (judge > 2) {
