@@ -58,6 +58,7 @@ const result = {
     2: 'E',
     1: 'F',
     0: 'F',
+    NaN: '몰?루',
 };
 
 cvs.width = window.innerWidth;
@@ -423,6 +424,7 @@ const colorScheme = {
         d: "#9370DB",
         e: "#FF1493",
         f: "#DC143C",
+        "몰?루": "#FFFFFF",
     },
 };
 
@@ -473,126 +475,49 @@ function draw() {
             ctx.fillRect(410 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(460 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(530 - 5 / 2, 0, 5, cvs.height);
-            if (bmsC.notes.filter(note => !note.executed).length > 0) {
-                for (line of Object.keys(pressC)) {
-                    let height = 0;
-                    if (pressC[line].pressed) {
-                        height = cvs.height;
-                    } else if (currentTime < pressC[line].time + pressIndicateDuration) {
-                        height = cvs.height * (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
-                    }
-                    if (height > 0) {
-                        ctx.fillStyle = ctx.createLinearGradient(0, cvs.height - height, 0, cvs.height);
-                        ctx.fillStyle.addColorStop(0, "#00000000");
-                        ctx.fillStyle.addColorStop(1, colorScheme.indicate);
-                        switch (line) {
-                            case '16':
-                                ctx.fillRect(0, cvs.height - height, 100, height);
-                                break;
-                            case '11':
-                                ctx.fillRect(100, cvs.height - height, 70, height);
-                                break;
-                            case '12':
-                                ctx.fillRect(170, cvs.height - height, 50, height);
-                                break;
-                            case '13':
-                                ctx.fillRect(220, cvs.height - height, 70, height);
-                                break;
-                            case '14':
-                                ctx.fillRect(290, cvs.height - height, 50, height);
-                                break;
-                            case '15':
-                                ctx.fillRect(340, cvs.height - height, 70, height);
-                                break;
-                            case '18':
-                                ctx.fillRect(410, cvs.height - height, 50, height);
-                                break;
-                            case '19':
-                                ctx.fillRect(460, cvs.height - height, 70, height);
-                                break;
-                        }
+            for (line of Object.keys(pressC)) {
+                let height = 0;
+                if (pressC[line].pressed) {
+                    height = cvs.height;
+                } else if (currentTime < pressC[line].time + pressIndicateDuration) {
+                    height = cvs.height * (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
+                }
+                if (height > 0) {
+                    ctx.fillStyle = ctx.createLinearGradient(0, cvs.height - height, 0, cvs.height);
+                    ctx.fillStyle.addColorStop(0, "#00000000");
+                    ctx.fillStyle.addColorStop(1, colorScheme.indicate);
+                    switch (line) {
+                        case '16':
+                            ctx.fillRect(0, cvs.height - height, 100, height);
+                            break;
+                        case '11':
+                            ctx.fillRect(100, cvs.height - height, 70, height);
+                            break;
+                        case '12':
+                            ctx.fillRect(170, cvs.height - height, 50, height);
+                            break;
+                        case '13':
+                            ctx.fillRect(220, cvs.height - height, 70, height);
+                            break;
+                        case '14':
+                            ctx.fillRect(290, cvs.height - height, 50, height);
+                            break;
+                        case '15':
+                            ctx.fillRect(340, cvs.height - height, 70, height);
+                            break;
+                        case '18':
+                            ctx.fillRect(410, cvs.height - height, 50, height);
+                            break;
+                        case '19':
+                            ctx.fillRect(460, cvs.height - height, 70, height);
+                            break;
                     }
                 }
-                for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
-                    if (note.type == 1) {
-                        let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                        let y2 = y1 + noteSize;
-                        if (y1 > cvs.height) {
-                            break;
-                        }
-                        switch (note.line) {
-                            case '16':
-                                ctx.fillStyle = colorScheme.scratch;
-                                ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
-                                break;
-                            case '11':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '12':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '13':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '14':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '15':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '18':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '19':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
-                                break;
-                        }
-                    }
-                    else if (note.type == 2) {
-                        let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                        let y2 = y1 + noteSize;
-                        if (y1 > cvs.height) {
-                            break;
-                        }
-                        ctx.fillStyle = colorScheme.mine; audioCtx.currentTime - startTime
-                        switch (note.line) {
-                            case '16':
-                                ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
-                                break;
-                            case '11':
-                                ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '12':
-                                ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '13':
-                                ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '14':
-                                ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '15':
-                                ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '18':
-                                ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '19':
-                                ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
-                                break;
-                        }
-                    }
-                }
-                for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
+            }
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
+                if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                    let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
+                    let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
@@ -631,7 +556,83 @@ function draw() {
                             break;
                     }
                 }
-            } else {
+                else if (note.type == 2) {
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                    let y2 = y1 + noteSize;
+                    if (y1 > cvs.height) {
+                        break;
+                    }
+                    ctx.fillStyle = colorScheme.mine; audioCtx.currentTime - startTime
+                    switch (note.line) {
+                        case '16':
+                            ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
+                            break;
+                        case '11':
+                            ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '12':
+                            ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '13':
+                            ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '14':
+                            ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '15':
+                            ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '18':
+                            ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '19':
+                            ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                            break;
+                    }
+                }
+            }
+            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
+                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
+                if (y1 > cvs.height) {
+                    break;
+                }
+                switch (note.line) {
+                    case '16':
+                        ctx.fillStyle = colorScheme.scratch;
+                        ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
+                        break;
+                    case '11':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '12':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '13':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '14':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '15':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '18':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '19':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                        break;
+                }
+            }
+            if (bmsC.notes.filter(note => !note.executed).length == 0) {
                 const r = result[Math.floor(exScore / bmsC.noteCnt / 2 * 9)];
                 ctx.fillStyle = colorScheme.result[r.toLowerCase()];
                 ctx.font = "200px monospaced";
@@ -724,206 +725,73 @@ function draw() {
             ctx.fillRect(940 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(1010 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(1110 - 5 / 2, 0, 5, cvs.height);
-            if (bmsC.notes.filter(note => !note.executed).length > 0) {
-                for (line of Object.keys(pressC)) {
-                    let height = 0;
-                    if (pressC[line].pressed) {
-                        height = cvs.height;
-                    } else if (currentTime < pressC[line].time + pressIndicateDuration) {
-                        height = cvs.height * (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
-                    }
-                    if (height > 0) {
-                        ctx.fillStyle = ctx.createLinearGradient(0, cvs.height - height, 0, cvs.height);
-                        ctx.fillStyle.addColorStop(0, "#00000000");
-                        ctx.fillStyle.addColorStop(1, colorScheme.indicate);
-                        switch (line) {
-                            case '16':
-                                ctx.fillRect(0, cvs.height - height, 100, height);
-                                break;
-                            case '11':
-                                ctx.fillRect(100, cvs.height - height, 70, height);
-                                break;
-                            case '12':
-                                ctx.fillRect(170, cvs.height - height, 50, height);
-                                break;
-                            case '13':
-                                ctx.fillRect(220, cvs.height - height, 70, height);
-                                break;
-                            case '14':
-                                ctx.fillRect(290, cvs.height - height, 50, height);
-                                break;
-                            case '15':
-                                ctx.fillRect(340, cvs.height - height, 70, height);
-                                break;
-                            case '18':
-                                ctx.fillRect(410, cvs.height - height, 50, height);
-                                break;
-                            case '19':
-                                ctx.fillRect(460, cvs.height - height, 70, height);
-                                break;
-                            case '21':
-                                ctx.fillRect(580, cvs.height - height, 70, height);
-                                break;
-                            case '22':
-                                ctx.fillRect(650, cvs.height - height, 50, height);
-                                break;
-                            case '23':
-                                ctx.fillRect(700, cvs.height - height, 70, height);
-                                break;
-                            case '24':
-                                ctx.fillRect(770, cvs.height - height, 50, height);
-                                break;
-                            case '25':
-                                ctx.fillRect(820, cvs.height - height, 70, height);
-                                break;
-                            case '28':
-                                ctx.fillRect(890, cvs.height - height, 50, height);
-                                break;
-                            case '29':
-                                ctx.fillRect(940, cvs.height - height, 70, height);
-                                break;
-                            case '26':
-                                ctx.fillRect(1010, cvs.height - height, 100, height);
-                                break;
-                        }
+            for (line of Object.keys(pressC)) {
+                let height = 0;
+                if (pressC[line].pressed) {
+                    height = cvs.height;
+                } else if (currentTime < pressC[line].time + pressIndicateDuration) {
+                    height = cvs.height * (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
+                }
+                if (height > 0) {
+                    ctx.fillStyle = ctx.createLinearGradient(0, cvs.height - height, 0, cvs.height);
+                    ctx.fillStyle.addColorStop(0, "#00000000");
+                    ctx.fillStyle.addColorStop(1, colorScheme.indicate);
+                    switch (line) {
+                        case '16':
+                            ctx.fillRect(0, cvs.height - height, 100, height);
+                            break;
+                        case '11':
+                            ctx.fillRect(100, cvs.height - height, 70, height);
+                            break;
+                        case '12':
+                            ctx.fillRect(170, cvs.height - height, 50, height);
+                            break;
+                        case '13':
+                            ctx.fillRect(220, cvs.height - height, 70, height);
+                            break;
+                        case '14':
+                            ctx.fillRect(290, cvs.height - height, 50, height);
+                            break;
+                        case '15':
+                            ctx.fillRect(340, cvs.height - height, 70, height);
+                            break;
+                        case '18':
+                            ctx.fillRect(410, cvs.height - height, 50, height);
+                            break;
+                        case '19':
+                            ctx.fillRect(460, cvs.height - height, 70, height);
+                            break;
+                        case '21':
+                            ctx.fillRect(580, cvs.height - height, 70, height);
+                            break;
+                        case '22':
+                            ctx.fillRect(650, cvs.height - height, 50, height);
+                            break;
+                        case '23':
+                            ctx.fillRect(700, cvs.height - height, 70, height);
+                            break;
+                        case '24':
+                            ctx.fillRect(770, cvs.height - height, 50, height);
+                            break;
+                        case '25':
+                            ctx.fillRect(820, cvs.height - height, 70, height);
+                            break;
+                        case '28':
+                            ctx.fillRect(890, cvs.height - height, 50, height);
+                            break;
+                        case '29':
+                            ctx.fillRect(940, cvs.height - height, 70, height);
+                            break;
+                        case '26':
+                            ctx.fillRect(1010, cvs.height - height, 100, height);
+                            break;
                     }
                 }
-                for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
-                    if (note.type == 1) {
-                        let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                        let y2 = y1 + noteSize;
-                        if (y1 > cvs.height) {
-                            break;
-                        }
-                        switch (note.line) {
-                            case '16':
-                                ctx.fillStyle = colorScheme.scratch;
-                                ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
-                                break;
-                            case '11':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '12':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '13':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '14':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '15':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '18':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '19':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '21':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '22':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '23':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '24':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '25':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '28':
-                                ctx.fillStyle = colorScheme.higher;
-                                ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '29':
-                                ctx.fillStyle = colorScheme.lower;
-                                ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '26':
-                                ctx.fillStyle = colorScheme.scratch;
-                                ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
-                                break;
-                        }
-                    }
-                    else if (note.type == 2) {
-                        let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                        let y2 = y1 + noteSize;
-                        if (y1 > cvs.height) {
-                            break;
-                        }
-                        ctx.fillStyle = colorScheme.mine;
-                        switch (note.line) {
-                            case '16':
-                                ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
-                                break;
-                            case '11':
-                                ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '12':
-                                ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '13':
-                                ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '14':
-                                ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '15':
-                                ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '18':
-                                ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '19':
-                                ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '21':
-                                ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '22':
-                                ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '23':
-                                ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '24':
-                                ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '25':
-                                ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '28':
-                                ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
-                                break;
-                            case '29':
-                                ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
-                                break;
-                            case '26':
-                                ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
-                                break;
-                        }
-                    }
-                }
-                for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
+            }
+            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
+                if (note.type == 1) {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                    let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
+                    let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
                     }
@@ -994,7 +862,139 @@ function draw() {
                             break;
                     }
                 }
-            } else {
+                else if (note.type == 2) {
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                    let y2 = y1 + noteSize;
+                    if (y1 > cvs.height) {
+                        break;
+                    }
+                    ctx.fillStyle = colorScheme.mine;
+                    switch (note.line) {
+                        case '16':
+                            ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
+                            break;
+                        case '11':
+                            ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '12':
+                            ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '13':
+                            ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '14':
+                            ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '15':
+                            ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '18':
+                            ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '19':
+                            ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '21':
+                            ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '22':
+                            ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '23':
+                            ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '24':
+                            ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '25':
+                            ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '28':
+                            ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
+                            break;
+                        case '29':
+                            ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
+                            break;
+                        case '26':
+                            ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
+                            break;
+                    }
+                }
+            }
+            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
+                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
+                if (y1 > cvs.height) {
+                    break;
+                }
+                switch (note.line) {
+                    case '16':
+                        ctx.fillStyle = colorScheme.scratch;
+                        ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
+                        break;
+                    case '11':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '12':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '13':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '14':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '15':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '18':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '19':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '21':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '22':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '23':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '24':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '25':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '28':
+                        ctx.fillStyle = colorScheme.higher;
+                        ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
+                        break;
+                    case '29':
+                        ctx.fillStyle = colorScheme.lower;
+                        ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
+                        break;
+                    case '26':
+                        ctx.fillStyle = colorScheme.scratch;
+                        ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
+                        break;
+                }
+            }
+            if (bmsC.notes.filter(note => !note.executed).length == 0) {
                 const r = result[Math.floor(exScore / bmsC.noteCnt / 2 * 9)];
                 ctx.fillStyle = colorScheme.result[r.toLowerCase()];
                 ctx.font = "200px monospaced";
