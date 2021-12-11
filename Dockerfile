@@ -7,7 +7,6 @@ COPY package-lock.json ./
 
 RUN npm install
 
-# 전체 소스 코드를 다 들고오자. 단, dockerignore는 없어야 함. 
 COPY ./ ./
 
 CMD ["node", "webbms.js"]
