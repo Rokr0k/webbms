@@ -74,6 +74,12 @@ background.onload = function () {
     ctx.fillText("Press Space to Start", cvs.width / 2, cvs.height / 2);
 }
 
+const keys = {
+    p1: ["KeyZ", "KeyS", "KeyX", "KeyD", "KeyC", "ShiftLeft", "KeyF", "KeyV"],
+    p2: ["KeyM", "KeyK", "Comma", "KeyL", "Period", "ShiftRight", "Semicolon", "Slash"],
+    speed: ["Digit1", "Digit2"],
+};
+
 window.addEventListener('keydown', e => {
     if (e.code == 'Escape') {
         window.history.back();
@@ -82,7 +88,6 @@ window.addEventListener('keydown', e => {
         cvs.height = window.innerHeight;
         playing = true;
         ctx.fillRect(0, 0, cvs.width, cvs.height);
-        cvs.requestPointerLock();
         loadBMS(bmsC).then(bms => {
             bmsC = bms;
             offsetC = 0;
@@ -99,61 +104,61 @@ window.addEventListener('keydown', e => {
     } else if (playing) {
         if (!autoC && !e.repeat) {
             switch (e.code) {
-                case 'KeyZ':
+                case keys.p1[0]:
                     keyPress('11');
                     break;
-                case 'KeyS':
+                case keys.p1[1]:
                     keyPress('12');
                     break;
-                case 'KeyX':
+                case keys.p1[2]:
                     keyPress('13');
                     break;
-                case 'KeyD':
+                case keys.p1[3]:
                     keyPress('14');
                     break;
-                case 'KeyC':
+                case keys.p1[4]:
                     keyPress('15');
                     break;
-                case 'ShiftLeft':
+                case keys.p1[5]:
                     keyPress('16');
                     break;
-                case 'KeyF':
+                case keys.p1[6]:
                     keyPress('18');
                     break;
-                case 'KeyV':
+                case keys.p1[7]:
                     keyPress('19');
                     break;
-                case 'KeyM':
+                case keys.p2[0]:
                     keyPress('21');
                     break;
-                case 'KeyK':
+                case keys.p2[1]:
                     keyPress('22');
                     break;
-                case 'Comma':
+                case keys.p2[2]:
                     keyPress('23');
                     break;
-                case 'KeyL':
+                case keys.p2[3]:
                     keyPress('24');
                     break;
-                case 'Period':
+                case keys.p2[4]:
                     keyPress('25');
                     break;
-                case 'ShiftRight':
+                case keys.p2[5]:
                     keyPress('26');
                     break;
-                case 'Semicolon':
+                case keys.p2[6]:
                     keyPress('28');
                     break;
-                case 'Slash':
+                case keys.p2[7]:
                     keyPress('29');
                     break;
             }
         }
         switch (e.code) {
-            case 'Digit1':
+            case keys.speed[0]:
                 scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
                 break;
-            case 'Digit2':
+            case keys.speed[1]:
                 scrollSpeedVar = Math.min(30, scrollSpeedVar + 1);
                 break;
         }
@@ -163,52 +168,52 @@ window.addEventListener('keydown', e => {
 window.addEventListener('keyup', e => {
     if (playing && !autoC) {
         switch (e.code) {
-            case 'KeyZ':
+            case keys.p1[0]:
                 keyRelease('11');
                 break;
-            case 'KeyS':
+            case keys.p1[1]:
                 keyRelease('12');
                 break;
-            case 'KeyX':
+            case keys.p1[2]:
                 keyRelease('13');
                 break;
-            case 'KeyD':
+            case keys.p1[3]:
                 keyRelease('14');
                 break;
-            case 'KeyC':
+            case keys.p1[4]:
                 keyRelease('15');
                 break;
-            case 'ShiftLeft':
+            case keys.p1[5]:
                 keyRelease('16');
                 break;
-            case 'KeyF':
+            case keys.p1[6]:
                 keyRelease('18');
                 break;
-            case 'KeyV':
+            case keys.p1[7]:
                 keyRelease('19');
                 break;
-            case 'KeyM':
+            case keys.p2[0]:
                 keyRelease('21');
                 break;
-            case 'KeyK':
+            case keys.p2[1]:
                 keyRelease('22');
                 break;
-            case 'Comma':
+            case keys.p2[2]:
                 keyRelease('23');
                 break;
-            case 'KeyL':
+            case keys.p2[3]:
                 keyRelease('24');
                 break;
-            case 'Period':
+            case keys.p2[4]:
                 keyRelease('25');
                 break;
-            case 'ShiftRight':
+            case keys.p2[5]:
                 keyRelease('26');
                 break;
-            case 'Semicolon':
+            case keys.p2[6]:
                 keyRelease('28');
                 break;
-            case 'Slash':
+            case keys.p2[7]:
                 keyRelease('29');
                 break;
         }
