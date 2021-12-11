@@ -60,13 +60,12 @@ const result = {
     0: 'F',
 };
 
-cvs.width = 4200;
-cvs.height = 2552;
+cvs.width = window.innerWidth;
+cvs.height = window.innerHeight;
 var background = new Image();
 background.src = "./img/bg3.jpeg";
 background.onload = function () {
-    ctx.drawImage(background, 0, 0);
-    ctx.fillRect(1600, 1176, 1000, 200);
+    ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
     ctx.font = "100px serif";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
@@ -87,6 +86,7 @@ window.addEventListener('keydown', e => {
         cvs.width = window.innerWidth;
         cvs.height = window.innerHeight;
         playing = true;
+        ctx.fillStyle = "black";
         ctx.fillRect(0, 0, cvs.width, cvs.height);
         loadBMS(bmsC).then(bms => {
             bmsC = bms;
