@@ -1078,6 +1078,7 @@ function loadBMS(bms) {
                     const video = bms.bmps[key];
                     bms.bmps[key] = document.createElement('video');
                     bms.bmps[key].src = video;
+                    bms.bmps[key].load
                     document.getElementById('bga').appendChild(bms.bmps[key]);
                     break;
                 }
@@ -1093,13 +1094,23 @@ function loadBMS(bms) {
             }
         }
         audioCtx = new AudioContext();
-        Promise.all(Object.keys(bms.wavs).map(wav => {
+        Promise.all(Object.keys(bms.bmps).filter(key => bms.bmps[key] instanceof HTMLVideoElement).map(key => {
+            new Promise(res => {
+                (function wait(key) {
+                    if(bms.bmps[key].readyState == bms.bmps[key].HAVE_ENOUGH_DATA){
+                        res();
+                    } else {
+                        setTimeout(wait, 0, key);
+                    }
+                })(key);
+            });
+        })).then(() => Promise.all(Object.keys(bms.wavs).map(wav => {
             if (wav.length > 0) {
                 return new Promise(res => {
                     fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => audioCtx.decodeAudioData(buffer)).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 })
             }
-        })).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
+        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
             bms.wavs = wavs;
         }).then(() => resolve(bms));
     });
