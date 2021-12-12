@@ -399,6 +399,20 @@ function exeJudge(judge) {
     }
 }
 
+localStorage["bg-color"] = localStorage["bg-color"] || "#1F2F2F";
+localStorage["effect-color"] = localStorage["effect-color"] || "#FFA500";
+localStorage["gauge-color"] = localStorage["gauge-color"] || "#00BFFF";
+localStorage["gear-color"] = localStorage["gear-color"] || "#DCDCDC";
+localStorage["text-color"] = localStorage["text-color"] || "#FFFFF0";
+localStorage["scratch-color"] = localStorage["scratch-color"] || "#FF0000";
+localStorage["lower-color"] = localStorage["lower-color"] || "#FFFFFF";
+localStorage["higher-color"] = localStorage["higher-color"] || "#00BFFF";
+localStorage["mine-color"] = localStorage["mine-color"] || "#DC143C";
+localStorage["great-color"] = localStorage["great-color"] || "#FFD700";
+localStorage["good-color"] = localStorage["good-color"] || "#ADFF2F";
+localStorage["bad-color"] = localStorage["bad-color"] || "#8A2BE2";
+localStorage["poor-color"] = localStorage["poor-color"] || "#8B0000";
+
 const colorScheme = {
     background: localStorage["bg-color"],
     gear: localStorage["gear-color"],
@@ -409,7 +423,7 @@ const colorScheme = {
     mine: localStorage["mine-color"],
     indicate: localStorage["effect-color"], // color when i press key
     gauge: localStorage["gauge-color"],
-    pgreat: localStorage["pgreat-color"],
+    pgreat: "#FFFFFF",
     great: localStorage["great-color"],
     good: localStorage["good-color"],
     bad: localStorage["bad-color"],

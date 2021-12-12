@@ -1,3 +1,17 @@
+localStorage["bg-color"] = localStorage["bg-color"] || "#1F2F2F";
+localStorage["effect-color"] = localStorage["effect-color"] || "#FFA500";
+localStorage["gauge-color"] = localStorage["gauge-color"] || "#00BFFF";
+localStorage["gear-color"] = localStorage["gear-color"] || "#DCDCDC";
+localStorage["text-color"] = localStorage["text-color"] || "#FFFFF0";
+localStorage["scratch-color"] = localStorage["scratch-color"] || "#FF0000";
+localStorage["lower-color"] = localStorage["lower-color"] || "#FFFFFF";
+localStorage["higher-color"] = localStorage["higher-color"] || "#00BFFF";
+localStorage["mine-color"] = localStorage["mine-color"] || "#DC143C";
+localStorage["great-color"] = localStorage["great-color"] || "#FFD700";
+localStorage["good-color"] = localStorage["good-color"] || "#ADFF2F";
+localStorage["bad-color"] = localStorage["bad-color"] || "#8A2BE2";
+localStorage["poor-color"] = localStorage["poor-color"] || "#8B0000";
+
 document.getElementById('bg-color').addEventListener('change', function () {
     var bgColor = document.getElementById('bg-color').value;
     document.getElementById('bg-val').innerHTML = bgColor;
@@ -52,12 +66,6 @@ document.getElementById('mine-color').addEventListener('change', function () {
     localStorage["mine-color"] = gaugeColor;
 });
 
-document.getElementById('pgreat-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('pgreat-color').value;
-    document.getElementById('pgreat-val').innerHTML = gaugeColor;
-    localStorage["pgreat-color"] = gaugeColor;
-});
-
 document.getElementById('great-color').addEventListener('change', function () {
     var gaugeColor = document.getElementById('great-color').value;
     document.getElementById('great-val').innerHTML = gaugeColor;
@@ -92,7 +100,6 @@ $(document).ready(function () {
     document.getElementById('lower-val').innerHTML = localStorage["lower-color"];
     document.getElementById('higher-val').innerHTML = localStorage["higher-color"];
     document.getElementById('mine-val').innerHTML = localStorage["mine-color"];
-    document.getElementById('pgreat-val').innerHTML = localStorage["pgreat-color"];
     document.getElementById('great-val').innerHTML = localStorage["great-color"];
     document.getElementById('good-val').innerHTML = localStorage["good-color"];
     document.getElementById('bad-val').innerHTML = localStorage["bad-color"];
@@ -107,7 +114,6 @@ $(document).ready(function () {
     document.getElementById('lower-color').value = localStorage["lower-color"];
     document.getElementById('higher-color').value = localStorage["higher-color"];
     document.getElementById('mine-color').value = localStorage["mine-color"];
-    document.getElementById('pgreat-color').value = localStorage["pgreat-color"];
     document.getElementById('great-color').value = localStorage["great-color"];
     document.getElementById('good-color').value = localStorage["good-color"];
     document.getElementById('bad-color').value = localStorage["bad-color"];
@@ -127,7 +133,6 @@ function reset() {
         localStorage["lower-color"] = "#FFFFFF";
         localStorage["higher-color"] = "#00BFFF";
         localStorage["mine-color"] = "#DC143C";
-        localStorage["pgreat-color"] = "#FFFFFF";
         localStorage["great-color"] = "#FFD700";
         localStorage["good-color"] = "#ADFF2F";
         localStorage["bad-color"] = "#8A2BE2";
