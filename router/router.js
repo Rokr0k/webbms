@@ -33,7 +33,7 @@ function route(app) {
 
         function callback(error, response, body) {
             if (!error && response.statusCode == 200)
-                res.send(`<pre>${body.replace(/</gi, "&lt;").replace(/>/gi, "&gt;")}</pre>`);
+                res.send(`<title>WebBMS - License</title><pre>${body.replace(/</gi, "&lt;").replace(/>/gi, "&gt;")}</pre>`);
         }
 
         request(options, callback);
