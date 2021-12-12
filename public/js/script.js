@@ -79,7 +79,7 @@ background.onload = function () {
 const keys = {
     p1: [localStorage["p1-1"], localStorage["p1-2"], localStorage["p1-3"], localStorage["p1-4"], localStorage["p1-5"], localStorage["p1-0"], localStorage["p1-6"], localStorage["p1-7"]],
     p2: [localStorage["p2-1"], localStorage["p2-2"], localStorage["p2-3"], localStorage["p2-4"], localStorage["p2-5"], localStorage["p2-0"], localStorage["p2-6"], localStorage["p2-7"]],
-    speed: ["Digit1", "Digit2"],
+    speed: [localStorage["speed-down"], localStorage["speed-up"]],
 };
 
 window.addEventListener('keydown', e => {

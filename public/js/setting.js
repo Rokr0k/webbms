@@ -135,6 +135,8 @@ $(document).ready(function () {
     document.getElementById('p2-5').value = localStorage["p2-5"];
     document.getElementById('p2-6').value = localStorage["p2-6"];
     document.getElementById('p2-7').value = localStorage["p2-7"];
+    document.getElementById('speed-down').value = localStorage["speed-down"];
+    document.getElementById('speed-up').value = localStorage["speed-up"];
 });
 
 function reset() {
@@ -170,6 +172,8 @@ function reset() {
         localStorage["p2-5"] = "Period";
         localStorage["p2-6"] = "SemiColon";
         localStorage["p2-7"] = "Slash";
+        localStorage["speed-down"] = "Digit1";
+        localStorage["speed-up"] = "Digit2";
         location.reload();
     }
 }
@@ -184,7 +188,7 @@ function p1_scratch(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -202,7 +206,7 @@ function p1_1(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -220,7 +224,7 @@ function p1_2(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -238,7 +242,7 @@ function p1_3(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -256,7 +260,7 @@ function p1_4(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -274,7 +278,7 @@ function p1_5(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -292,7 +296,7 @@ function p1_6(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -310,7 +314,7 @@ function p1_7(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -328,7 +332,7 @@ function p2_scratch(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -346,7 +350,7 @@ function p2_1(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -364,7 +368,7 @@ function p2_2(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -382,7 +386,7 @@ function p2_3(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -400,7 +404,7 @@ function p2_4(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -418,7 +422,7 @@ function p2_5(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -436,7 +440,7 @@ function p2_6(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -454,7 +458,7 @@ function p2_7(e) {
         alert("You can't use this key!");
     } else {
         for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
                 alert("Already used!");
                 x.value = "";
                 break;
@@ -464,5 +468,41 @@ function p2_7(e) {
     }
     x.disabled = true;
     x.disabled = false;
-    localStorage.setItem("p2-7", x.value);
+    localStorage.setItem("speed-down", x.value);
+}
+function speed_down(e) {
+    var x = document.getElementById("speed-down");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("speed-down", x.value);
+}
+function speed_up(e) {
+    var x = document.getElementById("speed-up");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("speed-up", x.value);
 }
