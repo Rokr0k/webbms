@@ -88,7 +88,24 @@ module.exports = function (filename) {
             if (skipped) {
                 return;
             }
-            bms.title = match[1];
+            matchCascade(match[1]).when(/^(.*)\s*-(.*)-$/, match => {
+                bms.title = match[1];
+                bms.subtitle = "[" + match[2] + "]";
+            }).when(/^(.*)\s*～(.*)～$/, match => {
+                bms.title = match[1];
+                bms.subtitle = "[" + match[2] + "]";
+            }).when(/^(.*)\s*\[(.*)\]$/, match => {
+                bms.title = match[1];
+                bms.subtitle = "[" + match[2] + "]";
+            }).when(/^(.*)\s*\((.*)\)$/, match => {
+                bms.title = match[1];
+                bms.subtitle = "[" + match[2] + "]";
+            }).when(/^(.*)\s*<(.*)>$/, match => {
+                bms.title = match[1];
+                bms.subtitle = "[" + match[2] + "]";
+            }).else(() => {
+                bms.title = match[1];
+            });
         }).when(/^#ARTIST (.*)$/i, match => {
             if (skipped) {
                 return;
