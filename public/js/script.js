@@ -3,6 +3,8 @@ let ctx = cvs.getContext('2d');
 let video = document.getElementById('video');
 
 let audioCtx;
+let volumeNode;
+let analyserNode;
 let playing = false;
 let startTime;
 let bpmC;
@@ -472,6 +474,18 @@ function draw() {
     } else if (bmpC instanceof HTMLImageElement) {
         bgaRatio = bmpC.height / bmpC.width;
     }
+    const analyseLength = analyserNode.frequencyBinCount;
+    const analyseData = new Uint8Array(analyseLength);
+    analyserNode.getByteFrequencyData(analyseData);
+    ctx.fillStyle = colorScheme.text;
+    ctx.beginPath();
+    ctx.moveTo(cvs.width, cvs.height);
+    for (let i = 0; i < analyseLength; i++) {
+        ctx.lineTo(cvs.width - analyseData[i] / 256 * cvs.width / 6, cvs.height * (1 - i / analyseLength));
+    }
+    ctx.lineTo(cvs.width, 0);
+    ctx.fill();
+    ctx.closePath();
     switch (bmsC.player) {
         case 1:
             ctx.fillStyle = colorScheme.gear;
@@ -1108,10 +1122,13 @@ function loadBMS(bms) {
             }
         }
         audioCtx = new AudioContext();
+        volumeNode = new GainNode(audioCtx, { gain: 1 });
+        analyserNode = new AnalyserNode(audioCtx, { fftSize: 2048 });
+        analyserNode.connect(volumeNode).connect(audioCtx.destination);
         Promise.all(Object.keys(bms.bmps).filter(key => bms.bmps[key] instanceof HTMLVideoElement).map(key => {
             new Promise(res => {
                 (function wait(key) {
-                    if(bms.bmps[key].readyState == bms.bmps[key].HAVE_ENOUGH_DATA){
+                    if (bms.bmps[key].readyState == bms.bmps[key].HAVE_ENOUGH_DATA) {
                         res();
                     } else {
                         setTimeout(wait, 0, key);
@@ -1157,9 +1174,8 @@ function fractionDiff(a, b) {
 
 function play(buffer) {
     if (buffer) {
-        const node = audioCtx.createBufferSource();
-        node.buffer = buffer;
-        node.connect(audioCtx.destination);
+        const node = new AudioBufferSourceNode(audioCtx, { buffer: buffer });
+        node.connect(analyserNode);
         node.start();
         setTimeout(node => node.disconnect(), buffer.duration * 1000, node);
         return node;
