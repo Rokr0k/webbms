@@ -55,14 +55,22 @@
 					id="bad-color"></label><br><br>
 			<label>POOR Color: <span id="poor-val"></span> <input type="color" name="poor-color"
 					id="poor-color"></label><br><br>
-			<label>P1 Scratch: <input type="text" onkeydown="scratch(event)" id="p1-scratch"></label>
-			<label>P1 1: <input type="text" onkeydown="p1(event)" id="p1-1"></label>
-			<label>P1 2: <input type="text" onkeydown="p2(event)" id="p1-2"></label>
-			<label>P1 3: <input type="text" onkeydown="p3(event)" id="p1-3"></label>
-			<label>P1 4: <input type="text" onkeydown="p4(event)" id="p1-4"></label>
-			<label>P1 5: <input type="text" onkeydown="p5(event)" id="p1-5"></label>
-			<label>P1 6: <input type="text" onkeydown="p6(event)" id="p1-6"></label>
-			<label>P1 7: <input type="text" onkeydown="p7(event)" id="p1-7"></label>
+			<label>P1 Scratch: <input type="text" onkeydown="p1_scratch(event)" id="p1-scratch"></label><br><br>
+			<label>P1 1: <input type="text" onkeydown="p1_1(event)" id="p1-1"></label><br><br>
+			<label>P1 2: <input type="text" onkeydown="p1_2(event)" id="p1-2"></label><br><br>
+			<label>P1 3: <input type="text" onkeydown="p1_3(event)" id="p1-3"></label><br><br>
+			<label>P1 4: <input type="text" onkeydown="p1_4(event)" id="p1-4"></label><br><br>
+			<label>P1 5: <input type="text" onkeydown="p1_5(event)" id="p1-5"></label><br><br>
+			<label>P1 6: <input type="text" onkeydown="p1_6(event)" id="p1-6"></label><br><br>
+			<label>P1 7: <input type="text" onkeydown="p1_7(event)" id="p1-7"></label><br><br>
+			<label>P2 Scratch: <input type="text" onkeydown="p2_scratch(event)" id="p2-scratch"></label><br><br>
+			<label>P2 1: <input type="text" onkeydown="p2_1(event)" id="p2-1"></label><br><br>
+			<label>P2 2: <input type="text" onkeydown="p2_2(event)" id="p2-2"></label><br><br>
+			<label>P2 3: <input type="text" onkeydown="p2_3(event)" id="p2-3"></label><br><br>
+			<label>P2 4: <input type="text" onkeydown="p2_4(event)" id="p2-4"></label><br><br>
+			<label>P2 5: <input type="text" onkeydown="p2_5(event)" id="p2-5"></label><br><br>
+			<label>P2 6: <input type="text" onkeydown="p2_6(event)" id="p2-6"></label><br><br>
+			<label>P2 7: <input type="text" onkeydown="p2_7(event)" id="p2-7"></label><br><br>
 		</div>
 	</div>
 	<footer>&copy; 2021 Rokr0k, All rights reserved.<br>Made with 🔥 by <a href="https://github.com/rokr0k"
@@ -71,87 +79,5 @@
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="/js/setting.js"></script>
-<script>
-	function scratch(event) {
-		const x = document.getElementById("p1-scratch");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p1(event) {
-		const x = document.getElementById("p1-1");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p2(event) {
-		const x = document.getElementById("p1-2");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p3(event) {
-		const x = document.getElementById("p1-3");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p4(event) {
-		const x = document.getElementById("p1-4");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p5(event) {
-		const x = document.getElementById("p1-5");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p6(event) {
-		const x = document.getElementById("p1-6");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-	function p7(event) {
-		const x = document.getElementById("p1-7");
-		if (event.shiftKey) {
-			x.value = event.code;
-		} else {
-			x.value = event.key;
-		}
-		x.disabled = true;
-		x.disabled = false;
-	}
-</script>
 
 </html>

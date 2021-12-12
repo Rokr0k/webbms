@@ -118,6 +118,23 @@ $(document).ready(function () {
     document.getElementById('good-color').value = localStorage["good-color"];
     document.getElementById('bad-color').value = localStorage["bad-color"];
     document.getElementById('poor-color').value = localStorage["poor-color"];
+
+    document.getElementById('p1-scratch').value = localStorage["p1-0"];
+    document.getElementById('p1-1').value = localStorage["p1-1"];
+    document.getElementById('p1-2').value = localStorage["p1-2"];
+    document.getElementById('p1-3').value = localStorage["p1-3"];
+    document.getElementById('p1-4').value = localStorage["p1-4"];
+    document.getElementById('p1-5').value = localStorage["p1-5"];
+    document.getElementById('p1-6').value = localStorage["p1-6"];
+    document.getElementById('p1-7').value = localStorage["p1-7"];
+    document.getElementById('p2-scratch').value = localStorage["p2-0"];
+    document.getElementById('p2-1').value = localStorage["p2-1"];
+    document.getElementById('p2-2').value = localStorage["p2-2"];
+    document.getElementById('p2-3').value = localStorage["p2-3"];
+    document.getElementById('p2-4').value = localStorage["p2-4"];
+    document.getElementById('p2-5').value = localStorage["p2-5"];
+    document.getElementById('p2-6').value = localStorage["p2-6"];
+    document.getElementById('p2-7').value = localStorage["p2-7"];
 });
 
 function reset() {
@@ -137,10 +154,315 @@ function reset() {
         localStorage["good-color"] = "#ADFF2F";
         localStorage["bad-color"] = "#8A2BE2";
         localStorage["poor-color"] = "#8B0000";
+        localStorage["p1-0"] = "ShiftLeft";
+        localStorage["p1-1"] = "KeyZ";
+        localStorage["p1-2"] = "KeyS";
+        localStorage["p1-3"] = "KeyX";
+        localStorage["p1-4"] = "KeyD";
+        localStorage["p1-5"] = "KeyC";
+        localStorage["p1-6"] = "KeyF";
+        localStorage["p1-7"] = "KeyV";
+        localStorage["p2-0"] = "ShiftRight";
+        localStorage["p2-1"] = "KeyM";
+        localStorage["p2-2"] = "KeyK";
+        localStorage["p2-3"] = "Comma";
+        localStorage["p2-4"] = "KeyL";
+        localStorage["p2-5"] = "Period";
+        localStorage["p2-6"] = "SemiColon";
+        localStorage["p2-7"] = "Slash";
         location.reload();
     }
 }
 
 function save() {
     window.location.href = "/";
+}
+
+function p1_scratch(e) {
+    var x = document.getElementById("p1-scratch");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-0", x.value);
+}
+function p1_1(e) {
+    var x = document.getElementById("p1-1");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-1", x.value);
+}
+function p1_2(e) {
+    var x = document.getElementById("p1-2");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-2", x.value);
+}
+function p1_3(e) {
+    var x = document.getElementById("p1-3");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-3", x.value);
+}
+function p1_4(e) {
+    var x = document.getElementById("p1-4");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-4", x.value);
+}
+function p1_5(e) {
+    var x = document.getElementById("p1-5");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-5", x.value);
+}
+function p1_6(e) {
+    var x = document.getElementById("p1-6");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-6", x.value);
+}
+function p1_7(e) {
+    var x = document.getElementById("p1-7");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p1-7", x.value);
+}
+function p2_scratch(e) {
+    var x = document.getElementById("p2-scratch");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-0", x.value);
+}
+function p2_1(e) {
+    var x = document.getElementById("p2-1");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-1", x.value);
+}
+function p2_2(e) {
+    var x = document.getElementById("p2-2");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-2", x.value);
+}
+function p2_3(e) {
+    var x = document.getElementById("p2-3");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-3", x.value);
+}
+function p2_4(e) {
+    var x = document.getElementById("p2-4");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-4", x.value);
+}
+function p2_5(e) {
+    var x = document.getElementById("p2-5");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-5", x.value);
+}
+function p2_6(e) {
+    var x = document.getElementById("p2-6");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-6", x.value);
+}
+function p2_7(e) {
+    var x = document.getElementById("p2-7");
+    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
+        alert("You can't use this key!");
+    } else {
+        for (var i = 0; i <= 7; i++) {
+            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code) {
+                alert("Already used!");
+                x.value = "";
+                break;
+            }
+            x.value = e.code;
+        }
+    }
+    x.disabled = true;
+    x.disabled = false;
+    localStorage.setItem("p2-7", x.value);
 }
