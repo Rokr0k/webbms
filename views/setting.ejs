@@ -2,61 +2,156 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setting</title>
-    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/css/setting.css" type="text/css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Setting</title>
+	<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="/css/setting.css" type="text/css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+		integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 </head>
+<style>
+	input[type="text"]:disabled {
+		background: #ffffff;
+	}
+</style>
 
 <body>
-    <h1>Setting</h1>
-    <div>
-        <input type="button" class="btn btn-danger setting-btn" value="Reset" onclick=reset()></input>
-        <input type="button" class="btn btn-success setting-btn" value="Save And Exit" onclick=save()></input><br><br>
-        <div class="container">
-            <label>Background Color: <span id="bg-val"></span> <input type="color" name="bg-color"
-                    id="bg-color"></label>
-            <!--<label>&nbsp;&nbsp;Transparency: <span id="bg-t-val"></span> <input
+	<h1>Setting</h1>
+	<div>
+		<input type="button" class="btn btn-danger setting-btn" value="Reset" onclick=reset()></input>
+		<input type="button" class="btn btn-success setting-btn" value="Save And Exit" onclick=save()></input><br><br>
+		<div class="container">
+			<label>Background Color: <span id="bg-val"></span> <input type="color" name="bg-color"
+					id="bg-color"></label>
+			<!--<label>&nbsp;&nbsp;Transparency: <span id="bg-t-val"></span> <input
                     type="range" name="bg-t" id="bg-t" min="0" max="255" width="300"></label>--><br><br>
-            <label>Effect Color: <span id="effect-val"></span> <input type="color" name="effect-color"
-                    id="effect-color"></label>
-            <!--<label>&nbsp;&nbsp;Transparency: <span id="effect-t-val"></span> <input
+			<label>Effect Color: <span id="effect-val"></span> <input type="color" name="effect-color"
+					id="effect-color"></label>
+			<!--<label>&nbsp;&nbsp;Transparency: <span id="effect-t-val"></span> <input
                     type="range" name="effect-t" id="effect-t" min="0" max="255"></label>--><br><br>
-            <label>Gauge Color: <span id="gauge-val"></span> <input type="color" name="gauge-color"
-                    id="gauge-color"></label>
-            <!--<label>&nbsp;&nbsp;Transparency: <span id="gauge-t-val"></span> <input
+			<label>Gauge Color: <span id="gauge-val"></span> <input type="color" name="gauge-color"
+					id="gauge-color"></label>
+			<!--<label>&nbsp;&nbsp;Transparency: <span id="gauge-t-val"></span> <input
                     type="range" name="gauge-t" id="gauge-t" min="0" max="255"></label>--><br><br>
-            <label>Gear Color: <span id="gear-val"></span> <input type="color" name="gear-color"
-                    id="gear-color"></label><br><br>
-            <label>Text Color: <span id="text-val"></span> <input type="color" name="text-color"
-                    id="text-color"></label><br><br>
-            <label>Scratch Color: <span id="scratch-val"></span> <input type="color" name="scratch-color"
-                    id="scratch-color"></label><br><br>
-            <label>Lower Color: <span id="lower-val"></span> <input type="color" name="lower-color"
-                    id="lower-color"></label><br><br>
-            <label>Higher Color: <span id="higher-val"></span> <input type="color" name="higher-color"
-                    id="higher-color"></label><br><br>
-            <label>Mine Color: <span id="mine-val"></span> <input type="color" name="mine-color"
-                    id="mine-color"></label><br><br>
-            <label>GREAT Color: <span id="great-val"></span> <input type="color" name="great-color"
-                    id="great-color"></label><br><br>
-            <label>GOOD Color: <span id="good-val"></span> <input type="color" name="good-color"
-                    id="good-color"></label><br><br>
-            <label>BAD Color: <span id="bad-val"></span> <input type="color" name="bad-color"
-                    id="bad-color"></label><br><br>
-            <label>POOR Color: <span id="poor-val"></span> <input type="color" name="poor-color"
-                    id="poor-color"></label><br><br>
-        </div>
-    </div>
-    <footer>&copy; 2021 Rokr0k, All rights reserved.<br>Made with 🔥 by <a href="https://github.com/rokr0k"
-            target="_blank" rel="noopener">Rokr0k</a>, <a href="https://github.com/D3vle0" target="_blank"
-            rel="noopener">D3vle0</a></footer>
+			<label>Gear Color: <span id="gear-val"></span> <input type="color" name="gear-color"
+					id="gear-color"></label><br><br>
+			<label>Text Color: <span id="text-val"></span> <input type="color" name="text-color"
+					id="text-color"></label><br><br>
+			<label>Scratch Color: <span id="scratch-val"></span> <input type="color" name="scratch-color"
+					id="scratch-color"></label><br><br>
+			<label>Lower Color: <span id="lower-val"></span> <input type="color" name="lower-color"
+					id="lower-color"></label><br><br>
+			<label>Higher Color: <span id="higher-val"></span> <input type="color" name="higher-color"
+					id="higher-color"></label><br><br>
+			<label>Mine Color: <span id="mine-val"></span> <input type="color" name="mine-color"
+					id="mine-color"></label><br><br>
+			<label>GREAT Color: <span id="great-val"></span> <input type="color" name="great-color"
+					id="great-color"></label><br><br>
+			<label>GOOD Color: <span id="good-val"></span> <input type="color" name="good-color"
+					id="good-color"></label><br><br>
+			<label>BAD Color: <span id="bad-val"></span> <input type="color" name="bad-color"
+					id="bad-color"></label><br><br>
+			<label>POOR Color: <span id="poor-val"></span> <input type="color" name="poor-color"
+					id="poor-color"></label><br><br>
+			<label>P1 Scratch: <input type="text" onkeydown="scratch(event)" id="p1-scratch"></label>
+			<label>P1 1: <input type="text" onkeydown="p1(event)" id="p1-1"></label>
+			<label>P1 2: <input type="text" onkeydown="p2(event)" id="p1-2"></label>
+			<label>P1 3: <input type="text" onkeydown="p3(event)" id="p1-3"></label>
+			<label>P1 4: <input type="text" onkeydown="p4(event)" id="p1-4"></label>
+			<label>P1 5: <input type="text" onkeydown="p5(event)" id="p1-5"></label>
+			<label>P1 6: <input type="text" onkeydown="p6(event)" id="p1-6"></label>
+			<label>P1 7: <input type="text" onkeydown="p7(event)" id="p1-7"></label>
+		</div>
+	</div>
+	<footer>&copy; 2021 Rokr0k, All rights reserved.<br>Made with 🔥 by <a href="https://github.com/rokr0k"
+			target="_blank" rel="noopener">Rokr0k</a>, <a href="https://github.com/D3vle0" target="_blank"
+			rel="noopener">D3vle0</a></footer>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="/js/setting.js"></script>
+<script>
+	function scratch(event) {
+		const x = document.getElementById("p1-scratch");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p1(event) {
+		const x = document.getElementById("p1-1");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p2(event) {
+		const x = document.getElementById("p1-2");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p3(event) {
+		const x = document.getElementById("p1-3");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p4(event) {
+		const x = document.getElementById("p1-4");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p5(event) {
+		const x = document.getElementById("p1-5");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p6(event) {
+		const x = document.getElementById("p1-6");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+	function p7(event) {
+		const x = document.getElementById("p1-7");
+		if (event.shiftKey) {
+			x.value = event.code;
+		} else {
+			x.value = event.key;
+		}
+		x.disabled = true;
+		x.disabled = false;
+	}
+</script>
 
 </html>
