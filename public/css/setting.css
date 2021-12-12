@@ -62,3 +62,7 @@ input[type="range"] {
 .setting-btn {
   font-family: "IBM Plex Sans KR", "M PLUS Rounded 1c", sans-serif;
 }
+
+input[type="text"]:disabled {
+  background: #ffffff;
+}
