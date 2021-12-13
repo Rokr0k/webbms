@@ -13,81 +13,81 @@ localStorage["bad-color"] = localStorage["bad-color"] || "#8A2BE2";
 localStorage["poor-color"] = localStorage["poor-color"] || "#8B0000";
 
 document.getElementById('bg-color').addEventListener('change', function () {
-    var bgColor = document.getElementById('bg-color').value;
-    document.getElementById('bg-val').innerHTML = bgColor;
-    localStorage["bg-color"] = bgColor;
+    var color = document.getElementById('bg-color').value;
+    document.getElementById('bg-val').innerHTML = color.toUpperCase();
+    localStorage["bg-color"] = color.toUpperCase();
 });
 
 document.getElementById('effect-color').addEventListener('change', function () {
-    var effectColor = document.getElementById('effect-color').value;
-    document.getElementById('effect-val').innerHTML = effectColor;
-    localStorage["effect-color"] = effectColor;
+    var color = document.getElementById('effect-color').value;
+    document.getElementById('effect-val').innerHTML = color.toUpperCase();
+    localStorage["effect-color"] = color.toUpperCase();
 });
 
 document.getElementById('gauge-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('gauge-color').value;
-    document.getElementById('gauge-val').innerHTML = gaugeColor;
-    localStorage["gauge-color"] = gaugeColor;
+    var color = document.getElementById('gauge-color').value;
+    document.getElementById('gauge-val').innerHTML = color.toUpperCase();
+    localStorage["gauge-color"] = color.toUpperCase();
 });
 
 document.getElementById('gear-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('gear-color').value;
-    document.getElementById('gear-val').innerHTML = gaugeColor;
-    localStorage["gear-color"] = gaugeColor;
+    var color = document.getElementById('gear-color').value;
+    document.getElementById('gear-val').innerHTML = color.toUpperCase();
+    localStorage["gear-color"] = color.toUpperCase();
 });
 
 document.getElementById('text-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('text-color').value;
-    document.getElementById('text-val').innerHTML = gaugeColor;
-    localStorage["text-color"] = gaugeColor;
+    var color = document.getElementById('text-color').value;
+    document.getElementById('text-val').innerHTML = color.toUpperCase();
+    localStorage["text-color"] = color.toUpperCase();
 });
 
 document.getElementById('scratch-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('scratch-color').value;
-    document.getElementById('scratch-val').innerHTML = gaugeColor;
-    localStorage["scratch-color"] = gaugeColor;
+    var color = document.getElementById('scratch-color').value;
+    document.getElementById('scratch-val').innerHTML = color.toUpperCase();
+    localStorage["scratch-color"] = color.toUpperCase();
 });
 
 document.getElementById('lower-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('lower-color').value;
-    document.getElementById('lower-val').innerHTML = gaugeColor;
-    localStorage["lower-color"] = gaugeColor;
+    var color = document.getElementById('lower-color').value;
+    document.getElementById('lower-val').innerHTML = color.toUpperCase();
+    localStorage["lower-color"] = color.toUpperCase();
 });
 
 document.getElementById('higher-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('higher-color').value;
-    document.getElementById('higher-val').innerHTML = gaugeColor;
-    localStorage["higher-color"] = gaugeColor;
+    var color = document.getElementById('higher-color').value;
+    document.getElementById('higher-val').innerHTML = color.toUpperCase();
+    localStorage["higher-color"] = color.toUpperCase();
 });
 
 document.getElementById('mine-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('mine-color').value;
-    document.getElementById('mine-val').innerHTML = gaugeColor;
-    localStorage["mine-color"] = gaugeColor;
+    var color = document.getElementById('mine-color').value;
+    document.getElementById('mine-val').innerHTML = color.toUpperCase();
+    localStorage["mine-color"] = color.toUpperCase();
 });
 
 document.getElementById('great-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('great-color').value;
-    document.getElementById('great-val').innerHTML = gaugeColor;
-    localStorage["great-color"] = gaugeColor;
+    var color = document.getElementById('great-color').value;
+    document.getElementById('great-val').innerHTML = color.toUpperCase();
+    localStorage["great-color"] = color.toUpperCase();
 });
 
 document.getElementById('good-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('good-color').value;
-    document.getElementById('good-val').innerHTML = gaugeColor;
-    localStorage["good-color"] = gaugeColor;
+    var color = document.getElementById('good-color').value;
+    document.getElementById('good-val').innerHTML = color.toUpperCase();
+    localStorage["good-color"] = color.toUpperCase();
 });
 
 document.getElementById('bad-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('bad-color').value;
-    document.getElementById('bad-val').innerHTML = gaugeColor;
-    localStorage["bad-color"] = gaugeColor;
+    var color = document.getElementById('bad-color').value;
+    document.getElementById('bad-val').innerHTML = color.toUpperCase();
+    localStorage["bad-color"] = color.toUpperCase();
 });
 
 document.getElementById('poor-color').addEventListener('change', function () {
-    var gaugeColor = document.getElementById('poor-color').value;
-    document.getElementById('poor-val').innerHTML = gaugeColor;
-    localStorage["poor-color"] = gaugeColor;
+    var color = document.getElementById('poor-color').value;
+    document.getElementById('poor-val').innerHTML = color.toUpperCase();
+    localStorage["poor-color"] = color.toUpperCase();
 });
 
 $(document).ready(function () {
