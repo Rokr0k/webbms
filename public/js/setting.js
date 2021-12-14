@@ -11,6 +11,24 @@ localStorage["great-color"] = localStorage["great-color"] || "#FFD700";
 localStorage["good-color"] = localStorage["good-color"] || "#ADFF2F";
 localStorage["bad-color"] = localStorage["bad-color"] || "#8A2BE2";
 localStorage["poor-color"] = localStorage["poor-color"] || "#8B0000";
+localStorage["p1-0"] = localStorage["p1-0"] || "ShiftLeft";
+localStorage["p1-1"] = localStorage["p1-1"] || "KeyZ";
+localStorage["p1-2"] = localStorage["p1-2"] || "KeyS";
+localStorage["p1-3"] = localStorage["p1-3"] || "KeyX";
+localStorage["p1-4"] = localStorage["p1-4"] || "KeyD";
+localStorage["p1-5"] = localStorage["p1-5"] || "KeyC";
+localStorage["p1-6"] = localStorage["p1-6"] || "KeyF";
+localStorage["p1-7"] = localStorage["p1-7"] || "KeyV";
+localStorage["p2-0"] = localStorage["p2-0"] || "ShiftRight";
+localStorage["p2-1"] = localStorage["p2-1"] || "KeyM";
+localStorage["p2-2"] = localStorage["p2-2"] || "KeyK";
+localStorage["p2-3"] = localStorage["p2-3"] || "Comma";
+localStorage["p2-4"] = localStorage["p2-4"] || "KeyL";
+localStorage["p2-5"] = localStorage["p2-5"] || "Period";
+localStorage["p2-6"] = localStorage["p2-6"] || "SemiColon";
+localStorage["p2-7"] = localStorage["p2-7"] || "Slash";
+localStorage["speed-down"] = localStorage["speed-down"] || "Digit1";
+localStorage["speed-up"] = localStorage["speed-up"] || "Digit2";
 
 document.getElementById('bg-color').addEventListener('change', function () {
     var color = document.getElementById('bg-color').value;
