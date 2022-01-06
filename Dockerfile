@@ -1,12 +1,7 @@
-FROM node:16.13.0
-
+FROM node:latest
 WORKDIR /usr/src/app
-
-COPY package.json ./
-COPY package-lock.json ./
-
+COPY package*.json ./
 RUN npm install
-
-COPY ./ ./
-
-CMD ["node", "webbms.js"]
+COPY . ./
+CMD ["npm", "start"]
+EXPOSE 80

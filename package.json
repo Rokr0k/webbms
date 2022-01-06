@@ -1,6 +1,6 @@
 {
   "name": "webbms",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "run bms in web",
   "main": "index.js",
   "scripts": {
