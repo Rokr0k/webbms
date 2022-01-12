@@ -2,6 +2,38 @@ let cvs = document.getElementById('cvs');
 let ctx = cvs.getContext('2d');
 let video = document.getElementById('video');
 
+localStorage["bg-color"] ||= "#1F2F2F";
+localStorage["effect-color"] ||= "#FFA500";
+localStorage["gauge-color"] ||= "#00BFFF";
+localStorage["gear-color"] ||= "#DCDCDC";
+localStorage["text-color"] ||= "#FFFFF0";
+localStorage["scratch-color"] ||= "#FF0000";
+localStorage["lower-color"] ||= "#FFFFFF";
+localStorage["higher-color"] ||= "#00BFFF";
+localStorage["mine-color"] ||= "#DC143C";
+localStorage["great-color"] ||= "#FFD700";
+localStorage["good-color"] ||= "#ADFF2F";
+localStorage["bad-color"] ||= "#8A2BE2";
+localStorage["poor-color"] ||= "#8B0000";
+localStorage["p1-0"] ||= "ShiftLeft";
+localStorage["p1-1"] ||= "KeyZ";
+localStorage["p1-2"] ||= "KeyS";
+localStorage["p1-3"] ||= "KeyX";
+localStorage["p1-4"] ||= "KeyD";
+localStorage["p1-5"] ||= "KeyC";
+localStorage["p1-6"] ||= "KeyF";
+localStorage["p1-7"] ||= "KeyV";
+localStorage["p2-0"] ||= "ShiftRight";
+localStorage["p2-1"] ||= "KeyM";
+localStorage["p2-2"] ||= "KeyK";
+localStorage["p2-3"] ||= "Comma";
+localStorage["p2-4"] ||= "KeyL";
+localStorage["p2-5"] ||= "Period";
+localStorage["p2-6"] ||= "SemiColon";
+localStorage["p2-7"] ||= "Slash";
+localStorage["speed-down"] ||= "Digit1";
+localStorage["speed-up"] ||= "Digit2";
+
 let audioCtx;
 let volumeNode;
 let analyserNode;
@@ -60,7 +92,7 @@ const result = {
     2: 'E',
     1: 'F',
     0: 'F',
-    NaN: '몰?루',
+    NaN: 'NaN',
 };
 
 cvs.width = window.innerWidth;
@@ -83,9 +115,7 @@ const keys = {
 };
 
 window.addEventListener('keydown', e => {
-    if (e.code == 'Escape') {
-        window.history.back();
-    } else if (!playing && e.code == 'Space') {
+    if (!playing && e.code == 'Space') {
         cvs.width = window.innerWidth;
         cvs.height = window.innerHeight;
         playing = true;
@@ -98,7 +128,7 @@ window.addEventListener('keydown', e => {
             bpmC = bmsC.bpm;
             timeC = 0
             indexC = 0;
-            startTime = audioCtx.currentTime + 1;
+            startTime = audioCtx.currentTime + 5;
             poorBmpC = bmsC.bmps['00'];
             setInterval(update, 0);
             setInterval(setColor, 50);
@@ -401,20 +431,6 @@ function exeJudge(judge) {
     }
 }
 
-localStorage["bg-color"] = localStorage["bg-color"] || "#1F2F2F";
-localStorage["effect-color"] = localStorage["effect-color"] || "#FFA500";
-localStorage["gauge-color"] = localStorage["gauge-color"] || "#00BFFF";
-localStorage["gear-color"] = localStorage["gear-color"] || "#DCDCDC";
-localStorage["text-color"] = localStorage["text-color"] || "#FFFFF0";
-localStorage["scratch-color"] = localStorage["scratch-color"] || "#FF0000";
-localStorage["lower-color"] = localStorage["lower-color"] || "#FFFFFF";
-localStorage["higher-color"] = localStorage["higher-color"] || "#00BFFF";
-localStorage["mine-color"] = localStorage["mine-color"] || "#DC143C";
-localStorage["great-color"] = localStorage["great-color"] || "#FFD700";
-localStorage["good-color"] = localStorage["good-color"] || "#ADFF2F";
-localStorage["bad-color"] = localStorage["bad-color"] || "#8A2BE2";
-localStorage["poor-color"] = localStorage["poor-color"] || "#8B0000";
-
 const colorScheme = {
     background: localStorage["bg-color"],
     gear: localStorage["gear-color"],
@@ -440,7 +456,7 @@ const colorScheme = {
         d: "#9370DB",
         e: "#FF1493",
         f: "#DC143C",
-        "몰?루": "#FFFFFF",
+        nan: "#FFFFFF",
     },
 };
 
@@ -451,8 +467,7 @@ function setColor() {
     greatPulse = !greatPulse;
 }
 
-const scrollSpeed = 200;
-let scrollSpeedVar = 15;
+let scrollSpeedVar = 10;
 
 const bgaSize = 500;
 
@@ -491,7 +506,7 @@ function draw() {
             ctx.fillStyle = colorScheme.gear;
             ctx.fillRect(0, cvs.height - noteSize, 530, noteSize);
             for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
-                let y = (fractionDiff(0, i) - fraction) * scrollSpeed * scrollSpeedVar;
+                let y = (fractionDiff(0, i) - fraction) * cvs.height * scrollSpeedVar / 10;
                 ctx.fillRect(0, cvs.height - y, 530, 5);
             }
             ctx.fillRect(0 - 5 / 2, 0, 5, cvs.height);
@@ -544,7 +559,7 @@ function draw() {
             }
             for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
                 if (note.type == 1) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -585,7 +600,7 @@ function draw() {
                     }
                 }
                 else if (note.type == 2) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -620,8 +635,8 @@ function draw() {
                 }
             }
             for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
-                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
+                let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                 if (y1 > cvs.height) {
                     break;
                 }
@@ -682,7 +697,7 @@ function draw() {
             } else {
                 ctx.fillText(`BPM ${bpmC.toString().substring(0, 3)}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
             }
-            ctx.fillText(`EXSCORE ${exScore}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
+            ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
             ctx.fillStyle = colorScheme.text;
@@ -731,7 +746,7 @@ function draw() {
             ctx.fillStyle = colorScheme.gear;
             ctx.fillRect(0, cvs.height - noteSize, 1110, noteSize);
             for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
-                let y = (fractionDiff(0, i) - fraction) * scrollSpeed * scrollSpeedVar;
+                let y = (fractionDiff(0, i) - fraction) * cvs.height * scrollSpeedVar / 10;
                 ctx.fillRect(0, cvs.height - y, 1110, 5);
             }
             ctx.fillRect(0 - 5 / 2, 0, 5, cvs.height);
@@ -818,7 +833,7 @@ function draw() {
             }
             for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 2 && !note.executed))) {
                 if (note.type == 1) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -891,7 +906,7 @@ function draw() {
                     }
                 }
                 else if (note.type == 2) {
-                    let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
+                    let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
                         break;
@@ -950,8 +965,8 @@ function draw() {
                 }
             }
             for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
-                let y1 = (fractionDiff(0, note.fraction) - fraction) * scrollSpeed * scrollSpeedVar;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * scrollSpeed * scrollSpeedVar + noteSize;
+                let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                let y2 = (fractionDiff(0, note.endFraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                 if (y1 > cvs.height) {
                     break;
                 }
@@ -1044,7 +1059,7 @@ function draw() {
             } else {
                 ctx.fillText(`BPM ${bpmC.toString().substring(0, 3)}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
             }
-            ctx.fillText(`EXSCORE ${exScore}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
+            ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
             ctx.fillStyle = colorScheme.text;
@@ -1123,7 +1138,7 @@ function loadBMS(bms) {
         }
         audioCtx = new AudioContext();
         volumeNode = new GainNode(audioCtx, { gain: 1 });
-        analyserNode = new AnalyserNode(audioCtx, { fftSize: 2048 });
+        analyserNode = new AnalyserNode(audioCtx, { fftSize: 512 });
         analyserNode.connect(volumeNode).connect(audioCtx.destination);
         Promise.all(Object.keys(bms.bmps).filter(key => bms.bmps[key] instanceof HTMLVideoElement).map(key => {
             new Promise(res => {
