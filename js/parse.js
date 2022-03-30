@@ -19,7 +19,6 @@ module.exports = function (filename) {
         bpm: 130,
         signatures: Array(1000).fill(1),
         notes: [],
-        randoms: [],
     };
     let lntype = 1;
     let lnobj = '00';
@@ -38,7 +37,6 @@ module.exports = function (filename) {
                 return;
             }
             randomGenerated = Math.floor(Math.random() * parseInt(match[1])) + 1;
-            bms.randoms.push(randomGenerated);
         }).when(/^#IF (\d+)$/i, match => {
             if (skipped) {
                 return;
@@ -151,7 +149,7 @@ module.exports = function (filename) {
                 return;
             }
             bms.signatures[parseInt(match[1])] = parseFloat(match[2]);
-        }).when(/^#(\d{3})([0-9A-Z]{2}):(([0-9A-Z]{2})+)$/i, match => {
+        }).when(/^#(\d{3})([0-9A-Z]{2}):([0-9A-Z]+)$/i, match => {
             if (skipped) {
                 return;
             }

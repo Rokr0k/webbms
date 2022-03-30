@@ -192,7 +192,7 @@ window.addEventListener('keydown', e => {
                 scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
                 break;
             case keys.speed[1]:
-                scrollSpeedVar = Math.min(30, scrollSpeedVar + 1);
+                scrollSpeedVar = Math.min(100, scrollSpeedVar + 1);
                 break;
         }
     }
