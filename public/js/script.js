@@ -33,6 +33,7 @@ localStorage["p2-6"] ||= "SemiColon";
 localStorage["p2-7"] ||= "Slash";
 localStorage["speed-down"] ||= "Digit1";
 localStorage["speed-up"] ||= "Digit2";
+localStorage["speed"] ||= 10;
 
 let audioCtx;
 let volumeNode;
@@ -197,6 +198,10 @@ window.addEventListener('keydown', e => {
         }
     }
 }, true);
+
+window.addEventListener("close", e => {
+    localStorage["speed"] = scrollSpeedVar;
+});
 
 window.addEventListener('keyup', e => {
     if (playing && !autoC) {
@@ -475,7 +480,7 @@ function setColor() {
     greatPulse = !greatPulse;
 }
 
-let scrollSpeedVar = 10;
+let scrollSpeedVar = parseInt(localStorage["speed"]);
 
 const bgaSize = 500;
 

@@ -29,6 +29,7 @@ localStorage["p2-6"] ||= "SemiColon";
 localStorage["p2-7"] ||= "Slash";
 localStorage["speed-down"] ||= "Digit1";
 localStorage["speed-up"] ||= "Digit2";
+localStorage["speed"] ||= 10;
 
 document.getElementById('bg-color').addEventListener('change', function () {
     var color = document.getElementById('bg-color').value;
@@ -155,6 +156,7 @@ $(document).ready(function () {
     document.getElementById('p2-7').value = localStorage["p2-7"];
     document.getElementById('speed-down').value = localStorage["speed-down"];
     document.getElementById('speed-up').value = localStorage["speed-up"];
+    document.getElementById('speed').value = localStorage["speed"];
 });
 
 function reset() {
@@ -192,6 +194,7 @@ function reset() {
         localStorage["p2-7"] = "Slash";
         localStorage["speed-down"] = "Digit1";
         localStorage["speed-up"] = "Digit2";
+        localStorage["speed"] = 10;
         location.reload();
     }
 }
