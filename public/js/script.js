@@ -191,17 +191,15 @@ window.addEventListener('keydown', e => {
         switch (e.code) {
             case keys.speed[0]:
                 scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
+                localStorage.setItem('speed', scrollSpeedVar);
                 break;
             case keys.speed[1]:
                 scrollSpeedVar = Math.min(100, scrollSpeedVar + 1);
+                localStorage.setItem('speed', scrollSpeedVar);
                 break;
         }
     }
 }, true);
-
-window.addEventListener("close", e => {
-    localStorage["speed"] = scrollSpeedVar;
-});
 
 window.addEventListener('keyup', e => {
     if (playing && !autoC) {

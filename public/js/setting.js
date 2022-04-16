@@ -109,7 +109,12 @@ document.getElementById('poor-color').addEventListener('change', function () {
     localStorage["poor-color"] = color.toUpperCase();
 });
 
-$(document).ready(function () {
+document.getElementById('speed').addEventListener('change', function () {
+    var speed = document.getElementById('speed').value;
+    localStorage["speed"] = Math.round(speed * 10);
+});
+
+(function () {
     document.getElementById('bg-val').innerHTML = localStorage["bg-color"];
     document.getElementById('effect-val').innerHTML = localStorage["effect-color"];
     document.getElementById('gauge-val').innerHTML = localStorage["gauge-color"];
@@ -156,8 +161,8 @@ $(document).ready(function () {
     document.getElementById('p2-7').value = localStorage["p2-7"];
     document.getElementById('speed-down').value = localStorage["speed-down"];
     document.getElementById('speed-up').value = localStorage["speed-up"];
-    document.getElementById('speed').value = localStorage["speed"];
-});
+    document.getElementById('speed').value = parseFloat(localStorage["speed"]) / 10;
+})();
 
 function reset() {
     const reset = confirm("Are you sure you want to reset?");
