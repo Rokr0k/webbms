@@ -260,6 +260,7 @@ module.exports = function (filename) {
                         }
                         if (lastObj[match[2]] == key) {
                             notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: true });
+                            lastObj[match[2]] = '00';
                         } else {
                             notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: false });
                             lastObj[match[2]] = key;
