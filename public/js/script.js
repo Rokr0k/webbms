@@ -11,6 +11,7 @@ localStorage["scratch-color"] ||= "#FF0000";
 localStorage["lower-color"] ||= "#FFFFFF";
 localStorage["higher-color"] ||= "#00BFFF";
 localStorage["mine-color"] ||= "#DC143C";
+localStorage["great-color"] ||= "#C0C0C0";
 localStorage["great-color"] ||= "#FFD700";
 localStorage["good-color"] ||= "#ADFF2F";
 localStorage["bad-color"] ||= "#8A2BE2";
@@ -40,10 +41,7 @@ let volumeNode;
 let analyserNode;
 let playing = false;
 let startTime;
-let bpmC;
-let offsetC;
-let timeC;
-let indexC;
+let speedcoreIdx;
 const bmpC = { 0: undefined, 1: undefined };
 let poorBmpC;
 
@@ -124,15 +122,11 @@ window.addEventListener('keydown', e => {
         ctx.fillRect(0, 0, cvs.width, cvs.height);
         loadBMS(bmsC).then(bms => {
             bmsC = bms;
-            offsetC = 0;
-            fractionC = 0;
-            bpmC = bmsC.bpm;
-            timeC = 0
-            indexC = 0;
+            speedcoreIdx = 0;
             startTime = audioCtx.currentTime + 5;
             poorBmpC = bmsC.bmps['00'];
             setInterval(update, 0);
-            setInterval(setColor, 50);
+            setInterval(() => greatPulse = !greatPulse, 50);
             draw();
         });
     } else if (playing) {
@@ -256,70 +250,54 @@ window.addEventListener('keyup', e => {
     }
 }, true);
 
-let stopC = false;
-
 function update() {
     const currentTime = audioCtx.currentTime - startTime;
-    if (stopC && timeC < currentTime) {
-        stopC = false;
-    }
-    for (const note of bmsC.notes.filter(note => !note.executed && note.time < currentTime)) {
-        if (stopC) {
-            break;
-        }
+
+    for (const note of bmsC.notes.filter(n => !n.executed && n.time < currentTime)) {
         switch (note.type) {
-            case 0:
+            case 'bgm':
                 play(bmsC.wavs[note.key]);
                 note.executed = true;
                 break;
-            case 1:
+            case 'not':
                 if (autoC) {
-                    if (note.judge == 0) {
-                        keyPress(note.line);
-                    }
-                    if (note.endFraction < 0 || (note.endFraction >= 0 && note.endTime < currentTime)) {
+                    if (note.end) {
                         keyRelease(note.line);
+                    } else {
+                        keyPress(note.line);
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.time > note.time && !n.executed)[0];
+                        if (!next || !next.end) {
+                            keyRelease(note.line);
+                        }
                     }
                 } else {
-                    if (note.judge == 0 && currentTime - note.time > judgeRange[bmsC.rank][2]) {
-                        note.judge = 1;
+                    if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
                         note.executed = true;
                         exeJudge(1);
-                    } else if (note.endFraction >= 0 && note.judge > 0 && currentTime - note.endTime > judgeRange[bmsC.rank][2]) {
-                        note.executed = true;
-                        exeJudge(1);
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.time > note.time && !n.executed)[0];
+                        if (next && next.end) {
+                            next.executed = true;
+                        }
                     }
                 }
                 break;
-            case 2:
+            case 'inv':
                 note.executed = true;
                 break;
-            case 3:
+            case 'bom':
                 if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
                     note.executed = true;
                 }
                 break;
-            case 4:
+            case 'bmp':
                 bmpC[note.layer] = bmsC.bmps[note.bmp];
                 if (bmpC[note.layer] instanceof HTMLVideoElement) {
                     bmpC[note.layer].play();
                 }
                 note.executed = true;
                 break;
-            case 5:
+            case 'pbmp':
                 poorBmpC = bmsC.bmps[note.bmp];
-                note.executed = true;
-                break;
-            case 6:
-                bpmC = note.bpm;
-                offsetC = fractionDiff(0, note.fraction);
-                timeC = note.time;
-                note.executed = true;
-                break;
-            case 7:
-                stopC = true;
-                offsetC = fractionDiff(0, note.fraction);
-                timeC = note.time + note.stop;
                 note.executed = true;
                 break;
         }
@@ -328,14 +306,12 @@ function update() {
 
 function keyPress(line) {
     const currentTime = audioCtx.currentTime - startTime;
-    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && !note.executed && note.judge == 0)[0];
+    const note = bmsC.notes.filter(n => n.type == 'not' && !n.end && n.line == line && !n.executed)[0];
 
     pressC[line] = { pressed: true, time: currentTime };
 
     if (note) {
-        if (note.endFraction < 0) {
-            play(bmsC.wavs[note.key]);
-        }
+        play(bmsC.wavs[note.key]);
 
         let judge = 0;
         if (autoC) {
@@ -352,25 +328,15 @@ function keyPress(line) {
             }
         }
         if (judge != 0) {
-            note.judge = judge;
-            if (note.endFraction < 0) {
-                exeJudge(judge);
-                note.executed = true;
-            } else {
-                if (judge > 2) {
-                    note.node = play(bmsC.wavs[note.key]);
-                } else {
-                    exeJudge(judge);
-                    note.executed = true;
-                }
-            }
+            exeJudge(judge);
+            note.executed = true;
         }
     } else {
-        const note = bmsC.notes.filter(note => note.type == 2 && note.line == line && !note.executed)[0];
+        const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
         if (note) {
             play(bmsC.wavs[note.key]);
         } else {
-            const note = bmsC.notes.filter(note => note.type == 3 && note.line == line && !note.executed)[0];
+            const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
             if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
                 note.executed = true;
                 gauge = Math.max(2, gauge - note.damage / 1296 * 100);
@@ -381,11 +347,11 @@ function keyPress(line) {
 
 function keyRelease(line) {
     const currentTime = audioCtx.currentTime - startTime;
-    const note = bmsC.notes.filter(note => note.type == 1 && note.line == line && note.endFraction >= 0 && !note.executed && note.judge > 0)[0];
+    const note = bmsC.notes.filter(n => n.type == 'not' && n.line == line && !n.executed)[0];
 
     pressC[line] = { pressed: false, time: currentTime };
 
-    if (note) {
+    if (note && note.end) {
         let judge = 0;
         if (autoC) {
             judge = 5;
@@ -402,13 +368,8 @@ function keyRelease(line) {
                 judge = 1;
             }
         }
-        exeJudge(Math.min(note.judge, judge));
-        if (judge < 2) {
-            note.node.stop();
-            combo = 0;
-        }
+        exeJudge(judge);
         note.executed = true;
-        note.node = undefined;
     }
 }
 
@@ -452,7 +413,7 @@ const colorScheme = {
     mine: localStorage["mine-color"],
     indicate: localStorage["effect-color"], // color when i press key
     gauge: localStorage["gauge-color"],
-    pgreat: "#FFFFFF",
+    pgreat: localStorage["pgreat-color"],
     great: localStorage["great-color"],
     good: localStorage["good-color"],
     bad: localStorage["bad-color"],
@@ -473,11 +434,6 @@ const colorScheme = {
 
 let greatPulse = false;
 
-function setColor() {
-    colorScheme.pgreat = `rgb(${Math.floor(Math.random() * 192 + 64)}, ${Math.floor(Math.random() * 192 + 64)}, ${Math.floor(Math.random() * 192 + 64)})`;
-    greatPulse = !greatPulse;
-}
-
 let scrollSpeedVar = parseInt(localStorage["speed"]);
 
 const bgaSize = 500;
@@ -493,7 +449,11 @@ function draw() {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     window.requestAnimationFrame(draw);
     const currentTime = audioCtx.currentTime - startTime;
-    const fraction = stopC ? offsetC : (currentTime - timeC) * bpmC / 240 + offsetC;
+    while (speedcoreIdx + 1 < bmsC.speedcore.length && bmsC.speedcore[speedcoreIdx + 1].time < currentTime) {
+        speedcoreIdx++;
+    }
+    const fraction = timeToFraction(currentTime);
+    const bpmC = bmsC.speedcore[speedcoreIdx].bpm == 0 && speedcoreIdx > 0 ? bmsC.speedcore[speedcoreIdx - 1].bpm : bmsC.speedcore[speedcoreIdx].bpm;
     let bgaRatio = 0;
     if (bmpC[0] instanceof HTMLVideoElement) {
         bgaRatio = bmpC[0].videoHeight / bmpC[0].videoWidth;
@@ -572,8 +532,8 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 3 && !note.executed))) {
-                if (note.type == 1) {
+            for (note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
+                if (note.type == 'not') {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
@@ -614,7 +574,7 @@ function draw() {
                             break;
                     }
                 }
-                else if (note.type == 3) {
+                else if (note.type == 'bom') {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
@@ -649,48 +609,48 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
+            for (note of bmsC.notes.filter(note => note.type == 'not' && note.end && !note.executed)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * cvs.height * scrollSpeedVar / 10;
-                if (y1 > cvs.height) {
+                let y2 = (fractionDiff(0, (bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction < note.fraction).reverse()[0] || { fraction: 0 }).fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                if (y2 > cvs.height) {
                     break;
                 }
                 switch (note.line) {
                     case '16':
                         ctx.fillStyle = colorScheme.scratch;
-                        ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
+                        ctx.fillRect(0 + 10, cvs.height - y2, 100 - 20, y2 - y1);
                         break;
                     case '11':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(100 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '12':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(170 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '13':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(220 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '14':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(290 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '15':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(340 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '18':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(410 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '19':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(460 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                 }
             }
-            if (bmsC.notes.filter(note => !note.executed).length == 0) {
+            if (bmsC.notes.filter(note => (note.type == 'bom' || note.type == 'not') && !note.executed).length == 0) {
                 const r = result[Math.floor(exScore / bmsC.noteCnt / 2 * 9)];
                 ctx.fillStyle = colorScheme.result[r.toLowerCase()];
                 ctx.font = "200px monospaced";
@@ -708,13 +668,7 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            if (bpmC < 1000) {
-                ctx.fillText(`BPM ${bpmC}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
-            } else if (bpmC.toString().substring(bpmC.toString().length - 3) != '000') {
-                ctx.fillText(`BPM ${bpmC.toString().substring(bpmC.toString().length - 3)}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
-            } else {
-                ctx.fillText(`BPM ${bpmC.toString().substring(0, 3)}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
-            }
+            ctx.fillText(`BPM ${Math.round(bpmC * 100) / 100 % 1000}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
             ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
@@ -849,8 +803,8 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 1 && note.endFraction < 0 && !note.executed) || (note.type == 3 && !note.executed))) {
-                if (note.type == 1) {
+            for (note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
+                if (note.type == 'not') {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
@@ -923,7 +877,7 @@ function draw() {
                             break;
                     }
                 }
-                else if (note.type == 3) {
+                else if (note.type == 'bom') {
                     let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     let y2 = y1 + noteSize;
                     if (y1 > cvs.height) {
@@ -982,76 +936,76 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => note.type == 1 && note.endFraction >= 0 && !note.executed)) {
+            for (note of bmsC.notes.filter(note => note.type == 'not' && note.end && !note.executed)) {
                 let y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
-                let y2 = (fractionDiff(0, note.endFraction) - fraction) * cvs.height * scrollSpeedVar / 10;
-                if (y1 > cvs.height) {
+                let y2 = (fractionDiff(0, (bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction < note.fraction).reverse()[0] || { fraction: 0 }).fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                if (y2 > cvs.height) {
                     break;
                 }
                 switch (note.line) {
                     case '16':
                         ctx.fillStyle = colorScheme.scratch;
-                        ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
+                        ctx.fillRect(0 + 10, cvs.height - y2, 100 - 20, y2 - y1);
                         break;
                     case '11':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(100, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(100 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '12':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(170, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(170 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '13':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(220, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(220 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '14':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(290, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(290 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '15':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(340, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(340 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '18':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(410, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(410 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '19':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(460, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(460 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '21':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(580, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(580 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '22':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(650, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(650 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '23':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(700, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(700 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '24':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(770, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(770 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '25':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(820, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(820 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '28':
                         ctx.fillStyle = colorScheme.higher;
-                        ctx.fillRect(890, cvs.height - y2, 50, y2 - y1);
+                        ctx.fillRect(890 + 10, cvs.height - y2, 50 - 20, y2 - y1);
                         break;
                     case '29':
                         ctx.fillStyle = colorScheme.lower;
-                        ctx.fillRect(940, cvs.height - y2, 70, y2 - y1);
+                        ctx.fillRect(940 + 10, cvs.height - y2, 70 - 20, y2 - y1);
                         break;
                     case '26':
                         ctx.fillStyle = colorScheme.scratch;
-                        ctx.fillRect(1010, cvs.height - y2, 100, y2 - y1);
+                        ctx.fillRect(1010 + 10, cvs.height - y2, 100 - 20, y2 - y1);
                         break;
                 }
             }
@@ -1073,13 +1027,7 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            if (bpmC < 1000) {
-                ctx.fillText(`BPM ${bpmC}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
-            } else if (bpmC.toString().substring(bpmC.toString().length - 3) != '000') {
-                ctx.fillText(`BPM ${bpmC.toString().substring(bpmC.toString().length - 3)}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
-            } else {
-                ctx.fillText(`BPM ${bpmC.toString().substring(0, 3)}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
-            }
+            ctx.fillText(`BPM ${Math.round(bpmC * 100) / 100 % 1000}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
             ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
@@ -1146,7 +1094,6 @@ function loadBMS(bms) {
                     document.getElementById('bga').appendChild(bms.bmps[key]);
                     break;
                 }
-                case 'bmp':
                 case 'png':
                 case 'jpg': {
                     const image = bms.bmps[key];
@@ -1206,6 +1153,10 @@ function fractionDiff(a, b) {
         sum = -sum;
     }
     return sum;
+}
+
+function timeToFraction(time) {
+    return (time - bmsC.speedcore[speedcoreIdx].time) * bmsC.speedcore[speedcoreIdx].bpm / 240 + fractionDiff(0, bmsC.speedcore[speedcoreIdx].fraction);
 }
 
 function play(buffer) {

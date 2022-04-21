@@ -17,4 +17,3 @@ You may need to modify your BMS files for these problems
 - Some BMS files have `.ogg` files even though they use `.wav` files, or vice versa. Most BMS players seem to automatically fix this, but we don't do that here. Modify the `#WAVxx` commands.
 - Web browsers do not support `.mpg` or `.mpeg` formats. Instead, they recommend to use `.mp4` or `.webm`. Convert them with, for example, FFmpeg, and modify the `#BMPxx` commands.
 - If there were encoding problems, it wouldn't look good. Encode with UTF-8 and check if everything is fine.
-- When importing 'Aleph-0' by LeaF, there is a little problem to solve. ![](imgs/aleph0warning.png) In the `#IF` &mdash; `#ENDIF` block, there are those two lines with extra 0s. Remove those red 0s to make it work like a magic. The Beginner chart does not have this problem.

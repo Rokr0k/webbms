@@ -36,6 +36,8 @@
 					id="higher-color"></label><br><br>
 			<label>Mine Color: <span id="mine-val"></span> <input type="color" name="mine-color"
 					id="mine-color"></label><br><br>
+			<label>PGREAT Color: <span id="pgreat-val"></span> <input type="color" name="pgreat-color"
+					id="pgreat-color"></label><br><br>
 			<label>GREAT Color: <span id="great-val"></span> <input type="color" name="great-color"
 					id="great-color"></label><br><br>
 			<label>GOOD Color: <span id="good-val"></span> <input type="color" name="good-color"
@@ -44,24 +46,24 @@
 					id="bad-color"></label><br><br>
 			<label>POOR Color: <span id="poor-val"></span> <input type="color" name="poor-color"
 					id="poor-color"></label><br><br>
-			<label>P1 Scratch: <input type="text" onkeydown="p1_scratch(event)" id="p1-scratch"></label><br><br>
-			<label>P1 1: <input type="text" onkeydown="p1_1(event)" id="p1-1"></label><br><br>
-			<label>P1 2: <input type="text" onkeydown="p1_2(event)" id="p1-2"></label><br><br>
-			<label>P1 3: <input type="text" onkeydown="p1_3(event)" id="p1-3"></label><br><br>
-			<label>P1 4: <input type="text" onkeydown="p1_4(event)" id="p1-4"></label><br><br>
-			<label>P1 5: <input type="text" onkeydown="p1_5(event)" id="p1-5"></label><br><br>
-			<label>P1 6: <input type="text" onkeydown="p1_6(event)" id="p1-6"></label><br><br>
-			<label>P1 7: <input type="text" onkeydown="p1_7(event)" id="p1-7"></label><br><br>
-			<label>P2 Scratch: <input type="text" onkeydown="p2_scratch(event)" id="p2-scratch"></label><br><br>
-			<label>P2 1: <input type="text" onkeydown="p2_1(event)" id="p2-1"></label><br><br>
-			<label>P2 2: <input type="text" onkeydown="p2_2(event)" id="p2-2"></label><br><br>
-			<label>P2 3: <input type="text" onkeydown="p2_3(event)" id="p2-3"></label><br><br>
-			<label>P2 4: <input type="text" onkeydown="p2_4(event)" id="p2-4"></label><br><br>
-			<label>P2 5: <input type="text" onkeydown="p2_5(event)" id="p2-5"></label><br><br>
-			<label>P2 6: <input type="text" onkeydown="p2_6(event)" id="p2-6"></label><br><br>
-			<label>P2 7: <input type="text" onkeydown="p2_7(event)" id="p2-7"></label><br><br>
-			<label>Speed Down: <input type="text" onkeydown="speed_down(event)" id="speed-down"></label><br><br>
-			<label>Speed Up: <input type="text" onkeydown="speed_up(event)" id="speed-up"></label><br><br>
+			<label>P1 Scratch: <input type="text" onkeydown="setKey(event, 'p1-0')" id="p1-0"></label><br><br>
+			<label>P1 1: <input type="text" onkeydown="setKey(event, 'p1-1')" id="p1-1"></label><br><br>
+			<label>P1 2: <input type="text" onkeydown="setKey(event, 'p1-2')" id="p1-2"></label><br><br>
+			<label>P1 3: <input type="text" onkeydown="setKey(event, 'p1-3')" id="p1-3"></label><br><br>
+			<label>P1 4: <input type="text" onkeydown="setKey(event, 'p1-4')" id="p1-4"></label><br><br>
+			<label>P1 5: <input type="text" onkeydown="setKey(event, 'p1-5')" id="p1-5"></label><br><br>
+			<label>P1 6: <input type="text" onkeydown="setKey(event, 'p1-6')" id="p1-6"></label><br><br>
+			<label>P1 7: <input type="text" onkeydown="setKey(event, 'p1-7')" id="p1-7"></label><br><br>
+			<label>P2 Scratch: <input type="text" onkeydown="setKey(event, 'p2-0')" id="p2-0"></label><br><br>
+			<label>P2 1: <input type="text" onkeydown="setKey(event, 'p2-1')" id="p2-1"></label><br><br>
+			<label>P2 2: <input type="text" onkeydown="setKey(event, 'p2-2')" id="p2-2"></label><br><br>
+			<label>P2 3: <input type="text" onkeydown="setKey(event, 'p2-3')" id="p2-3"></label><br><br>
+			<label>P2 4: <input type="text" onkeydown="setKey(event, 'p2-4')" id="p2-4"></label><br><br>
+			<label>P2 5: <input type="text" onkeydown="setKey(event, 'p2-5')" id="p2-5"></label><br><br>
+			<label>P2 6: <input type="text" onkeydown="setKey(event, 'p2-6')" id="p2-6"></label><br><br>
+			<label>P2 7: <input type="text" onkeydown="setKey(event, 'p2-7')" id="p2-7"></label><br><br>
+			<label>Speed Down: <input type="text" onkeydown="setKey(event, 'speed-down')" id="speed-down"></label><br><br>
+			<label>Speed Up: <input type="text" onkeydown="setKey(event, 'speed-up')" id="speed-up"></label><br><br>
 			<label>Speed: <input type="number" min="0.1" max="10" step="0.1" id="speed"></label><br><br>
 		</div>
 	</div>

@@ -7,6 +7,7 @@ localStorage["scratch-color"] ||= "#FF0000";
 localStorage["lower-color"] ||= "#FFFFFF";
 localStorage["higher-color"] ||= "#00BFFF";
 localStorage["mine-color"] ||= "#DC143C";
+localStorage["pgreat-color"] ||= "#C0C0C0";
 localStorage["great-color"] ||= "#FFD700";
 localStorage["good-color"] ||= "#ADFF2F";
 localStorage["bad-color"] ||= "#8A2BE2";
@@ -25,7 +26,7 @@ localStorage["p2-2"] ||= "KeyK";
 localStorage["p2-3"] ||= "Comma";
 localStorage["p2-4"] ||= "KeyL";
 localStorage["p2-5"] ||= "Period";
-localStorage["p2-6"] ||= "SemiColon";
+localStorage["p2-6"] ||= "Semicolon";
 localStorage["p2-7"] ||= "Slash";
 localStorage["speed-down"] ||= "Digit1";
 localStorage["speed-up"] ||= "Digit2";
@@ -85,6 +86,12 @@ document.getElementById('mine-color').addEventListener('change', function () {
     localStorage["mine-color"] = color.toUpperCase();
 });
 
+document.getElementById('pgreat-color').addEventListener('change', function () {
+    var color = document.getElementById('pgreat-color').value;
+    document.getElementById('pgreat-val').innerHTML = color.toUpperCase();
+    localStorage["pgreat-color"] = color.toUpperCase();
+});
+
 document.getElementById('great-color').addEventListener('change', function () {
     var color = document.getElementById('great-color').value;
     document.getElementById('great-val').innerHTML = color.toUpperCase();
@@ -115,35 +122,22 @@ document.getElementById('speed').addEventListener('change', function () {
 });
 
 (function () {
-    document.getElementById('bg-val').innerHTML = localStorage["bg-color"];
-    document.getElementById('effect-val').innerHTML = localStorage["effect-color"];
-    document.getElementById('gauge-val').innerHTML = localStorage["gauge-color"];
-    document.getElementById('gear-val').innerHTML = localStorage["gear-color"];
-    document.getElementById('text-val').innerHTML = localStorage["text-color"];
-    document.getElementById('scratch-val').innerHTML = localStorage["scratch-color"];
-    document.getElementById('lower-val').innerHTML = localStorage["lower-color"];
-    document.getElementById('higher-val').innerHTML = localStorage["higher-color"];
-    document.getElementById('mine-val').innerHTML = localStorage["mine-color"];
-    document.getElementById('great-val').innerHTML = localStorage["great-color"];
-    document.getElementById('good-val').innerHTML = localStorage["good-color"];
-    document.getElementById('bad-val').innerHTML = localStorage["bad-color"];
-    document.getElementById('poor-val').innerHTML = localStorage["poor-color"];
+    document.getElementById('bg-val').innerHTML = document.getElementById('bg-color').value = localStorage["bg-color"];
+    document.getElementById('effect-val').innerHTML = document.getElementById('effect-color').value = localStorage["effect-color"];
+    document.getElementById('gauge-val').innerHTML = document.getElementById('gauge-color').value = localStorage["gauge-color"];
+    document.getElementById('gear-val').innerHTML = document.getElementById('gear-color').value = localStorage["gear-color"];
+    document.getElementById('text-val').innerHTML = document.getElementById('text-color').value = localStorage["text-color"];
+    document.getElementById('scratch-val').innerHTML = document.getElementById('scratch-color').value = localStorage["scratch-color"];
+    document.getElementById('lower-val').innerHTML = document.getElementById('lower-color').value = localStorage["lower-color"];
+    document.getElementById('higher-val').innerHTML = document.getElementById('higher-color').value = localStorage["higher-color"];
+    document.getElementById('mine-val').innerHTML = document.getElementById('mine-color').value = localStorage["mine-color"];
+    document.getElementById('pgreat-val').innerHTML = document.getElementById('pgreat-color').value = localStorage["pgreat-color"];
+    document.getElementById('great-val').innerHTML = document.getElementById('great-color').value = localStorage["great-color"];
+    document.getElementById('good-val').innerHTML = document.getElementById('good-color').value = localStorage["good-color"];
+    document.getElementById('bad-val').innerHTML = document.getElementById('bad-color').value = localStorage["bad-color"];
+    document.getElementById('poor-val').innerHTML = document.getElementById('poor-color').value = localStorage["poor-color"];
 
-    document.getElementById('bg-color').value = localStorage["bg-color"];
-    document.getElementById('effect-color').value = localStorage["effect-color"];
-    document.getElementById('gauge-color').value = localStorage["gauge-color"];
-    document.getElementById('gear-color').value = localStorage["gear-color"];
-    document.getElementById('text-color').value = localStorage["text-color"];
-    document.getElementById('scratch-color').value = localStorage["scratch-color"];
-    document.getElementById('lower-color').value = localStorage["lower-color"];
-    document.getElementById('higher-color').value = localStorage["higher-color"];
-    document.getElementById('mine-color').value = localStorage["mine-color"];
-    document.getElementById('great-color').value = localStorage["great-color"];
-    document.getElementById('good-color').value = localStorage["good-color"];
-    document.getElementById('bad-color').value = localStorage["bad-color"];
-    document.getElementById('poor-color').value = localStorage["poor-color"];
-
-    document.getElementById('p1-scratch').value = localStorage["p1-0"];
+    document.getElementById('p1-0').value = localStorage["p1-0"];
     document.getElementById('p1-1').value = localStorage["p1-1"];
     document.getElementById('p1-2').value = localStorage["p1-2"];
     document.getElementById('p1-3').value = localStorage["p1-3"];
@@ -151,7 +145,7 @@ document.getElementById('speed').addEventListener('change', function () {
     document.getElementById('p1-5').value = localStorage["p1-5"];
     document.getElementById('p1-6').value = localStorage["p1-6"];
     document.getElementById('p1-7').value = localStorage["p1-7"];
-    document.getElementById('p2-scratch').value = localStorage["p2-0"];
+    document.getElementById('p2-0').value = localStorage["p2-0"];
     document.getElementById('p2-1').value = localStorage["p2-1"];
     document.getElementById('p2-2').value = localStorage["p2-2"];
     document.getElementById('p2-3').value = localStorage["p2-3"];
@@ -168,38 +162,6 @@ function reset() {
     const reset = confirm("Are you sure you want to reset?");
     if (reset) {
         localStorage.clear();
-        localStorage["bg-color"] = "#1F2F2F";
-        localStorage["effect-color"] = "#FFA500";
-        localStorage["gauge-color"] = "#00BFFF";
-        localStorage["gear-color"] = "#DCDCDC";
-        localStorage["text-color"] = "#FFFFF0";
-        localStorage["scratch-color"] = "#FF0000";
-        localStorage["lower-color"] = "#FFFFFF";
-        localStorage["higher-color"] = "#00BFFF";
-        localStorage["mine-color"] = "#DC143C";
-        localStorage["great-color"] = "#FFD700";
-        localStorage["good-color"] = "#ADFF2F";
-        localStorage["bad-color"] = "#8A2BE2";
-        localStorage["poor-color"] = "#8B0000";
-        localStorage["p1-0"] = "ShiftLeft";
-        localStorage["p1-1"] = "KeyZ";
-        localStorage["p1-2"] = "KeyS";
-        localStorage["p1-3"] = "KeyX";
-        localStorage["p1-4"] = "KeyD";
-        localStorage["p1-5"] = "KeyC";
-        localStorage["p1-6"] = "KeyF";
-        localStorage["p1-7"] = "KeyV";
-        localStorage["p2-0"] = "ShiftRight";
-        localStorage["p2-1"] = "KeyM";
-        localStorage["p2-2"] = "KeyK";
-        localStorage["p2-3"] = "Comma";
-        localStorage["p2-4"] = "KeyL";
-        localStorage["p2-5"] = "Period";
-        localStorage["p2-6"] = "SemiColon";
-        localStorage["p2-7"] = "Slash";
-        localStorage["speed-down"] = "Digit1";
-        localStorage["speed-up"] = "Digit2";
-        localStorage["speed"] = 10;
         location.reload();
     }
 }
@@ -208,327 +170,11 @@ function save() {
     window.location.href = "/";
 }
 
-function p1_scratch(e) {
-    var x = document.getElementById("p1-scratch");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
+function setKey(e, key) {
+    var x = document.getElementById(key);
+    x.value = e.code;
     x.disabled = true;
     x.disabled = false;
-    localStorage.setItem("p1-0", x.value);
-}
-function p1_1(e) {
-    var x = document.getElementById("p1-1");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-1", x.value);
-}
-function p1_2(e) {
-    var x = document.getElementById("p1-2");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-2", x.value);
-}
-function p1_3(e) {
-    var x = document.getElementById("p1-3");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-3", x.value);
-}
-function p1_4(e) {
-    var x = document.getElementById("p1-4");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-4", x.value);
-}
-function p1_5(e) {
-    var x = document.getElementById("p1-5");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-5", x.value);
-}
-function p1_6(e) {
-    var x = document.getElementById("p1-6");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-6", x.value);
-}
-function p1_7(e) {
-    var x = document.getElementById("p1-7");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p1-7", x.value);
-}
-function p2_scratch(e) {
-    var x = document.getElementById("p2-scratch");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-0", x.value);
-}
-function p2_1(e) {
-    var x = document.getElementById("p2-1");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-1", x.value);
-}
-function p2_2(e) {
-    var x = document.getElementById("p2-2");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-2", x.value);
-}
-function p2_3(e) {
-    var x = document.getElementById("p2-3");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-3", x.value);
-}
-function p2_4(e) {
-    var x = document.getElementById("p2-4");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-4", x.value);
-}
-function p2_5(e) {
-    var x = document.getElementById("p2-5");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-5", x.value);
-}
-function p2_6(e) {
-    var x = document.getElementById("p2-6");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("p2-6", x.value);
-}
-function p2_7(e) {
-    var x = document.getElementById("p2-7");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("speed-down", x.value);
-}
-function speed_down(e) {
-    var x = document.getElementById("speed-down");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("speed-down", x.value);
-}
-function speed_up(e) {
-    var x = document.getElementById("speed-up");
-    if (e.code === "Digit1" || e.code === "Digit2" || e.code === "Numpad1" || e.code === "Numpad2") {
-        alert("You can't use this key!");
-    } else {
-        for (var i = 0; i <= 7; i++) {
-            if (localStorage[`p1-${i}`] === e.code || localStorage[`p2-${i}`] === e.code || localStorage["speed-down"] === e.code || localStorage["speed-up"] === e.code) {
-                alert("Already used!");
-                x.value = "";
-                break;
-            }
-            x.value = e.code;
-        }
-    }
-    x.disabled = true;
-    x.disabled = false;
-    localStorage.setItem("speed-up", x.value);
+    localStorage.setItem(key, x.value);
+    e.preventDefault();
 }

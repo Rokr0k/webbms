@@ -16,20 +16,21 @@ module.exports = function (filename) {
         rank: 2,
         wavs: {},
         bmps: {},
-        bpm: 130,
         signatures: Array(1000).fill(1),
         notes: [],
+        speedcore: [{ fraction: 0, time: 0, bpm: 130, inclusive: true }],
     };
-    let lntype = 1;
     let lnobj = '00';
     const bpms = {};
     const stops = {};
     const lastObj = {
-        '11': '00', '12': '00', '13': '00', '14': '00', '15': '00', '16': '00', '18': '00', '19': '00',
-        '21': '00', '22': '00', '23': '00', '24': '00', '25': '00', '26': '00', '28': '00', '29': '00',
+        '51': '00', '52': '00', '53': '00', '54': '00', '55': '00', '56': '00', '58': '00', '59': '00',
+        '61': '00', '62': '00', '63': '00', '64': '00', '65': '00', '66': '00', '68': '00', '69': '00',
     };
     let randomGenerated = 0;
     const ifStack = [false];
+    const speedcore = [];
+    const notes = [];
     text.split(/\r?\n/g).forEach(line => {
         const skipped = ifStack[ifStack.length - 1];
         matchCascade(line).when(/^#RANDOM (\d+)$/i, match => {
@@ -46,11 +47,6 @@ module.exports = function (filename) {
             ifStack.push(!ifStack.pop());
         }).when(/^#ENDIF$/i, () => {
             ifStack.pop();
-        }).when(/^#LNTYPE (1|2)$/i, match => {
-            if (skipped) {
-                return;
-            }
-            lntype = parseInt(match[1]);
         }).when(/^#LNOBJ ([0-9A-Z]{2})$/i, match => {
             if (skipped) {
                 return;
@@ -133,7 +129,7 @@ module.exports = function (filename) {
             if (skipped) {
                 return;
             }
-            bms.bpm = parseFloat(match[1]);
+            bms.speedcore[0].bpm = parseFloat(match[1]);
         }).when(/^#BPM([0-9A-Z]{2}) (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;
@@ -154,52 +150,52 @@ module.exports = function (filename) {
                 return;
             }
             const measure = parseInt(match[1]);
-            for (let i = 0; i < match[3].length; i += 2) {
-                const fraction = i / match[3].length;
-                const key = match[3].substring(i, i + 2);
-                let lineNum;
+            const length = Math.floor(match[3].length / 2);
+            for (let i = 0; i < length; i++) {
+                const fraction = i / length;
+                const key = match[3].substring(i * 2, i * 2 + 2);
                 switch (match[2]) {
                     case '01':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0, executed: false });
+                        notes.push({ fraction: measure + fraction, type: 'bgm', key: key });
                         break;
                     case '03':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 6, bpm: parseInt(key, 16), time: 0, executed: false });
+                        speedcore.push({ fraction: measure + fraction, type: 'bpm', bpm: parseInt(key, 16) });
                         break;
                     case '04':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 4, bmp: key, layer: 0, time: 0, executed: false });
+                        notes.push({ fraction: measure + fraction, type: 'bmp', bmp: key, layer: 0 });
                         break;
                     case '06':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 5, bmp: key, time: 0, executed: false });
+                        notes.push({ fraction: measure + fraction, type: 'pbmp', bmp: key });
                         break;
                     case '07':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 4, bmp: key, layer: 1, time: 0, executed: false });
+                        notes.push({ fraction: measure + fraction, type: 'bmp', bmp: key, layer: 1 });
                         break;
                     case '08':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 6, bpm: bpms[key], time: 0, executed: false });
+                        speedcore.push({ fraction: measure + fraction, type: 'bpm', bpm: bpms[key] });
                         break;
                     case '09':
                         if (key == '00') {
                             break;
                         }
-                        bms.notes.push({ fraction: measure + fraction, type: 7, stop: stops[key], time: 0, executed: false });
+                        speedcore.push({ fraction: measure + fraction, type: 'stp', stop: stops[key] });
                         break;
                     case '11':
                     case '12':
@@ -220,18 +216,7 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        lineNum = match[2][1];
-                        if (key == lnobj) {
-                            const lineNotes = bms.notes.filter(note => note.type == 1 && note.line == match[2] && note.fraction < measure + fraction);
-                            if (lineNotes) {
-                                const note = lineNotes[lineNotes.length - 1];
-                                note.endFraction = measure + fraction;
-                            }
-                            bms.notes.push({ fraction: measure + fraction, type: 0, key: key, time: 0, executed: false });
-                        } else {
-                            bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: match[2], key: key, time: 0, endTime: 0, node: undefined, judge: 0, executed: false });
-                            bms.noteCnt++;
-                        }
+                        notes.push({ fraction: measure + fraction, type: 'not', line: match[2], key: key, end: key == lnobj });
                         break;
                     case '31':
                     case '32':
@@ -252,8 +237,7 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        lineNum = match[2][1];
-                        bms.notes.push({ fraction: measure + fraction, type: 2, line: match[2], key: key, time: 0, executed: false });
+                        notes.push({ fraction: measure + fraction, type: 'inv', line: match[2][0] - 2 + match[2][1], key: key });
                         break;
                     case '51':
                     case '52':
@@ -271,37 +255,14 @@ module.exports = function (filename) {
                     case '66':
                     case '68':
                     case '69':
-                        lineNum = match[2][0] - 4 + match[2][1];
-                        if (lntype == 1) {
-                            if (key == '00') {
-                                break;
-                            }
-                            if (lastObj[lineNum] == '00') {
-                                bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: 0, executed: false });
-                                bms.noteCnt++;
-                                lastObj[lineNum] = key;
-                            } else {
-                                const lineNotes = bms.notes.filter(note => note.type == 1 && note.line == lineNum && note.fraction < measure + fraction);
-                                if (lineNotes) {
-                                    const note = lineNotes[lineNotes.length - 1];
-                                    note.endFraction = measure + fraction;
-                                }
-                                lastObj[lineNum] = '00';
-                            }
-                        } else if (lntype == 2) {
-                            if (lastObj[lineNum] != key) {
-                                if (lastObj[lineNum] != '00') {
-                                    const lineNotes = bms.notes.filter(note => note.type == 1 && note.line == lineNum && note.fraction < measure + fraction);
-                                    if (lineNotes) {
-                                        const note = lineNotes[lineNotes.length - 1];
-                                        note.endFraction = measure + fraction;
-                                    }
-                                }
-                                if (key != '00') {
-                                    bms.notes.push({ fraction: measure + fraction, endFraction: -1, type: 1, line: lineNum, key: key, time: 0, endTime: 0, node: undefined, judge: 0, executed: false });
-                                    bms.noteCnt++;
-                                }
-                            }
+                        if (key == '00') {
+                            break;
+                        }
+                        if (lastObj[match[2]] == key) {
+                            notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: true });
+                        } else {
+                            notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: false });
+                            lastObj[match[2]] = key;
                         }
                         break;
                     case 'D1':
@@ -323,73 +284,33 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        lineNum = String.fromCharCode(match[2][0].charCodeAt() - 19) + match[2][1];
-                        bms.notes.push({ fraction: measure + fraction, type: 3, line: lineNum, damage: parseInt(key, 36), time: 0, executed: false });
+                        notes.push({ fraction: measure + fraction, type: 'bom', line: String.fromCharCode(match[2][0].charCodeAt() - 19) + match[2][1], damage: parseInt(key, 36) });
                         break;
                 }
             }
         });
     });
-    bms.notes.sort((a, b) => a.fraction == b.fraction ? a.type - b.type : a.fraction - b.fraction);
-    let bpmV = bms.bpm;
-    let fractionV = 0;
-    let offsetV = 0;
-    let stack = [];
-    for (let i = 0; i < bms.notes.length; i++) {
-        switch (bms.notes[i].type) {
-            case 0:
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
+    speedcore.sort((a, b) => a.fraction - b.fraction);
+    for (const core of speedcore) {
+        const last = bms.speedcore.filter(s => s.fraction < core.fraction || (s.inclusive && s.fraction == core.fraction)).reverse()[0];
+        switch (core.type) {
+            case 'bpm':
+                bms.speedcore.push({ fraction: core.fraction, time: fractionDiff(bms.signatures, last.fraction, core.fraction) * (last.bpm == 0 ? 0 : 240 / last.bpm) + last.time, bpm: core.bpm, inclusive: true });
                 break;
-            case 1:
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                if (bms.notes[i].endFraction >= 0) {
-                    stack.push(i);
-                }
-                break;
-            case 2:
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                break;
-            case 3:
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                break;
-            case 4:
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                break;
-            case 5:
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                break;
-            case 6:
-                stack = stack.reduce((prev, n) => {
-                    if (bms.notes[n].endFraction < bms.notes[i].fraction) {
-                        bms.notes[n].endTime = fractionDiff(bms, fractionV, bms.notes[n].endFraction) * 240 / bpmV + offsetV;
-                    } else {
-                        prev.push(n);
-                    }
-                    return prev;
-                }, []);
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                bpmV = bms.notes[i].bpm;
-                fractionV = bms.notes[i].fraction;
-                offsetV = bms.notes[i].time;
-                break;
-            case 7:
-                stack = stack.reduce((prev, n) => {
-                    if (bms.notes[n].endFraction < bms.notes[i].fraction) {
-                        bms.notes[n].endTime = fractionDiff(bms, fractionV, bms.notes[n].endFraction) * 240 / bpmV + offsetV;
-                    } else {
-                        prev.push(n);
-                    }
-                    return prev;
-                }, []);
-                bms.notes[i].time = fractionDiff(bms, fractionV, bms.notes[i].fraction) * 240 / bpmV + offsetV;
-                bms.notes[i].stop = bms.notes[i].stop * 240 / bpmV;
-                offsetV += bms.notes[i].stop;
+            case 'stp':
+                bms.speedcore.push({ fraction: core.fraction, time: fractionDiff(bms.signatures, last.fraction, core.fraction) * (last.bpm == 0 ? 0 : 240 / last.bpm) + last.time, bpm: 0, inclusive: true });
+                bms.speedcore.push({ fraction: core.fraction, time: (fractionDiff(bms.signatures, last.fraction, core.fraction) + core.stop) * (last.bpm == 0 ? 0 : 240 / last.bpm) + last.time, bpm: last.bpm, inclusive: false });
                 break;
         }
     }
-    stack.forEach(n => {
-        bms.notes[n].endTime = fractionDiff(bms, fractionV, bms.notes[n].endFraction) * 240 / bpmV + offsetV;
-    });
+    notes.sort((a, b) => a.fraction - b.fraction);
+    for (const note of notes) {
+        const core = bms.speedcore.filter(s => s.fraction < note.fraction || (s.inclusive && s.fraction == note.fraction)).reverse()[0];
+        bms.notes.push({ ...note, time: fractionDiff(bms.signatures, core.fraction, note.fraction) * (core.bpm == 0 ? 0 : 240 / core.bpm) + core.time, executed: false });
+        if (note.type == 'not') {
+            bms.noteCnt++;
+        }
+    }
     return bms;
 }
 
@@ -416,7 +337,7 @@ function matchCascade(text) {
     }
 }
 
-function fractionDiff(bms, a, b) {
+function fractionDiff(signatures, a, b) {
     let negative = false;
     if (a > b) {
         [a, b] = [b, a];
@@ -428,11 +349,11 @@ function fractionDiff(bms, a, b) {
     const bF = b - bM;
     let sum;
     if (aM == bM) {
-        sum = (bF - aF) * bms.signatures[aM];
+        sum = (bF - aF) * signatures[aM];
     } else {
-        sum = (1 - aF) * bms.signatures[aM] + bF * bms.signatures[bM];
+        sum = (1 - aF) * signatures[aM] + bF * signatures[bM];
         for (let i = aM + 1; i < bM; i++) {
-            sum += bms.signatures[i];
+            sum += signatures[i];
         }
     }
     if (negative) {
