@@ -356,13 +356,13 @@ function keyRelease(line) {
         if (autoC) {
             judge = 5;
         } else {
-            if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][5]) {
+            if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][5]) {
                 judge = 5;
-            } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][4]) {
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
                 judge = 4;
-            } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][3]) {
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
                 judge = 3;
-            } else if (Math.abs(currentTime - note.endTime) < judgeRange[bmsC.rank][2]) {
+            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
             } else {
                 judge = 1;
