@@ -13,7 +13,8 @@ in terminal.
 
 Then, the server will be open.
 
-You may need to modify your BMS files for these problems
-- Some BMS files have `.ogg` files even though they use `.wav` files, or vice versa. Most BMS players seem to automatically fix this, but we don't do that here. Modify the `#WAVxx` commands.
-- Web browsers do not support `.mpg` or `.mpeg` formats. Instead, they recommend to use `.mp4` or `.webm`. Convert them with, for example, FFmpeg, and modify the `#BMPxx` commands.
-- If there were encoding problems, it wouldn't look good. Encode with UTF-8 and check if everything is fine.
+## Warning
+
+Web browsers do not support `.mpg` or `.mpeg` formats. Instead, they recommend to use `.mp4` or `.webm`. Convert them with, for example, FFmpeg.  
+For the same reason, convert `.bmp` into `.png` or `.jpg`.  
+The parser will automatically detect them, so you don't have to modify the BMS file.
