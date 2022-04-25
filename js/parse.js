@@ -22,7 +22,7 @@ module.exports = function (filename) {
         notes: [],
         speedcore: [{ fraction: 0, time: 0, bpm: 130, inclusive: true }],
     };
-    let lnobj = '00';
+    let lnobj = [];
     const bpms = {};
     const stops = {};
     const lastObj = {
@@ -55,8 +55,7 @@ module.exports = function (filename) {
             if (skipped) {
                 return;
             }
-            lntype = 3;
-            lnobj = match[1];
+            lnobj.push(match[1]);
         }).when(/^#PLAYER (\d)$/i, match => {
             if (skipped) {
                 return;
@@ -199,7 +198,7 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        notes.push({ fraction: measure + fraction, type: 'pbmp', bmp: key });
+                        notes.push({ fraction: measure + fraction, type: 'bmp', bmp: key, layer: -1 });
                         break;
                     case '07':
                         if (key == '00') {
@@ -238,7 +237,7 @@ module.exports = function (filename) {
                         if (key == '00') {
                             break;
                         }
-                        notes.push({ fraction: measure + fraction, type: 'not', line: match[2], key: key, end: key == lnobj });
+                        notes.push({ fraction: measure + fraction, type: 'not', line: match[2], key: key, end: lnobj.includes(key) });
                         break;
                     case '31':
                     case '32':

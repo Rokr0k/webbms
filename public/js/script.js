@@ -290,14 +290,14 @@ function update() {
                 }
                 break;
             case 'bmp':
-                bmpC[note.layer] = bmsC.bmps[note.bmp];
-                if (bmpC[note.layer] instanceof HTMLVideoElement) {
-                    bmpC[note.layer].play();
+                if (note.layer < 0) {
+                    poorBmpC = bmsC.bmps[note.bmp];
+                } else {
+                    bmpC[note.layer] = bmsC.bmps[note.bmp];
+                    if (bmpC[note.layer] instanceof HTMLVideoElement) {
+                        bmpC[note.layer].play();
+                    }
                 }
-                note.executed = true;
-                break;
-            case 'pbmp':
-                poorBmpC = bmsC.bmps[note.bmp];
                 note.executed = true;
                 break;
         }
