@@ -1,8 +1,10 @@
 const fs = require('fs');
+const iconv = require('iconv-lite');
 
 module.exports = function (filename) {
     filename = filename.replace(/\\/g, '/');
-    const text = fs.readFileSync('public/' + filename, { encoding: 'utf-8' }).toString();
+    const buffer = fs.readFileSync('public/' + filename);
+    const text = iconv.decode(buffer, "shift-jis");
     const bms = {
         player: 1,
         genre: "",
@@ -27,6 +29,8 @@ module.exports = function (filename) {
         '51': '00', '52': '00', '53': '00', '54': '00', '55': '00', '56': '00', '58': '00', '59': '00',
         '61': '00', '62': '00', '63': '00', '64': '00', '65': '00', '66': '00', '68': '00', '69': '00',
     };
+    const wavProc = [".wav", ".mp3", ".ogg", ".webm", ".flac"];
+    const bmpProc = [".png", ".jpg", ".mp4", ".webm"];
     let randomGenerated = 0;
     const ifStack = [false];
     const speedcore = [];
@@ -94,7 +98,7 @@ module.exports = function (filename) {
             }).when(/^(.*)\s*\((.*)\)$/, match => {
                 bms.title = match[1];
                 bms.subtitle = "[" + match[2] + "]";
-            }).when(/^(.*)\s*<(.*)>$/, match => {
+            }).when(/^(.*)\s*\<(.*)\>$/, match => {
                 bms.title = match[1];
                 bms.subtitle = "[" + match[2] + "]";
             }).else(() => {
@@ -114,17 +118,35 @@ module.exports = function (filename) {
             if (skipped) {
                 return;
             }
-            bms.stagefile = encodeURI(filename.substring(0, filename.lastIndexOf('/') + 1).concat(match[1]));
+            let path = filename.substring(0, filename.lastIndexOf('/') + 1).concat(match[1]);
+            if (!bmpProc.includes(path.substring(0, path.lastIndexOf('.'))) || !fs.existsSync('public/' + path)) {
+                path = bmpProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
+            }
+            if (path) {
+                bms.stagefile = encodeURI(path);
+            }
         }).when(/^#WAV([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.wavs[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf('/') + 1).concat(match[2]));
+            let path = filename.substring(0, filename.lastIndexOf('/') + 1).concat(match[2]);
+            if (!wavProc.includes(path.substring(0, path.lastIndexOf('.'))) || !fs.existsSync('public/' + path)) {
+                path = wavProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
+            }
+            if (path) {
+                bms.wavs[match[1]] = encodeURI(path);
+            }
         }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.bmps[match[1]] = encodeURI(filename.substring(0, filename.lastIndexOf('/') + 1).concat(match[2]));
+            let path = filename.substring(0, filename.lastIndexOf('/') + 1).concat(match[2]);
+            if (!bmpProc.includes(path.substring(0, path.lastIndexOf('.'))) || !fs.existsSync('public/' + path)) {
+                path = bmpProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
+            }
+            if (path) {
+                bms.bmps[match[1]] = encodeURI(path);
+            }
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;

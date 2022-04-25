@@ -678,7 +678,7 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${Math.round(bpmC * 100) / 100 % 1000}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${Math.floor(bpmC) % 1000}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
             ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
@@ -1062,7 +1062,7 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${Math.round(bpmC * 100) / 100 % 1000}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${Math.floor(bpmC) % 1000}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
             ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
             ctx.fillStyle = colorScheme.gauge;
             ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);

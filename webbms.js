@@ -20,4 +20,4 @@ router.route(app);
 
 console.log(`🚀 Welcome to WebBMS!\nListening on port ${port}`);
 
-setInterval(() => router.setBMS(init.parseBMS()), 10000);
+router.setBMS(init.parseBMS());
