@@ -668,6 +668,8 @@ function draw() {
                 ctx.textAlign = "center";
                 ctx.fillText(`${r}`, (cvs.width + 530) / 2, (cvs.height - bgaSize) / 4);
             }
+            ctx.fillStyle = "#000000";
+            ctx.fillRect((cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize) / 2, bgaSize, bgaSize);
             if (bmpC[0]) {
                 ctx.drawImage(bmpC[0], (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
             }
@@ -1052,6 +1054,8 @@ function draw() {
                 ctx.textAlign = "center";
                 ctx.fillText(`${r}`, (cvs.width + 1110) / 2, (cvs.height - bgaSize) / 4);
             }
+            ctx.fillStyle = "#000000";
+            ctx.fillRect((cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize) / 2, bgaSize, bgaSize);
             if (bmpC[0]) {
                 ctx.drawImage(bmpC[0], (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
             }
@@ -1131,10 +1135,24 @@ function loadBMS(bms) {
                 }
                 case 'png':
                 case 'jpg': {
-                    const image = bms.bmps[key];
-                    bms.bmps[key] = document.createElement('img');
-                    bms.bmps[key].src = image;
-                    document.getElementById('bga').appendChild(bms.bmps[key]);
+                    const image = document.createElement('img');
+                    image.src = bms.bmps[key];
+                    image.addEventListener('load', () => {
+                        const buffer = document.createElement('canvas');
+                        const bufferCtx = buffer.getContext('2d');
+                        bufferCtx.drawImage(image, 0, 0);
+                        const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
+                        for (let i = 0; i < imageData.data.length; i += 4) {
+                            if (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2] == 0) {
+                                imageData.data[i + 3] = 0;
+                            }
+                        }
+                        bufferCtx.putImageData(imageData, 0, 0);
+                        bms.bmps[key] = document.createElement('img');
+                        console.log(buffer.toDataURL());
+                        bms.bmps[key].src = buffer.toDataURL();
+                        document.getElementById('bga').appendChild(bms.bmps[key]);
+                    });
                     break;
                 }
             }
