@@ -1129,7 +1129,6 @@ function loadBMS(bms) {
                     const video = bms.bmps[key];
                     bms.bmps[key] = document.createElement('video');
                     bms.bmps[key].src = video;
-                    bms.bmps[key].load
                     document.getElementById('bga').appendChild(bms.bmps[key]);
                     break;
                 }
@@ -1175,7 +1174,7 @@ function loadBMS(bms) {
             if (wav.length > 0) {
                 return new Promise(res => {
                     fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => audioCtx.decodeAudioData(buffer)).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
-                })
+                });
             }
         }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
             bms.wavs = wavs;

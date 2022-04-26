@@ -1,4 +1,5 @@
 const request = require('request');
+const parser = require('../js/parse');
 
 let bmsV;
 
@@ -44,7 +45,7 @@ function route(app) {
         const auto = req.query.auto || "false";
         if (bmsV[key]) {
             res.render('play', {
-                bms: bmsV[key],
+                bms: parser('bms/' + key),
                 auto: auto,
             });
         } else {
