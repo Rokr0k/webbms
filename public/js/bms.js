@@ -15,7 +15,8 @@ localStorage["bms-great-color"] ||= "#FFD700";
 localStorage["bms-good-color"] ||= "#ADFF2F";
 localStorage["bms-bad-color"] ||= "#8A2BE2";
 localStorage["bms-poor-color"] ||= "#8B0000";
-localStorage["bms-p1-0"] ||= "ShiftLeft";
+localStorage["bms-p1-0-u"] ||= "ShiftLeft";
+localStorage["bms-p1-0-d"] ||= "ControlLeft";
 localStorage["bms-p1-1"] ||= "KeyZ";
 localStorage["bms-p1-2"] ||= "KeyS";
 localStorage["bms-p1-3"] ||= "KeyX";
@@ -23,7 +24,8 @@ localStorage["bms-p1-4"] ||= "KeyD";
 localStorage["bms-p1-5"] ||= "KeyC";
 localStorage["bms-p1-6"] ||= "KeyF";
 localStorage["bms-p1-7"] ||= "KeyV";
-localStorage["bms-p2-0"] ||= "ShiftRight";
+localStorage["bms-p2-0-u"] ||= "ShiftRight";
+localStorage["bms-p2-0-d"] ||= "ControlRight";
 localStorage["bms-p2-1"] ||= "KeyM";
 localStorage["bms-p2-2"] ||= "KeyK";
 localStorage["bms-p2-3"] ||= "Comma";
@@ -97,8 +99,8 @@ cvs.width = window.innerWidth;
 cvs.height = window.innerHeight;
 
 const keys = {
-    p1: [localStorage["bms-p1-1"], localStorage["bms-p1-2"], localStorage["bms-p1-3"], localStorage["bms-p1-4"], localStorage["bms-p1-5"], localStorage["bms-p1-0"], localStorage["bms-p1-6"], localStorage["bms-p1-7"]],
-    p2: [localStorage["bms-p2-1"], localStorage["bms-p2-2"], localStorage["bms-p2-3"], localStorage["bms-p2-4"], localStorage["bms-p2-5"], localStorage["bms-p2-0"], localStorage["bms-p2-6"], localStorage["bms-p2-7"]],
+    p1: [localStorage["bms-p1-1"], localStorage["bms-p1-2"], localStorage["bms-p1-3"], localStorage["bms-p1-4"], localStorage["bms-p1-5"], localStorage["bms-p1-6"], localStorage["bms-p1-7"], localStorage["bms-p1-0-u"], localStorage["bms-p1-0-d"]],
+    p2: [localStorage["bms-p2-1"], localStorage["bms-p2-2"], localStorage["bms-p2-3"], localStorage["bms-p2-4"], localStorage["bms-p2-5"], localStorage["bms-p2-6"], localStorage["bms-p2-7"], localStorage["bms-p2-0-u"], localStorage["bms-p2-0-d"]],
     speed: [localStorage["speed-down"], localStorage["speed-up"]],
 };
 
@@ -156,13 +158,14 @@ loadBMS(bmsC).then(bms => {
                         keyPress('15');
                         break;
                     case keys.p1[5]:
-                        keyPress('16');
-                        break;
-                    case keys.p1[6]:
                         keyPress('18');
                         break;
-                    case keys.p1[7]:
+                    case keys.p1[6]:
                         keyPress('19');
+                        break;
+                    case keys.p1[7]:
+                    case keys.p1[8]:
+                        keyPress('16');
                         break;
                     case keys.p2[0]:
                         keyPress('21');
@@ -180,13 +183,14 @@ loadBMS(bmsC).then(bms => {
                         keyPress('25');
                         break;
                     case keys.p2[5]:
-                        keyPress('26');
-                        break;
-                    case keys.p2[6]:
                         keyPress('28');
                         break;
-                    case keys.p2[7]:
+                    case keys.p2[6]:
                         keyPress('29');
+                        break;
+                    case keys.p2[7]:
+                    case keys.p2[8]:
+                        keyPress('26');
                         break;
                 }
             }
@@ -202,6 +206,7 @@ loadBMS(bmsC).then(bms => {
             }
         }
     }, true);
+
 });
 
 window.addEventListener('keyup', e => {
@@ -223,13 +228,14 @@ window.addEventListener('keyup', e => {
                 keyRelease('15');
                 break;
             case keys.p1[5]:
-                keyRelease('16');
-                break;
-            case keys.p1[6]:
                 keyRelease('18');
                 break;
-            case keys.p1[7]:
+            case keys.p1[6]:
                 keyRelease('19');
+                break;
+            case keys.p1[7]:
+            case keys.p1[8]:
+                keyRelease('16');
                 break;
             case keys.p2[0]:
                 keyRelease('21');
@@ -247,13 +253,14 @@ window.addEventListener('keyup', e => {
                 keyRelease('25');
                 break;
             case keys.p2[5]:
-                keyRelease('26');
-                break;
-            case keys.p2[6]:
                 keyRelease('28');
                 break;
-            case keys.p2[7]:
+            case keys.p2[6]:
                 keyRelease('29');
+                break;
+            case keys.p2[7]:
+            case keys.p2[8]:
+                keyRelease('26');
                 break;
         }
     }
@@ -454,6 +461,7 @@ const longNotePadding = 10;
 const pressIndicateDuration = 0.1;
 
 function draw() {
+    gamepadInput();
     cvs.width = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
     cvs.height = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
     ctx.fillStyle = colorScheme.background;
@@ -1127,6 +1135,61 @@ function draw() {
                 }
             }
             break;
+    }
+}
+
+const gpInput = {
+    1: {
+        2: false,
+        4: false,
+        0: false,
+        5: false,
+        1: false,
+        7: false,
+        15: false,
+        12: false,
+        13: false,
+    },
+    2: {
+        2: false,
+        4: false,
+        0: false,
+        5: false,
+        1: false,
+        7: false,
+        15: false,
+        12: false,
+        13: false,
+    },
+};
+const buttons = [2, 4, 0, 5, 1, 7, 15, 12, 13];
+const buttonToKey = {
+    2: '1',
+    4: '2',
+    0: '3',
+    5: '4',
+    1: '5',
+    7: '8',
+    15: '9',
+    12: '6',
+    13: '6',
+};
+function gamepadInput() {
+    const gamepad = navigator.getGamepads();
+    let player = 0;
+    for (const gp of gamepad) {
+        if (gp && player++ < 2) {
+            for (const button of buttons) {
+                if (gpInput[button] != gp.buttons[button].pressed) {
+                    gpInput[button] = gp.buttons[button].pressed;
+                    if (gpInput[button]) {
+                        keyPress('' + player + buttonToKey[button]);
+                    } else {
+                        keyRelease('' + player + buttonToKey[button]);
+                    }
+                }
+            }
+        }
     }
 }
 

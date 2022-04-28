@@ -395,6 +395,7 @@ let scrollSpeedVar = parseInt(localStorage["speed"]);
 const pressIndicateDuration = 0.1;
 
 function draw() {
+    gamepadInput();
     cvs.width = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
     cvs.height = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
     ctx.fillStyle = colorScheme.background;
@@ -956,6 +957,61 @@ function draw() {
             ctx.font = "50px monospaced";
             ctx.fillStyle = colorScheme.text;
             ctx.fillText(combo.toString(), cvs.width / 3 + cvs.width * i / 6, cvs.height * 7 / 8);
+        }
+    }
+}
+
+const gpInput = {
+    3: false,
+    1: false,
+    5: false,
+    0: false,
+    4: false,
+    2: false,
+    7: false,
+    12: false,
+    6: false,
+}
+const buttons = [3, 1, 5, 0, 4, 2, 7, 12, 6];
+const buttonToKey = {
+    1: {
+        3: '11',
+        1: '12',
+        5: '13',
+        0: '14',
+        4: '15',
+        2: '18',
+        7: '19',
+        12: '16',
+        6: '17',
+    },
+    3: {
+        3: '11',
+        1: '12',
+        5: '13',
+        0: '14',
+        4: '15',
+        2: '22',
+        7: '23',
+        12: '24',
+        6: '25',
+    },
+};
+function gamepadInput() {
+    const gamepad = navigator.getGamepads();
+    for (const gp of gamepad) {
+        if (gp) {
+            for (const button of buttons) {
+                if (gpInput[button] != gp.buttons[button].pressed) {
+                    gpInput[button] = gp.buttons[button].pressed;
+                    if (gpInput[button]) {
+                        keyPress(buttonToKey[bmsC.player][button]);
+                    } else {
+                        keyRelease(buttonToKey[bmsC.player][button]);
+                    }
+                }
+            }
+            break;
         }
     }
 }
