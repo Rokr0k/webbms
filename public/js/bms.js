@@ -1,37 +1,36 @@
 let cvs = document.getElementById('cvs');
 let ctx = cvs.getContext('2d');
-let video = document.getElementById('video');
 
 localStorage["bg-color"] ||= "#1F2F2F";
 localStorage["effect-color"] ||= "#FFA500";
 localStorage["gauge-color"] ||= "#00BFFF";
 localStorage["gear-color"] ||= "#DCDCDC";
 localStorage["text-color"] ||= "#FFFFF0";
-localStorage["scratch-color"] ||= "#FF0000";
-localStorage["lower-color"] ||= "#FFFFFF";
-localStorage["higher-color"] ||= "#00BFFF";
-localStorage["mine-color"] ||= "#DC143C";
-localStorage["great-color"] ||= "#C0C0C0";
-localStorage["great-color"] ||= "#FFD700";
-localStorage["good-color"] ||= "#ADFF2F";
-localStorage["bad-color"] ||= "#8A2BE2";
-localStorage["poor-color"] ||= "#8B0000";
-localStorage["p1-0"] ||= "ShiftLeft";
-localStorage["p1-1"] ||= "KeyZ";
-localStorage["p1-2"] ||= "KeyS";
-localStorage["p1-3"] ||= "KeyX";
-localStorage["p1-4"] ||= "KeyD";
-localStorage["p1-5"] ||= "KeyC";
-localStorage["p1-6"] ||= "KeyF";
-localStorage["p1-7"] ||= "KeyV";
-localStorage["p2-0"] ||= "ShiftRight";
-localStorage["p2-1"] ||= "KeyM";
-localStorage["p2-2"] ||= "KeyK";
-localStorage["p2-3"] ||= "Comma";
-localStorage["p2-4"] ||= "KeyL";
-localStorage["p2-5"] ||= "Period";
-localStorage["p2-6"] ||= "SemiColon";
-localStorage["p2-7"] ||= "Slash";
+localStorage["bms-scratch-color"] ||= "#FF0000";
+localStorage["bms-lower-color"] ||= "#FFFFFF";
+localStorage["bms-higher-color"] ||= "#00BFFF";
+localStorage["bms-mine-color"] ||= "#DC143C";
+localStorage["bms-pgreat-color"] ||= "#C0C0C0";
+localStorage["bms-great-color"] ||= "#FFD700";
+localStorage["bms-good-color"] ||= "#ADFF2F";
+localStorage["bms-bad-color"] ||= "#8A2BE2";
+localStorage["bms-poor-color"] ||= "#8B0000";
+localStorage["bms-p1-0"] ||= "ShiftLeft";
+localStorage["bms-p1-1"] ||= "KeyZ";
+localStorage["bms-p1-2"] ||= "KeyS";
+localStorage["bms-p1-3"] ||= "KeyX";
+localStorage["bms-p1-4"] ||= "KeyD";
+localStorage["bms-p1-5"] ||= "KeyC";
+localStorage["bms-p1-6"] ||= "KeyF";
+localStorage["bms-p1-7"] ||= "KeyV";
+localStorage["bms-p2-0"] ||= "ShiftRight";
+localStorage["bms-p2-1"] ||= "KeyM";
+localStorage["bms-p2-2"] ||= "KeyK";
+localStorage["bms-p2-3"] ||= "Comma";
+localStorage["bms-p2-4"] ||= "KeyL";
+localStorage["bms-p2-5"] ||= "Period";
+localStorage["bms-p2-6"] ||= "SemiColon";
+localStorage["bms-p2-7"] ||= "Slash";
 localStorage["speed-down"] ||= "Digit1";
 localStorage["speed-up"] ||= "Digit2";
 localStorage["speed"] ||= 10;
@@ -96,104 +95,114 @@ const result = {
 
 cvs.width = window.innerWidth;
 cvs.height = window.innerHeight;
-var background = new Image();
-background.src = "./img/bg3.jpeg";
-background.onload = function () {
+
+const keys = {
+    p1: [localStorage["bms-p1-1"], localStorage["bms-p1-2"], localStorage["bms-p1-3"], localStorage["bms-p1-4"], localStorage["bms-p1-5"], localStorage["bms-p1-0"], localStorage["bms-p1-6"], localStorage["bms-p1-7"]],
+    p2: [localStorage["bms-p2-1"], localStorage["bms-p2-2"], localStorage["bms-p2-3"], localStorage["bms-p2-4"], localStorage["bms-p2-5"], localStorage["bms-p2-0"], localStorage["bms-p2-6"], localStorage["bms-p2-7"]],
+    speed: [localStorage["speed-down"], localStorage["speed-up"]],
+};
+
+const background = document.createElement('img');
+background.src = bmsC.stagefile;
+background.addEventListener('load', () => {
     ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
     ctx.font = "100px serif";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.fillText("Loading...", cvs.width / 2, cvs.height / 2);
+    ctx.strokeText("Loading...", cvs.width / 2, cvs.height / 2);
+});
+
+loadBMS(bmsC).then(bms => {
+    ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
+    ctx.font = "100px serif";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
     ctx.fillText("Press Space to Start", cvs.width / 2, cvs.height / 2);
-}
+    ctx.strokeText("Press Space to Start", cvs.width / 2, cvs.height / 2);
+    bmsC = bms;
+    speedcoreIdx = 0;
+    poorBmpC = bmsC.bmps['00'];
 
-const keys = {
-    p1: [localStorage["p1-1"], localStorage["p1-2"], localStorage["p1-3"], localStorage["p1-4"], localStorage["p1-5"], localStorage["p1-0"], localStorage["p1-6"], localStorage["p1-7"]],
-    p2: [localStorage["p2-1"], localStorage["p2-2"], localStorage["p2-3"], localStorage["p2-4"], localStorage["p2-5"], localStorage["p2-0"], localStorage["p2-6"], localStorage["p2-7"]],
-    speed: [localStorage["speed-down"], localStorage["speed-up"]],
-};
-
-window.addEventListener('keydown', e => {
-    if (!playing && e.code == 'Space') {
-        cvs.width = window.innerWidth;
-        cvs.height = window.innerHeight;
-        playing = true;
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, cvs.width, cvs.height);
-        loadBMS(bmsC).then(bms => {
-            bmsC = bms;
-            speedcoreIdx = 0;
+    window.addEventListener('keydown', e => {
+        if (!playing && e.code == 'Space') {
+            playing = true;
             startTime = audioCtx.currentTime + 5;
-            poorBmpC = bmsC.bmps['00'];
             setInterval(update, 0);
             setInterval(() => greatPulse = !greatPulse, 50);
             draw();
-        });
-    } else if (playing) {
-        if (!autoC && !e.repeat) {
+        } else if (playing) {
+            if (!autoC && !e.repeat) {
+                switch (e.code) {
+                    case keys.p1[0]:
+                        keyPress('11');
+                        break;
+                    case keys.p1[1]:
+                        keyPress('12');
+                        break;
+                    case keys.p1[2]:
+                        keyPress('13');
+                        break;
+                    case keys.p1[3]:
+                        keyPress('14');
+                        break;
+                    case keys.p1[4]:
+                        keyPress('15');
+                        break;
+                    case keys.p1[5]:
+                        keyPress('16');
+                        break;
+                    case keys.p1[6]:
+                        keyPress('18');
+                        break;
+                    case keys.p1[7]:
+                        keyPress('19');
+                        break;
+                    case keys.p2[0]:
+                        keyPress('21');
+                        break;
+                    case keys.p2[1]:
+                        keyPress('22');
+                        break;
+                    case keys.p2[2]:
+                        keyPress('23');
+                        break;
+                    case keys.p2[3]:
+                        keyPress('24');
+                        break;
+                    case keys.p2[4]:
+                        keyPress('25');
+                        break;
+                    case keys.p2[5]:
+                        keyPress('26');
+                        break;
+                    case keys.p2[6]:
+                        keyPress('28');
+                        break;
+                    case keys.p2[7]:
+                        keyPress('29');
+                        break;
+                }
+            }
             switch (e.code) {
-                case keys.p1[0]:
-                    keyPress('11');
+                case keys.speed[0]:
+                    scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
+                    localStorage.setItem('speed', scrollSpeedVar);
                     break;
-                case keys.p1[1]:
-                    keyPress('12');
-                    break;
-                case keys.p1[2]:
-                    keyPress('13');
-                    break;
-                case keys.p1[3]:
-                    keyPress('14');
-                    break;
-                case keys.p1[4]:
-                    keyPress('15');
-                    break;
-                case keys.p1[5]:
-                    keyPress('16');
-                    break;
-                case keys.p1[6]:
-                    keyPress('18');
-                    break;
-                case keys.p1[7]:
-                    keyPress('19');
-                    break;
-                case keys.p2[0]:
-                    keyPress('21');
-                    break;
-                case keys.p2[1]:
-                    keyPress('22');
-                    break;
-                case keys.p2[2]:
-                    keyPress('23');
-                    break;
-                case keys.p2[3]:
-                    keyPress('24');
-                    break;
-                case keys.p2[4]:
-                    keyPress('25');
-                    break;
-                case keys.p2[5]:
-                    keyPress('26');
-                    break;
-                case keys.p2[6]:
-                    keyPress('28');
-                    break;
-                case keys.p2[7]:
-                    keyPress('29');
+                case keys.speed[1]:
+                    scrollSpeedVar = Math.min(100, scrollSpeedVar + 1);
+                    localStorage.setItem('speed', scrollSpeedVar);
                     break;
             }
         }
-        switch (e.code) {
-            case keys.speed[0]:
-                scrollSpeedVar = Math.max(1, scrollSpeedVar - 1);
-                localStorage.setItem('speed', scrollSpeedVar);
-                break;
-            case keys.speed[1]:
-                scrollSpeedVar = Math.min(100, scrollSpeedVar + 1);
-                localStorage.setItem('speed', scrollSpeedVar);
-                break;
-        }
-    }
-}, true);
+    }, true);
+});
 
 window.addEventListener('keyup', e => {
     if (playing && !autoC) {
@@ -407,17 +416,17 @@ const colorScheme = {
     background: localStorage["bg-color"],
     gear: localStorage["gear-color"],
     text: localStorage["text-color"],
-    scratch: localStorage["scratch-color"],
-    lower: localStorage["lower-color"],
-    higher: localStorage["higher-color"],
-    mine: localStorage["mine-color"],
+    scratch: localStorage["bms-scratch-color"],
+    lower: localStorage["bms-lower-color"],
+    higher: localStorage["bms-higher-color"],
+    mine: localStorage["bms-mine-color"],
     indicate: localStorage["effect-color"], // color when i press key
     gauge: localStorage["gauge-color"],
-    pgreat: localStorage["pgreat-color"],
-    great: localStorage["great-color"],
-    good: localStorage["good-color"],
-    bad: localStorage["bad-color"],
-    poor: localStorage["poor-color"],
+    pgreat: localStorage["bms-pgreat-color"],
+    great: localStorage["bms-great-color"],
+    good: localStorage["bms-good-color"],
+    bad: localStorage["bms-bad-color"],
+    poor: localStorage["bms-poor-color"],
     result: {
         s: "#7FFFDA",
         aaa: "#FFD700",
@@ -456,15 +465,16 @@ function draw() {
     }
     const fraction = timeToFraction(currentTime);
     const bpmC = bmsC.speedcore[speedcoreIdx].bpm == 0 && speedcoreIdx > 0 ? bmsC.speedcore[speedcoreIdx - 1].bpm : bmsC.speedcore[speedcoreIdx].bpm;
-    let bgaRatio = 0;
+    const bgaRatio = [0, 0];
     if (bmpC[0] instanceof HTMLVideoElement) {
-        bgaRatio = bmpC[0].videoHeight / bmpC[0].videoWidth;
+        bgaRatio[0] = bmpC[0].videoHeight / bmpC[0].videoWidth;
     } else if (bmpC[0] instanceof HTMLImageElement) {
-        bgaRatio = bmpC[0].height / bmpC[0].width;
-    } else if (bmpC[1] instanceof HTMLVideoElement) {
-        bgaRatio = bmpC[1].videoHeight / bmpC[1].videoWidth;
+        bgaRatio[0] = bmpC[0].height / bmpC[0].width;
+    }
+    if (bmpC[1] instanceof HTMLVideoElement) {
+        bgaRatio[1] = bmpC[1].videoHeight / bmpC[1].videoWidth;
     } else if (bmpC[1] instanceof HTMLImageElement) {
-        bgaRatio = bmpC[1].height / bmpC[1].width;
+        bgaRatio[1] = bmpC[1].height / bmpC[1].width;
     }
     const analyseLength = analyserNode.frequencyBinCount;
     const analyseData = new Uint8Array(analyseLength);
@@ -582,7 +592,7 @@ function draw() {
                     if (y1 > cvs.height) {
                         break;
                     }
-                    ctx.fillStyle = colorScheme.mine; audioCtx.currentTime - startTime
+                    ctx.fillStyle = colorScheme.mine;
                     switch (note.line) {
                         case '16':
                             ctx.fillRect(0, cvs.height - y2, 100, y2 - y1);
@@ -671,10 +681,10 @@ function draw() {
             ctx.fillStyle = "#000000";
             ctx.fillRect((cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize) / 2, bgaSize, bgaSize);
             if (bmpC[0]) {
-                ctx.drawImage(bmpC[0], (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+                ctx.drawImage(bmpC[0], (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio[0]) / 2, bgaSize, bgaSize * bgaRatio[0]);
             }
             if (bmpC[1]) {
-                ctx.drawImage(bmpC[1], (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+                ctx.drawImage(bmpC[1], (cvs.width - 530 - bgaSize) / 2 + 530, (cvs.height - bgaSize * bgaRatio[1]) / 2, bgaSize, bgaSize * bgaRatio[1]);
             }
             ctx.fillStyle = colorScheme.text;
             ctx.font = "40px monospaced";
@@ -1057,10 +1067,10 @@ function draw() {
             ctx.fillStyle = "#000000";
             ctx.fillRect((cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize) / 2, bgaSize, bgaSize);
             if (bmpC[0]) {
-                ctx.drawImage(bmpC[0], (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+                ctx.drawImage(bmpC[0], (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio[0]) / 2, bgaSize, bgaSize * bgaRatio[0]);
             }
             if (bmpC[1]) {
-                ctx.drawImage(bmpC[1], (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio) / 2, bgaSize, bgaSize * bgaRatio);
+                ctx.drawImage(bmpC[1], (cvs.width - 1110 - bgaSize) / 2 + 1110, (cvs.height - bgaSize * bgaRatio[1]) / 2, bgaSize, bgaSize * bgaRatio[1]);
             }
             ctx.fillStyle = colorScheme.text;
             ctx.font = "40px monospaced";

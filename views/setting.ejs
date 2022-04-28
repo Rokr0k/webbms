@@ -18,6 +18,7 @@
 		<input type="button" class="btn btn-danger setting-btn" value="Reset" onclick=reset()></input>
 		<input type="button" class="btn btn-success setting-btn" value="Save And Exit" onclick=save()></input><br><br>
 		<div class="container">
+			<h2>Common Colors</h2><br>
 			<label>Background Color: <span id="bg-val"></span> <input type="color" name="bg-color"
 					id="bg-color"></label><br><br>
 			<label>Effect Color: <span id="effect-val"></span> <input type="color" name="effect-color"
@@ -28,41 +29,78 @@
 					id="gear-color"></label><br><br>
 			<label>Text Color: <span id="text-val"></span> <input type="color" name="text-color"
 					id="text-color"></label><br><br>
-			<label>Scratch Color: <span id="scratch-val"></span> <input type="color" name="scratch-color"
-					id="scratch-color"></label><br><br>
-			<label>Lower Color: <span id="lower-val"></span> <input type="color" name="lower-color"
-					id="lower-color"></label><br><br>
-			<label>Higher Color: <span id="higher-val"></span> <input type="color" name="higher-color"
-					id="higher-color"></label><br><br>
-			<label>Mine Color: <span id="mine-val"></span> <input type="color" name="mine-color"
-					id="mine-color"></label><br><br>
-			<label>PGREAT Color: <span id="pgreat-val"></span> <input type="color" name="pgreat-color"
-					id="pgreat-color"></label><br><br>
-			<label>GREAT Color: <span id="great-val"></span> <input type="color" name="great-color"
-					id="great-color"></label><br><br>
-			<label>GOOD Color: <span id="good-val"></span> <input type="color" name="good-color"
-					id="good-color"></label><br><br>
-			<label>BAD Color: <span id="bad-val"></span> <input type="color" name="bad-color"
-					id="bad-color"></label><br><br>
-			<label>POOR Color: <span id="poor-val"></span> <input type="color" name="poor-color"
-					id="poor-color"></label><br><br>
-			<label>P1 Scratch: <input type="text" onkeydown="setKey(event, 'p1-0')" id="p1-0"></label><br><br>
-			<label>P1 1: <input type="text" onkeydown="setKey(event, 'p1-1')" id="p1-1"></label><br><br>
-			<label>P1 2: <input type="text" onkeydown="setKey(event, 'p1-2')" id="p1-2"></label><br><br>
-			<label>P1 3: <input type="text" onkeydown="setKey(event, 'p1-3')" id="p1-3"></label><br><br>
-			<label>P1 4: <input type="text" onkeydown="setKey(event, 'p1-4')" id="p1-4"></label><br><br>
-			<label>P1 5: <input type="text" onkeydown="setKey(event, 'p1-5')" id="p1-5"></label><br><br>
-			<label>P1 6: <input type="text" onkeydown="setKey(event, 'p1-6')" id="p1-6"></label><br><br>
-			<label>P1 7: <input type="text" onkeydown="setKey(event, 'p1-7')" id="p1-7"></label><br><br>
-			<label>P2 Scratch: <input type="text" onkeydown="setKey(event, 'p2-0')" id="p2-0"></label><br><br>
-			<label>P2 1: <input type="text" onkeydown="setKey(event, 'p2-1')" id="p2-1"></label><br><br>
-			<label>P2 2: <input type="text" onkeydown="setKey(event, 'p2-2')" id="p2-2"></label><br><br>
-			<label>P2 3: <input type="text" onkeydown="setKey(event, 'p2-3')" id="p2-3"></label><br><br>
-			<label>P2 4: <input type="text" onkeydown="setKey(event, 'p2-4')" id="p2-4"></label><br><br>
-			<label>P2 5: <input type="text" onkeydown="setKey(event, 'p2-5')" id="p2-5"></label><br><br>
-			<label>P2 6: <input type="text" onkeydown="setKey(event, 'p2-6')" id="p2-6"></label><br><br>
-			<label>P2 7: <input type="text" onkeydown="setKey(event, 'p2-7')" id="p2-7"></label><br><br>
-			<label>Speed Down: <input type="text" onkeydown="setKey(event, 'speed-down')" id="speed-down"></label><br><br>
+			<h2>BMS Colors</h2><br>
+			<label>Scratch Color: <span id="bms-scratch-val"></span> <input type="color" name="bms-scratch-color"
+					id="bms-scratch-color"></label><br><br>
+			<label>Lower Color: <span id="bms-lower-val"></span> <input type="color" name="bms-lower-color"
+					id="bms-lower-color"></label><br><br>
+			<label>Higher Color: <span id="bms-higher-val"></span> <input type="color" name="bms-higher-color"
+					id="bms-higher-color"></label><br><br>
+			<label>Mine Color: <span id="bms-mine-val"></span> <input type="color" name="bms-mine-color"
+					id="bms-mine-color"></label><br><br>
+			<label>PGREAT Color: <span id="bms-pgreat-val"></span> <input type="color" name="bms-pgreat-color"
+					id="bms-pgreat-color"></label><br><br>
+			<label>GREAT Color: <span id="bms-great-val"></span> <input type="color" name="bms-great-color"
+					id="bms-great-color"></label><br><br>
+			<label>GOOD Color: <span id="bms-good-val"></span> <input type="color" name="bms-good-color"
+					id="bms-good-color"></label><br><br>
+			<label>BAD Color: <span id="bms-bad-val"></span> <input type="color" name="bms-bad-color"
+					id="bms-bad-color"></label><br><br>
+			<label>POOR Color: <span id="bms-poor-val"></span> <input type="color" name="bms-poor-color"
+					id="bms-poor-color"></label><br><br>
+			<h2>Pop'n Music Colors</h2><br>
+			<label>Color #1: <span id="pms-0-val"></span> <input type="color" name="pms-0-color"
+					id="pms-0-color"></label><br><br>
+			<label>Color #2: <span id="pms-1-val"></span> <input type="color" name="pms-1-color"
+					id="pms-1-color"></label><br><br>
+			<label>Color #3: <span id="pms-2-val"></span> <input type="color" name="pms-2-color"
+					id="pms-2-color"></label><br><br>
+			<label>Color #4: <span id="pms-3-val"></span> <input type="color" name="pms-3-color"
+					id="pms-3-color"></label><br><br>
+			<label>Color #5: <span id="pms-4-val"></span> <input type="color" name="pms-4-color"
+					id="pms-4-color"></label><br><br>
+			<label>Mine Color: <span id="pms-mine-val"></span> <input type="color" name="pms-mine-color"
+					id="pms-mine-color"></label><br><br>
+			<label>COOL Color: <span id="pms-cool-val"></span> <input type="color" name="pms-cool-color"
+					id="pms-cool-color"></label><br><br>
+			<label>GREAT Color: <span id="pms-great-val"></span> <input type="color" name="pms-great-color"
+					id="pms-great-color"></label><br><br>
+			<label>BAD Color: <span id="pms-bad-val"></span> <input type="color" name="pms-bad-color"
+					id="pms-bad-color"></label><br><br>
+			<label>POOR Color: <span id="pms-poor-val"></span> <input type="color" name="pms-poor-color"
+					id="pms-poor-color"></label><br><br>
+			<h2>BMS Keys</h2><br>
+			<label>BMS P1 Scratch: <input type="text" onkeydown="setKey(event, 'bms-p1-0')"
+					id="bms-p1-0"></label><br><br>
+			<label>BMS P1 1: <input type="text" onkeydown="setKey(event, 'bms-p1-1')" id="bms-p1-1"></label><br><br>
+			<label>BMS P1 2: <input type="text" onkeydown="setKey(event, 'bms-p1-2')" id="bms-p1-2"></label><br><br>
+			<label>BMS P1 3: <input type="text" onkeydown="setKey(event, 'bms-p1-3')" id="bms-p1-3"></label><br><br>
+			<label>BMS P1 4: <input type="text" onkeydown="setKey(event, 'bms-p1-4')" id="bms-p1-4"></label><br><br>
+			<label>BMS P1 5: <input type="text" onkeydown="setKey(event, 'bms-p1-5')" id="bms-p1-5"></label><br><br>
+			<label>BMS P1 6: <input type="text" onkeydown="setKey(event, 'bms-p1-6')" id="bms-p1-6"></label><br><br>
+			<label>BMS P1 7: <input type="text" onkeydown="setKey(event, 'bms-p1-7')" id="bms-p1-7"></label><br><br>
+			<label>BMS P2 Scratch: <input type="text" onkeydown="setKey(event, 'bms-p2-0')"
+					id="bms-p2-0"></label><br><br>
+			<label>BMS P2 1: <input type="text" onkeydown="setKey(event, 'bms-p2-1')" id="bms-p2-1"></label><br><br>
+			<label>BMS P2 2: <input type="text" onkeydown="setKey(event, 'bms-p2-2')" id="bms-p2-2"></label><br><br>
+			<label>BMS P2 3: <input type="text" onkeydown="setKey(event, 'bms-p2-3')" id="bms-p2-3"></label><br><br>
+			<label>BMS P2 4: <input type="text" onkeydown="setKey(event, 'bms-p2-4')" id="bms-p2-4"></label><br><br>
+			<label>BMS P2 5: <input type="text" onkeydown="setKey(event, 'bms-p2-5')" id="bms-p2-5"></label><br><br>
+			<label>BMS P2 6: <input type="text" onkeydown="setKey(event, 'bms-p2-6')" id="bms-p2-6"></label><br><br>
+			<label>BMS P2 7: <input type="text" onkeydown="setKey(event, 'bms-p2-7')" id="bms-p2-7"></label><br><br>
+			<h2>Pop'n Music Keys</h2><br>
+			<label>PMS 1: <input type="text" onkeydown="setKey(event, 'pms-0')" id="pms-0"></label><br><br>
+			<label>PMS 2: <input type="text" onkeydown="setKey(event, 'pms-1')" id="pms-1"></label><br><br>
+			<label>PMS 3: <input type="text" onkeydown="setKey(event, 'pms-2')" id="pms-2"></label><br><br>
+			<label>PMS 4: <input type="text" onkeydown="setKey(event, 'pms-3')" id="pms-3"></label><br><br>
+			<label>PMS 5: <input type="text" onkeydown="setKey(event, 'pms-4')" id="pms-4"></label><br><br>
+			<label>PMS 6: <input type="text" onkeydown="setKey(event, 'pms-5')" id="pms-5"></label><br><br>
+			<label>PMS 7: <input type="text" onkeydown="setKey(event, 'pms-6')" id="pms-6"></label><br><br>
+			<label>PMS 8: <input type="text" onkeydown="setKey(event, 'pms-7')" id="pms-7"></label><br><br>
+			<label>PMS 9: <input type="text" onkeydown="setKey(event, 'pms-8')" id="pms-8"></label><br><br>
+			<h2>Common Keys</h2><br>
+			<label>Speed Down: <input type="text" onkeydown="setKey(event, 'speed-down')"
+					id="speed-down"></label><br><br>
 			<label>Speed Up: <input type="text" onkeydown="setKey(event, 'speed-up')" id="speed-up"></label><br><br>
 			<label>Speed: <input type="number" min="0.1" max="10" step="0.1" id="speed"></label><br><br>
 		</div>

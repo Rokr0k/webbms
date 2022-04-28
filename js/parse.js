@@ -6,6 +6,7 @@ module.exports = function (filename) {
     const buffer = fs.readFileSync('public/' + filename);
     const text = iconv.decode(buffer, "shift-jis");
     const bms = {
+        game: 0,
         player: 1,
         genre: "",
         title: "",
@@ -22,12 +23,15 @@ module.exports = function (filename) {
         notes: [],
         speedcore: [{ fraction: 0, time: 0, bpm: 130, inclusive: true }],
     };
+    if (filename.match(/^.*\.pms$/i)) {
+        bms.game = 1;
+    }
     let lnobj = [];
     const bpms = {};
     const stops = {};
     const lastObj = {
-        '51': '00', '52': '00', '53': '00', '54': '00', '55': '00', '56': '00', '58': '00', '59': '00',
-        '61': '00', '62': '00', '63': '00', '64': '00', '65': '00', '66': '00', '68': '00', '69': '00',
+        '51': false, '52': false, '53': false, '54': false, '55': false, '56': false, '57': false, '58': false, '59': false,
+        '61': false, '62': false, '63': false, '64': false, '65': false, '66': false, '67': false, '68': false, '69': false,
     };
     const wavProc = [".wav", ".mp3", ".ogg", ".webm", ".flac"];
     const bmpProc = [".png", ".jpg", ".mp4", ".webm"];
@@ -224,6 +228,7 @@ module.exports = function (filename) {
                     case '14':
                     case '15':
                     case '16':
+                    case '17':
                     case '18':
                     case '19':
                     case '21':
@@ -232,6 +237,7 @@ module.exports = function (filename) {
                     case '24':
                     case '25':
                     case '26':
+                    case '27':
                     case '28':
                     case '29':
                         if (key == '00') {
@@ -245,6 +251,7 @@ module.exports = function (filename) {
                     case '34':
                     case '35':
                     case '36':
+                    case '37':
                     case '38':
                     case '39':
                     case '41':
@@ -253,6 +260,7 @@ module.exports = function (filename) {
                     case '44':
                     case '45':
                     case '46':
+                    case '47':
                     case '48':
                     case '49':
                         if (key == '00') {
@@ -266,6 +274,7 @@ module.exports = function (filename) {
                     case '54':
                     case '55':
                     case '56':
+                    case '57':
                     case '58':
                     case '59':
                     case '61':
@@ -274,18 +283,14 @@ module.exports = function (filename) {
                     case '64':
                     case '65':
                     case '66':
+                    case '67':
                     case '68':
                     case '69':
                         if (key == '00') {
                             break;
                         }
-                        if (lastObj[match[2]] == key) {
-                            notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: true });
-                            lastObj[match[2]] = '00';
-                        } else {
-                            notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: false });
-                            lastObj[match[2]] = key;
-                        }
+                        notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: lastObj[match[2]] });
+                        lastObj[match[2]] = !lastObj[match[2]];
                         break;
                     case 'D1':
                     case 'D2':
@@ -293,6 +298,7 @@ module.exports = function (filename) {
                     case 'D4':
                     case 'D5':
                     case 'D6':
+                    case 'D7':
                     case 'D8':
                     case 'D9':
                     case 'E1':
@@ -301,6 +307,7 @@ module.exports = function (filename) {
                     case 'E4':
                     case 'E5':
                     case 'E6':
+                    case 'E7':
                     case 'E8':
                     case 'E9':
                         if (key == '00') {

@@ -19,6 +19,13 @@ h1 {
   padding-top: 50px;
 }
 
+h2 {
+  text-align: center;
+  color: white;
+  font-family: "IBM Plex Sans KR", "M PLUS Rounded 1c", sans-serif;
+  text-decoration: none;
+}
+
 div {
   text-align: center;
   width: 700px;
