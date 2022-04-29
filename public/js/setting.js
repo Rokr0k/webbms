@@ -230,7 +230,8 @@ document.getElementById('speed').addEventListener('change', function () {
     document.getElementById('pms-bad-val').innerHTML = document.getElementById('pms-bad-color').value = localStorage["pms-bad-color"];
     document.getElementById('pms-poor-val').innerHTML = document.getElementById('pms-poor-color').value = localStorage["pms-poor-color"];
 
-    document.getElementById('bms-p1-0').value = localStorage["bms-p1-0"];
+    document.getElementById('bms-p1-0-u').value = localStorage["bms-p1-0-u"];
+    document.getElementById('bms-p1-0-d').value = localStorage["bms-p1-0-d"];
     document.getElementById('bms-p1-1').value = localStorage["bms-p1-1"];
     document.getElementById('bms-p1-2').value = localStorage["bms-p1-2"];
     document.getElementById('bms-p1-3').value = localStorage["bms-p1-3"];
@@ -238,7 +239,8 @@ document.getElementById('speed').addEventListener('change', function () {
     document.getElementById('bms-p1-5').value = localStorage["bms-p1-5"];
     document.getElementById('bms-p1-6').value = localStorage["bms-p1-6"];
     document.getElementById('bms-p1-7').value = localStorage["bms-p1-7"];
-    document.getElementById('bms-p2-0').value = localStorage["bms-p2-0"];
+    document.getElementById('bms-p2-0-u').value = localStorage["bms-p2-0-u"];
+    document.getElementById('bms-p2-0-d').value = localStorage["bms-p2-0-d"];
     document.getElementById('bms-p2-1').value = localStorage["bms-p2-1"];
     document.getElementById('bms-p2-2').value = localStorage["bms-p2-2"];
     document.getElementById('bms-p2-3').value = localStorage["bms-p2-3"];
