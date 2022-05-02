@@ -1,6 +1,7 @@
 localStorage["bg-color"] ||= "#1F2F2F";
 localStorage["effect-color"] ||= "#FFA500";
-localStorage["gauge-color"] ||= "#00BFFF";
+localStorage["gauge-1-color"] ||= "#00BFFF";
+localStorage["gauge-2-color"] ||= "#FFBF00";
 localStorage["gear-color"] ||= "#DCDCDC";
 localStorage["text-color"] ||= "#FFFFF0";
 localStorage["bms-scratch-color"] ||= "#FF0000";
@@ -65,10 +66,16 @@ document.getElementById('effect-color').addEventListener('change', function () {
     localStorage["effect-color"] = color.toUpperCase();
 });
 
-document.getElementById('gauge-color').addEventListener('change', function () {
-    var color = document.getElementById('gauge-color').value;
-    document.getElementById('gauge-val').innerHTML = color.toUpperCase();
-    localStorage["gauge-color"] = color.toUpperCase();
+document.getElementById('gauge-2-color').addEventListener('change', function () {
+    var color = document.getElementById('gauge-2-color').value;
+    document.getElementById('gauge-2-val').innerHTML = color.toUpperCase();
+    localStorage["gauge-2-color"] = color.toUpperCase();
+});
+
+document.getElementById('gauge-1-color').addEventListener('change', function () {
+    var color = document.getElementById('gauge-1-color').value;
+    document.getElementById('gauge-1-val').innerHTML = color.toUpperCase();
+    localStorage["gauge-1-color"] = color.toUpperCase();
 });
 
 document.getElementById('gear-color').addEventListener('change', function () {
@@ -205,7 +212,8 @@ document.getElementById('speed').addEventListener('change', function () {
 (function () {
     document.getElementById('bg-val').innerHTML = document.getElementById('bg-color').value = localStorage["bg-color"];
     document.getElementById('effect-val').innerHTML = document.getElementById('effect-color').value = localStorage["effect-color"];
-    document.getElementById('gauge-val').innerHTML = document.getElementById('gauge-color').value = localStorage["gauge-color"];
+    document.getElementById('gauge-1-val').innerHTML = document.getElementById('gauge-1-color').value = localStorage["gauge-1-color"];
+    document.getElementById('gauge-2-val').innerHTML = document.getElementById('gauge-2-color').value = localStorage["gauge-2-color"];
     document.getElementById('gear-val').innerHTML = document.getElementById('gear-color').value = localStorage["gear-color"];
     document.getElementById('text-val').innerHTML = document.getElementById('text-color').value = localStorage["text-color"];
 

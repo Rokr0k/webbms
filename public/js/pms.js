@@ -1,6 +1,12 @@
 let cvs = document.getElementById('cvs');
 let ctx = cvs.getContext('2d');
 
+localStorage["bg-color"] ||= "#1F2F2F";
+localStorage["effect-color"] ||= "#FFA500";
+localStorage["gauge-1-color"] ||= "#00BFFF";
+localStorage["gauge-2-color"] ||= "#FFBF00";
+localStorage["gear-color"] ||= "#DCDCDC";
+localStorage["text-color"] ||= "#FFFFF0";
 localStorage["pms-0-color"] ||= "#FFFFFF";
 localStorage["pms-1-color"] ||= "#FFFF00";
 localStorage["pms-2-color"] ||= "#00FF00";
@@ -372,7 +378,8 @@ const colorScheme = {
     k3: localStorage["pms-3-color"],
     k4: localStorage["pms-4-color"],
     mine: localStorage["pms-mine-color"],
-    gauge: localStorage["gauge-color"],
+    gauge1: localStorage["gauge-1-color"],
+    gauge2: localStorage["gauge-2-color"],
     cool: localStorage["pms-cool-color"],
     great: localStorage["pms-great-color"],
     bad: localStorage["pms-bad-color"],
@@ -886,16 +893,17 @@ function draw() {
     if (clock > 0) {
         ctx.fillText(String(Math.floor(clock / 60)) + ':' + String(clock % 60).padStart(2, '0'), cvs.width * 7 / 8, cvs.height - 140);
     }
-    ctx.fillText(`BPM ${Math.floor(bpmC) % 1000}`, cvs.width * 7 / 8, cvs.height - 100);
+    ctx.fillText(`BPM ${Math.floor(bpmC).toString().substring(0, 3)}`, cvs.width * 7 / 8, cvs.height - 100);
     ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, cvs.width * 7 / 8, cvs.height - 60);
-    ctx.fillStyle = colorScheme.gauge;
+    ctx.fillStyle = colorScheme.gauge1;
     ctx.fillRect(cvs.width * 3 / 4, cvs.height * 5 / 6 - Math.min(gauge, 60) * cvs.height / 150, 20, Math.min(gauge, 60) * cvs.height / 150);
+    ctx.fillStyle = colorScheme.gauge2;
     ctx.fillRect(cvs.width * 3 / 4, cvs.height * 13 / 30 - Math.max(gauge - 60, 0) * cvs.height / 150, 40, Math.max(gauge - 60, 0) * cvs.height / 150);
     ctx.fillStyle = colorScheme.text;
     ctx.font = "30px monospaced";
     ctx.textBaseline = "bottom";
     ctx.textAlign = "left";
-    ctx.fillText(`x${scrollSpeedVar / 10}`, cvs.width * 3 / 4, cvs.height);
+    ctx.fillText(`${scrollSpeedVar / 10} x ${bpmC} = ${scrollSpeedVar * bpmC / 10}`, cvs.width * 3 / 4, cvs.height);
     ctx.font = "80px monospaced";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";

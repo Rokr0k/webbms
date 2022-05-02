@@ -3,7 +3,8 @@ let ctx = cvs.getContext('2d');
 
 localStorage["bg-color"] ||= "#1F2F2F";
 localStorage["effect-color"] ||= "#FFA500";
-localStorage["gauge-color"] ||= "#00BFFF";
+localStorage["gauge-1-color"] ||= "#00BFFF";
+localStorage["gauge-2-color"] ||= "#FFBF00";
 localStorage["gear-color"] ||= "#DCDCDC";
 localStorage["text-color"] ||= "#FFFFF0";
 localStorage["bms-scratch-color"] ||= "#FF0000";
@@ -430,7 +431,8 @@ const colorScheme = {
     higher: localStorage["bms-higher-color"],
     mine: localStorage["bms-mine-color"],
     indicate: localStorage["effect-color"], // color when i press key
-    gauge: localStorage["gauge-color"],
+    gauge1: localStorage["gauge-1-color"],
+    gauge2: localStorage["gauge-2-color"],
     pgreat: localStorage["bms-pgreat-color"],
     great: localStorage["bms-great-color"],
     good: localStorage["bms-good-color"],
@@ -700,16 +702,18 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${Math.floor(bpmC) % 1000}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${Math.floor(bpmC).toString().substring(0, 3)}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2);
             ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 530) / 2 + 530, (cvs.height + bgaSize) / 2 + 40);
-            ctx.fillStyle = colorScheme.gauge;
-            ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
+            ctx.fillStyle = colorScheme.gauge1;
+            ctx.fillRect(530, cvs.height * 5 / 6 - Math.floor(Math.min(gauge, 80) / 2) * cvs.height * 4 / 300, 20, Math.floor(Math.min(gauge, 80) / 2) * cvs.height * 4 / 300);
+            ctx.fillStyle = colorScheme.gauge2;
+            ctx.fillRect(530, cvs.height * 3 / 10 - Math.floor(Math.max(gauge - 80, 0) / 2) * cvs.height * 4 / 300, 20, Math.floor(Math.max(gauge - 80, 0) / 2) * cvs.height * 4 / 300);
             ctx.fillStyle = colorScheme.text;
             ctx.font = "30px monospaced";
             ctx.textBaseline = "bottom";
             ctx.textAlign = "left";
             ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 530, cvs.height / 6);
-            ctx.fillText(`x${scrollSpeedVar / 10}`, 530, cvs.height);
+            ctx.fillText(`${scrollSpeedVar / 10} x ${bpmC} = ${scrollSpeedVar * bpmC / 10}`, 530, cvs.height);
             if (prevJudgeTime + 1 > currentTime) {
                 ctx.font = "80px monospaced";
                 ctx.textBaseline = "middle";
@@ -1086,16 +1090,18 @@ function draw() {
             ctx.font = "40px monospaced";
             ctx.textBaseline = "top";
             ctx.textAlign = "center";
-            ctx.fillText(`BPM ${Math.floor(bpmC) % 1000}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
+            ctx.fillText(`BPM ${Math.floor(bpmC).toString().substring(0, 3)}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2);
             ctx.fillText(`EXSCORE ${exScore} / ${bmsC.noteCnt * 2}`, (cvs.width - 1110) / 2 + 1110, (cvs.height + bgaSize) / 2 + 40);
-            ctx.fillStyle = colorScheme.gauge;
-            ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(gauge / 2) * cvs.height * 4 / 300, 20, Math.floor(gauge / 2) * cvs.height * 4 / 300);
+            ctx.fillStyle = colorScheme.gauge1;
+            ctx.fillRect(1110, cvs.height * 5 / 6 - Math.floor(Math.min(gauge, 80) / 2) * cvs.height * 4 / 300, 20, Math.floor(Math.min(gauge, 80) / 2) * cvs.height * 4 / 300);
+            ctx.fillStyle = colorScheme.gauge2;
+            ctx.fillRect(1110, cvs.height * 3 / 10 - Math.floor(Math.max(gauge - 80, 0) / 2) * cvs.height * 4 / 300, 20, Math.floor(Math.max(gauge - 80, 0) / 2) * cvs.height * 4 / 300);
             ctx.fillStyle = colorScheme.text;
             ctx.font = "30px monospaced";
             ctx.textBaseline = "bottom";
             ctx.textAlign = "left";
             ctx.fillText(`${Math.floor(gauge / 2) * 2}%`, 1110, cvs.height / 6);
-            ctx.fillText(`x${scrollSpeedVar / 10}`, 1110, cvs.height);
+            ctx.fillText(`${scrollSpeedVar / 10} x ${bpmC} = ${scrollSpeedVar * bpmC / 10}`, 1110, cvs.height);
             if (prevJudgeTime + 1 > currentTime) {
                 ctx.font = "80px monospaced";
                 ctx.textBaseline = "middle";
