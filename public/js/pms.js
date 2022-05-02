@@ -86,7 +86,6 @@ const keys = {
 };
 
 const background = document.createElement('img');
-background.src = bmsC.stagefile;
 background.addEventListener('load', () => {
     ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
     ctx.font = "100px serif";
@@ -98,6 +97,7 @@ background.addEventListener('load', () => {
     ctx.fillText("Loading...", cvs.width / 2, cvs.height / 2);
     ctx.strokeText("Loading...", cvs.width / 2, cvs.height / 2);
 });
+background.src = bmsC.stagefile;
 
 loadBMS(bmsC).then(bms => {
     ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
@@ -115,10 +115,12 @@ loadBMS(bmsC).then(bms => {
 
     window.addEventListener('keydown', e => {
         if (!playing && e.code == 'Space') {
-            playing = true;
-            startTime = audioCtx.currentTime + 5;
-            setInterval(update, 0);
-            draw();
+            readyBMS().then(() => {
+                playing = true;
+                startTime = audioCtx.currentTime + 5;
+                setInterval(update, 0);
+                draw();
+            });
         } else if (playing) {
             if (!autoC && !e.repeat) {
                 switch (e.code) {
@@ -1052,10 +1054,6 @@ function loadBMS(bms) {
                 }
             }
         }
-        audioCtx = new AudioContext();
-        volumeNode = new GainNode(audioCtx, { gain: 1 });
-        analyserNode = new AnalyserNode(audioCtx, { fftSize: 512 });
-        analyserNode.connect(volumeNode).connect(audioCtx.destination);
         Promise.all(Object.keys(bms.bmps).filter(key => bms.bmps[key] instanceof HTMLVideoElement).map(key => {
             new Promise(res => {
                 (function wait(key) {
@@ -1069,14 +1067,23 @@ function loadBMS(bms) {
         })).then(() => Promise.all(Object.keys(bms.wavs).map(wav => {
             if (wav.length > 0) {
                 return new Promise(res => {
-                    fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => audioCtx.decodeAudioData(buffer)).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
+                    fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 });
             }
         }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
             bms.wavs = wavs;
         }).then(() => resolve(bms));
     });
+}
 
+function readyBMS() {
+    return new Promise(resolve => {
+        audioCtx = new AudioContext();
+        volumeNode = new GainNode(audioCtx, { gain: 1 });
+        analyserNode = new AnalyserNode(audioCtx, { fftSize: 512 });
+        analyserNode.connect(volumeNode).connect(audioCtx.destination);
+        Promise.all(Object.keys(bmsC.wavs).filter(wav => bmsC.wavs[wav]).map(wav => audioCtx.decodeAudioData(bmsC.wavs[wav]).then(buffer => bmsC.wavs[wav] = buffer))).then(() => resolve());
+    });
 }
 
 function fractionDiff(a, b) {
