@@ -126,7 +126,7 @@ module.exports = function (filename) {
                 path = bmpProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
             }
             if (path) {
-                bms.stagefile = encodeURIComponent(path);
+                bms.stagefile = encodeURIComponent(path).replace(/%2F/ig, '/');
             }
         }).when(/^#WAV([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
@@ -137,7 +137,8 @@ module.exports = function (filename) {
                 path = wavProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
             }
             if (path) {
-                bms.wavs[match[1]] = encodeURIComponent(path);
+                
+                bms.wavs[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
             }
         }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
@@ -148,7 +149,7 @@ module.exports = function (filename) {
                 path = bmpProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
             }
             if (path) {
-                bms.bmps[match[1]] = encodeURIComponent(path);
+                bms.bmps[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
             }
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
