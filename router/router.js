@@ -1,7 +1,9 @@
+"use strict";
+
 const request = require('request');
 const parser = require('../js/parse');
 
-let bmsV;
+let bmsV = [];
 
 function setBMS(bms) {
     bmsV = bms;

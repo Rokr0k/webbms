@@ -1,3 +1,5 @@
+"use strict";
+
 let cvs = document.getElementById('cvs');
 let ctx = cvs.getContext('2d');
 
@@ -517,7 +519,7 @@ function draw() {
             ctx.fillRect(410 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(460 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(530 - 5 / 2, 0, 5, cvs.height);
-            for (line of Object.keys(pressC)) {
+            for (const line of Object.keys(pressC)) {
                 let height = 0;
                 if (pressC[line].pressed) {
                     height = cvs.height;
@@ -556,7 +558,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
+            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
                 if (note.type == 'not') {
                     const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     const y2 = y1 + noteSize;
@@ -785,7 +787,7 @@ function draw() {
             ctx.fillRect(940 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(1010 - 5 / 2, 0, 5, cvs.height);
             ctx.fillRect(1110 - 5 / 2, 0, 5, cvs.height);
-            for (line of Object.keys(pressC)) {
+            for (const line of Object.keys(pressC)) {
                 let height = 0;
                 if (pressC[line].pressed) {
                     height = cvs.height;
@@ -848,7 +850,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
+            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
                 if (note.type == 'not') {
                     const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     const y2 = y1 + noteSize;
@@ -981,7 +983,7 @@ function draw() {
                     }
                 }
             }
-            for (note of bmsC.notes.filter(note => note.type == 'not' && note.end && !note.executed)) {
+            for (const note of bmsC.notes.filter(note => note.type == 'not' && note.end && !note.executed)) {
                 const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                 const y2 = Math.max(0, (fractionDiff(0, (bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction < note.fraction).reverse()[0] || { fraction: 0 }).fraction) - fraction) * cvs.height * scrollSpeedVar / 10) + noteSize;
                 if (y2 > cvs.height) {

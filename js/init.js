@@ -1,18 +1,25 @@
+"use strict";
+
 const fs = require('fs');
 const path = require('path');
 const parser = require('./parse');
 
-function readDirR(dir) {
-    return fs.statSync(dir).isDirectory() ? Array.prototype.concat(...fs.readdirSync(dir).map(f => readDirR(path.join(dir, f)))) : dir;
+async function* readDirR(dir) {
+    if (fs.statSync(dir).isDirectory()) {
+        for (const f of fs.readdirSync(dir)) {
+            yield* readDirR(path.join(dir, f));
+        }
+    } else if (dir.split('.').pop().match(/^(bm[sel]|pms)$/)) {
+        yield dir;
+    }
 }
 
-function parseBMS() {
-    const bms = readDirR('public/bms').filter(file => file.split('.').pop().match(/^(bm[sel]|pms)$/)).map(file => ({ key: file.substr(11), data: parser(file.substr(7)) })).reduce((prev, d) => {
-        prev[d.key] = d.data;
-        return prev;
-    }, {});
-
+async function parseBMS() {
+    const bms = {};
+    for await (const file of readDirR('public/bms')) {
+        bms[file.substr(11)] = parser(file.substr(7));
+    }
     return bms;
 }
 
-module.exports = { readDirR: readDirR, parseBMS: parseBMS };
+module.exports = { parseBMS: parseBMS };

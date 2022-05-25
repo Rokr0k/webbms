@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require('express');
 const app = express();
 const router = require('./router/router');
@@ -15,7 +17,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.listen(port);
-router.setBMS(init.parseBMS());
 router.route(app);
+console.log(`Welcome to WebBMS! Listening on port ${port}.`);
 
-console.log(`🚀 Welcome to WebBMS!\nListening on port ${port}`);
+const start = new Date();
+init.parseBMS().then(bms => {
+    router.setBMS(bms);
+    const end = new Date();
+    console.log(`Reading BMS files complete! Took ${(end - start) / 1000}s.`);
+});

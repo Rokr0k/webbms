@@ -1,3 +1,5 @@
+"use strict";
+
 localStorage["bg-color"] ||= "#1F2F2F";
 localStorage["effect-color"] ||= "#FFA500";
 localStorage["gauge-1-color"] ||= "#00BFFF";
