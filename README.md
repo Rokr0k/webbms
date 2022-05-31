@@ -5,13 +5,17 @@ BMS streaming application based on Web Audio API and HTML5 Canvas.
 
 # How to run
 
-Put BMS files in `public/bms/` directory, and type
+Put BMS files in `public/bms/` directory (symlinks available), and type
 ```sh
-npm start [port number]
+npm start
 ```
-in terminal.
+in terminal. Then, the server will be open on port 80.
 
-Then, the server will be open.
+If you want to open the server on different port, create a file named `.env` and write
+```env
+PORT=[Port Number]
+```
+inside it.
 
 ## Warning
 
