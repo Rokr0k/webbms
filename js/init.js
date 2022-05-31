@@ -22,4 +22,4 @@ async function parseBMS() {
     return bms;
 }
 
-module.exports = { parseBMS: parseBMS };
+module.exports = { parseBMS };

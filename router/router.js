@@ -1,6 +1,5 @@
 "use strict";
 
-const request = require('request');
 const parser = require('../js/parse');
 
 let bmsV = [];
@@ -30,16 +29,7 @@ function route(app) {
     });
 
     app.get('/license', (req, res) => {
-        const options = {
-            url: 'https://raw.githubusercontent.com/Rokr0k/webbms/main/LICENSE'
-        };
-
-        function callback(error, response, body) {
-            if (!error && response.statusCode == 200)
-                res.send(`<title>WebBMS - License</title><pre>${body.replace(/</gi, "&lt;").replace(/>/gi, "&gt;")}</pre>`);
-        }
-
-        request(options, callback);
+        fetch('https://raw.githubusercontent.com/Rokr0k/webbms/main/LICENSE').then(response => response.text()).then(text => text.replace(/</g, "&lt;").replace(/>/g, "&gt;")).then(text => res.send(`<title>WebBMS - License</title><pre>${text}</pre>`));
     });
 
     app.get('/play', (req, res) => {
@@ -60,4 +50,4 @@ function route(app) {
     });
 }
 
-module.exports = { setBMS: setBMS, route: route };
+module.exports = { setBMS, route };
