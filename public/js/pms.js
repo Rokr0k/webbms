@@ -225,7 +225,7 @@ function update() {
     for (const note of bmsC.notes.filter(n => !n.executed && n.time < currentTime)) {
         switch (note.type) {
             case 'bgm':
-                play(bmsC.wavs[note.key]);
+                playWav(note.key);
                 note.executed = true;
                 break;
             case 'not':
@@ -280,7 +280,7 @@ function keyPress(line) {
     pressC[line] = { pressed: true, time: currentTime };
 
     if (note) {
-        play(bmsC.wavs[note.key]);
+        playWav(note.key);
 
         let judge = 0;
         if (autoC) {
@@ -301,7 +301,7 @@ function keyPress(line) {
     } else {
         const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
         if (note) {
-            play(bmsC.wavs[note.key]);
+            playWav(note.key);
         } else {
             const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
             if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
@@ -1135,12 +1135,22 @@ function timeToFraction(time) {
     return (time - bmsC.speedcore[speedcoreIdx].time) * bmsC.speedcore[speedcoreIdx].bpm / 240 + fractionDiff(0, bmsC.speedcore[speedcoreIdx].fraction);
 }
 
-function play(buffer) {
-    if (buffer) {
-        const node = new AudioBufferSourceNode(audioCtx, { buffer: buffer });
-        node.connect(analyserNode);
-        node.start();
-        setTimeout(node => node.disconnect(), buffer.duration * 1000, node);
-        return node;
+const nodes = {};
+
+function playWav(key) {
+    if (bmsC.wavs[key]) {
+        if (nodes[key]) {
+            nodes[key].stop();
+        }
+        nodes[key] = new AudioBufferSourceNode(audioCtx, { buffer: bmsC.wavs[key] });
+        nodes[key].connect(analyserNode);
+        nodes[key].start();
+        setTimeout(node => node.disconnect(), bmsC.wavs[key].duration * 1000, nodes[key]);
+    }
+}
+
+function stopWav(key) {
+    if (nodes[key]) {
+        nodes[key].stop();
     }
 }
