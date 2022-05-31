@@ -93,6 +93,14 @@ const keys = {
     speed: [localStorage["speed-down"], localStorage["speed-up"]],
 };
 
+ctx.font = "100px serif";
+ctx.textBaseline = "middle";
+ctx.textAlign = "center";
+ctx.fillStyle = "white";
+ctx.strokeStyle = "black";
+ctx.lineWidth = 2;
+ctx.fillText("Loading...", cvs.width / 2, cvs.height / 2);
+ctx.strokeText("Loading...", cvs.width / 2, cvs.height / 2);
 const background = document.createElement('img');
 background.addEventListener('load', () => {
     ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
@@ -108,6 +116,8 @@ background.addEventListener('load', () => {
 background.src = bmsC.stagefile;
 
 loadBMS(bmsC).then(bms => {
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
     ctx.drawImage(background, 0, 0, cvs.width, cvs.height);
     ctx.font = "100px serif";
     ctx.textBaseline = "middle";
