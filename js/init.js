@@ -1,23 +1,17 @@
 "use strict";
 
-const fs = require('fs');
-const path = require('path');
 const parser = require('./parse');
+const glob = require('glob');
 
-async function* readDirR(dir) {
-    if (fs.statSync(dir).isDirectory()) {
-        for (const f of fs.readdirSync(dir)) {
-            yield* readDirR(path.join(dir, f));
-        }
-    } else if (dir.split('.').pop().match(/^(bm[sel]|pms)$/)) {
-        yield dir;
-    }
-}
-
-async function parseBMS() {
+function parseBMS() {
     const bms = {};
-    for await (const file of readDirR('public/bms')) {
-        bms[file.substr(11)] = parser(file.substr(7));
+    console.time("reading file list");
+    const files = glob.sync("public/bms/**/*.@(bm[sel]|pms)");
+    console.timeEnd("reading file list");
+    for (const file of files) {
+        console.time(file);
+        bms[file.substring(11)] = parser(file.substring(7));
+        console.timeEnd(file);
     }
     return bms;
 }

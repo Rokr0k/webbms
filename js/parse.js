@@ -139,7 +139,6 @@ module.exports = function (filename) {
                 path = wavProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
             }
             if (path) {
-                
                 bms.wavs[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
             }
         }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {

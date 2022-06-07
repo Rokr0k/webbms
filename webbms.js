@@ -14,13 +14,12 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(port);
 router.route(app);
-console.log(`Welcome to WebBMS! Listening on port ${port}.`);
 
-const start = new Date();
-init.parseBMS().then(bms => {
-    router.setBMS(bms);
-    const end = new Date();
-    console.log(`Reading BMS files complete! Took ${(end - start) / 1000}s.`);
-});
+const server = app.listen(port);
+process.on('SIGTERM', () => server.close());
+console.log(`Listening on port ${port}.`);
+
+console.time(`reading BMS files`);
+router.setBMS(init.parseBMS());
+console.timeEnd(`reading BMS files`);
