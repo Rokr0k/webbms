@@ -51,23 +51,27 @@ const pressC = {};
 const judgeRange = {
     0: {
         4: 0.008,
-        3: 0.016,
-        2: 0.050,
+        3: 0.030,
+        2: 0.200,
+        0: 1,
     },
     1: {
-        4: 0.016,
-        3: 0.032,
-        2: 0.100,
+        4: 0.012,
+        3: 0.040,
+        2: 0.200,
+        0: 1,
     },
     2: {
         4: 0.024,
-        3: 0.048,
-        2: 0.100,
+        3: 0.050,
+        2: 0.200,
+        0: 1,
     },
     3: {
         4: 0.032,
-        3: 0.064,
+        3: 0.060,
         2: 0.200,
+        0: 1,
     },
 };
 
@@ -282,7 +286,7 @@ function keyPress(line) {
     if (note) {
         playWav(note.key);
 
-        let judge = 0;
+        let judge = -1;
         if (autoC) {
             judge = 4;
         } else {
@@ -292,21 +296,23 @@ function keyPress(line) {
                 judge = 3;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
+            } else if (note.time - currentTime < judgeRange[bmsC.rank][0]) {
+                judge = 0;
             }
         }
-        if (judge != 0) {
+        if (judge != -1) {
             exeJudge(judge, line);
             note.executed = true;
         }
     } else {
-        const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
-        if (note) {
-            playWav(note.key);
+        const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
+        if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
+            note.executed = true;
+            gauge = Math.max(2, gauge - note.damage / 1296 * 100);
         } else {
-            const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
-            if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
-                note.executed = true;
-                gauge = Math.max(2, gauge - note.damage / 1296 * 100);
+            const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
+            if (note) {
+                playWav(note.key);
             }
         }
     }
@@ -319,21 +325,11 @@ function keyRelease(line) {
     pressC[line] = { pressed: false, time: currentTime };
 
     if (note && note.end) {
-        let judge = 0;
-        if (autoC) {
-            judge = 4;
-        } else {
-            if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
-                judge = 4;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
-                judge = 3;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
-                judge = 2;
-            } else {
-                judge = 1;
+        if (!autoC) {
+            if (Math.abs(currentTime - note.time) > judgeRange[bmsC.rank][2]) {
+                exeJudge(1, line);
             }
         }
-        exeJudge(judge, line);
         note.executed = true;
     }
 }
@@ -376,6 +372,9 @@ function exeJudge(judge, line) {
         case 1:
             combo = 0;
             gauge = Math.max(2, gauge - 6);
+            break;
+        case 0:
+            gauge = Math.max(2, gauge - 2);
             break;
     }
 }
@@ -923,6 +922,7 @@ function draw() {
     for (let i = 0; i < 3; i++) {
         if (prevJudge[i].time + 1 > currentTime) {
             switch (prevJudge[i].judge) {
+                case 0:
                 case 1:
                     ctx.fillStyle = colorScheme.poor;
                     ctx.fillText(`POOR`, cvs.width / 3 + cvs.width * i / 6, cvs.height * 3 / 4);

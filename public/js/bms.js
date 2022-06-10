@@ -63,24 +63,28 @@ const judgeRange = {
         4: 0.024,
         3: 0.040,
         2: 0.200,
+        0: 1,
     },
     1: {
         5: 0.015,
         4: 0.030,
         3: 0.060,
         2: 0.200,
+        0: 1,
     },
     2: {
         5: 0.018,
         4: 0.040,
         3: 0.100,
         2: 0.200,
+        0: 1,
     },
     3: {
         5: 0.021,
         4: 0.060,
         3: 0.120,
         2: 0.200,
+        0: 1,
     },
 };
 
@@ -344,7 +348,7 @@ function keyPress(line) {
     if (note) {
         playWav(note.key);
 
-        let judge = 0;
+        let judge = -1;
         if (autoC) {
             judge = 5;
         } else {
@@ -356,21 +360,23 @@ function keyPress(line) {
                 judge = 3;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
+            } else if(note.time - currentTime < judgeRange[bmsC.rank][0]) {
+                judge = 0;
             }
         }
-        if (judge != 0) {
+        if (judge != -1) {
             exeJudge(judge);
             note.executed = true;
         }
     } else {
-        const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
-        if (note) {
-            playWav(note.key);
+        const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
+        if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
+            note.executed = true;
+            gauge = Math.max(2, gauge - note.damage / 1296 * 100);
         } else {
-            const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
-            if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
-                note.executed = true;
-                gauge = Math.max(2, gauge - note.damage / 1296 * 100);
+            const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
+            if (note) {
+                playWav(note.key);
             }
         }
     }
@@ -383,23 +389,11 @@ function keyRelease(line) {
     pressC[line] = { pressed: false, time: currentTime };
 
     if (note && note.end) {
-        let judge = 0;
-        if (autoC) {
-            judge = 5;
-        } else {
-            if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][5]) {
-                judge = 5;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][4]) {
-                judge = 4;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
-                judge = 3;
-            } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
-                judge = 2;
-            } else {
-                judge = 1;
+        if (!autoC) {
+            if (Math.abs(currentTime - note.time) > judgeRange[bmsC.rank][2]) {
+                exeJudge(1);
             }
         }
-        exeJudge(judge);
         note.executed = true;
     }
 }
@@ -425,11 +419,14 @@ function exeJudge(judge) {
             break;
         case 2:
             combo = 0;
-            gauge = Math.max(2, gauge - 4);
+            gauge = Math.max(2, gauge - 2);
             break;
         case 1:
             combo = 0;
             gauge = Math.max(2, gauge - 6);
+            break;
+        case 0:
+            gauge = Math.max(2, gauge - 2);
             break;
     }
 }
@@ -731,6 +728,7 @@ function draw() {
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
                 switch (prevJudge) {
+                    case 0:
                     case 1:
                         ctx.fillStyle = colorScheme.poor;
                         ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
@@ -1119,6 +1117,7 @@ function draw() {
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
                 switch (prevJudge) {
+                    case 0:
                     case 1:
                         ctx.fillStyle = colorScheme.poor;
                         ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
