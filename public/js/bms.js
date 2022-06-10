@@ -49,7 +49,7 @@ let speedcoreIdx;
 const bmpC = { 0: undefined, 1: undefined };
 let poorBmpC;
 
-let prevJudge = 0;
+let prevJudge = -1;
 let prevJudgeTime = 0;
 let combo = 0;
 let gauge = 20;
@@ -360,7 +360,7 @@ function keyPress(line) {
                 judge = 3;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
-            } else if(note.time - currentTime < judgeRange[bmsC.rank][0]) {
+            } else if (note.time - currentTime < judgeRange[bmsC.rank][0]) {
                 judge = 0;
             }
         }

@@ -41,7 +41,7 @@ let speedcoreIdx;
 const bmpC = { 0: undefined, 1: undefined };
 let poorBmpC;
 
-let prevJudge = { 0: { judge: 0, time: 0 }, 1: { judge: 0, time: 0 }, 2: { judge: 0, time: 0 } };
+let prevJudge = { 0: { judge: -1, time: 0 }, 1: { judge: -1, time: 0 }, 2: { judge: -1, time: 0 } };
 let combo = 0;
 let gauge = 20;
 let exScore = 0;
