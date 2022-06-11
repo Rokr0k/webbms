@@ -20,6 +20,8 @@ const server = app.listen(port);
 process.on('SIGTERM', () => server.close());
 console.log(`Listening on port ${port}.`);
 
-console.time(`reading BMS files`);
-router.setBMS(init.parseBMS());
-console.timeEnd(`reading BMS files`);
+(async () => {
+    console.time(`reading BMS files`);
+    router.setBMS(await init.parseBMS());
+    console.timeEnd(`reading BMS files`);
+})();
