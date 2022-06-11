@@ -338,10 +338,8 @@ module.exports = function (filename) {
     for (const note of notes) {
         const core = bms.speedcore.filter(s => s.fraction < note.fraction || (s.inclusive && s.fraction == note.fraction)).reverse()[0];
         bms.notes.push({ ...note, time: fractionDiff(bms.signatures, core.fraction, note.fraction) * (core.bpm == 0 ? 0 : 240 / core.bpm) + core.time, executed: false });
-        if (note.type == 'not') {
-            bms.noteCnt++;
-        }
     }
+    bms.noteCnt = bms.notes.filter(note => note.type == 'not' && !note.end).length;
     return bms;
 }
 
