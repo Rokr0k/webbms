@@ -565,7 +565,7 @@ function draw() {
                     }
                 }
             }
-            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
+            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.end && !note.executed) || (note.type == 'bom' && !note.executed))) {
                 if (note.type == 'not') {
                     const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     const y2 = y1 + noteSize;
@@ -858,7 +858,7 @@ function draw() {
                     }
                 }
             }
-            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.executed) || (note.type == 'bom' && !note.executed))) {
+            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.end && !note.executed) || (note.type == 'bom' && !note.executed))) {
                 if (note.type == 'not') {
                     const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
                     const y2 = y1 + noteSize;
