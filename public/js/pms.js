@@ -1085,6 +1085,8 @@ function loadBMS(bms) {
                     image.src = bms.bmps[key];
                     image.addEventListener('load', () => {
                         const buffer = document.createElement('canvas');
+                        buffer.width = image.width;
+                        buffer.height = image.height;
                         const bufferCtx = buffer.getContext('2d');
                         bufferCtx.drawImage(image, 0, 0);
                         const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
