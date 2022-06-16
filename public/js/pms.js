@@ -53,25 +53,21 @@ const judgeRange = {
         4: 0.015,
         3: 0.030,
         2: 0.200,
-        0: 1,
     },
     1: {
         4: 0.020,
         3: 0.040,
         2: 0.200,
-        0: 1,
     },
     2: {
         4: 0.025,
         3: 0.050,
         2: 0.200,
-        0: 1,
     },
     3: {
         4: 0.030,
         3: 0.060,
         2: 0.200,
-        0: 1,
     },
 };
 
@@ -296,8 +292,6 @@ function keyPress(line) {
                 judge = 3;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
-            } else if (note.time - currentTime < judgeRange[bmsC.rank][0]) {
-                judge = 0;
             }
         }
         if (judge != -1) {
@@ -958,7 +952,6 @@ function draw() {
     for (let i = 0; i < 3; i++) {
         if (prevJudge[i].time + 1 > currentTime) {
             switch (prevJudge[i].judge) {
-                case 0:
                 case 1:
                     ctx.fillStyle = colorScheme.poor;
                     ctx.fillText(`POOR`, cvs.width / 3 + cvs.width * i / 6, cvs.height * 3 / 4);
