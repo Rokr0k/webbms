@@ -63,24 +63,28 @@ const judgeRange = {
         4: 0.024,
         3: 0.040,
         2: 0.200,
+        0: 1,
     },
     1: {
         5: 0.015,
         4: 0.030,
         3: 0.060,
         2: 0.200,
+        0: 1,
     },
     2: {
         5: 0.018,
         4: 0.040,
         3: 0.100,
         2: 0.200,
+        0: 1,
     },
     3: {
         5: 0.021,
         4: 0.060,
         3: 0.120,
         2: 0.200,
+        0: 1,
     },
 };
 
@@ -356,6 +360,8 @@ function keyPress(line) {
                 judge = 3;
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
+            } else if (note.time - currentTime < judgeRange[bmsC.rank][0]) {
+                judge = 0;
             }
         }
         if (judge != -1) {
@@ -418,6 +424,9 @@ function exeJudge(judge) {
         case 1:
             combo = 0;
             gauge = Math.max(2, gauge - 6);
+            break;
+        case 0:
+            gauge = Math.max(2, gauge - 2);
             break;
     }
 }
@@ -719,6 +728,7 @@ function draw() {
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
                 switch (prevJudge) {
+                    case 0:
                     case 1:
                         ctx.fillStyle = colorScheme.poor;
                         ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
@@ -1107,6 +1117,7 @@ function draw() {
                 ctx.textBaseline = "middle";
                 ctx.textAlign = "center";
                 switch (prevJudge) {
+                    case 0:
                     case 1:
                         ctx.fillStyle = colorScheme.poor;
                         ctx.fillText(`POOR ${combo}`, 530 / 2, cvs.height * 3 / 4);
