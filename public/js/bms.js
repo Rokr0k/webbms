@@ -300,16 +300,19 @@ function update() {
                         keyRelease(note.line);
                     } else {
                         keyPress(note.line);
-                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.time > note.time && !n.executed)[0];
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
                         if (!next || !next.end) {
                             keyRelease(note.line);
                         }
                     }
                 } else {
-                    if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
+                    if (note.end && note.lazy != -1) {
+                        exeJudge(note.lazy);
+                        note.executed = true;
+                    } else if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
                         note.executed = true;
                         exeJudge(1);
-                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.time > note.time && !n.executed)[0];
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
                         if (next && next.end) {
                             next.executed = true;
                         }
@@ -361,11 +364,21 @@ function keyPress(line) {
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
             } else if (note.time - currentTime < judgeRange[bmsC.rank][0]) {
-                judge = 0;
+                exeJudge(0);
             }
         }
         if (judge != -1) {
-            exeJudge(judge);
+            const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
+            if (next && next.end) {
+                if (judge > 2) {
+                    next.lazy = judge;
+                } else {
+                    next.executed = true;
+                    exeJudge(judge);
+                }
+            } else {
+                exeJudge(judge);
+            }
             note.executed = true;
         }
     } else {
@@ -392,6 +405,8 @@ function keyRelease(line) {
         if (!autoC) {
             if (Math.abs(currentTime - note.time) > judgeRange[bmsC.rank][2]) {
                 exeJudge(1);
+            } else {
+                exeJudge(note.lazy);
             }
         }
         note.executed = true;
@@ -426,7 +441,7 @@ function exeJudge(judge) {
             gauge = Math.max(2, gauge - 6);
             break;
         case 0:
-            gauge = Math.max(2, gauge - 2);
+            gauge = Math.max(2, gauge - 4);
             break;
     }
 }
@@ -1266,9 +1281,7 @@ function loadBMS(bms) {
                     fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 });
             }
-        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
-            bms.wavs = wavs;
-        }).then(() => resolve(bms));
+        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => bms.wavs = wavs).then(() => bms.notes = bms.notes.map(note => note.end ? { ...note, lazy: -1 } : note)).then(() => resolve(bms));
     });
 }
 

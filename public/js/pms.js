@@ -244,6 +244,10 @@ function update() {
                         }
                     }
                 } else {
+                    if (note.end && note.lazy != -1) {
+                        exeJudge(note.lazy);
+                        note.executed = true;
+                    }
                     if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
                         note.executed = true;
                         exeJudge(1);
@@ -297,11 +301,21 @@ function keyPress(line) {
             } else if (Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][2]) {
                 judge = 2;
             } else if (note.time - currentTime < judgeRange[bmsC.rank][0]) {
-                judge = 0;
+                exeJudge(0);
             }
         }
         if (judge != -1) {
-            exeJudge(judge, line);
+            const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction, !n.executed)[0];
+            if (next && next.end) {
+                if (judge > 2) {
+                    next.lazy = judge;
+                } else {
+                    exeJudge(judge, line);
+                    next.executed = true;
+                }
+            } else {
+                exeJudge(judge, line);
+            }
             note.executed = true;
         }
     } else {
@@ -328,6 +342,8 @@ function keyRelease(line) {
         if (!autoC) {
             if (Math.abs(currentTime - note.time) > judgeRange[bmsC.rank][2]) {
                 exeJudge(1, line);
+            } else {
+                exeJudge(note.lazy, line);
             }
         }
         note.executed = true;
@@ -1128,9 +1144,7 @@ function loadBMS(bms) {
                     fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 });
             }
-        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => {
-            bms.wavs = wavs;
-        }).then(() => resolve(bms));
+        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => bms.wavs = wavs).then(() => bms.notes = bms.notes.map(note => note.end ? { ...note, lazy: -1 } : note)).then(() => resolve(bms));
     });
 }
 
