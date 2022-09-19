@@ -408,6 +408,8 @@ function keyRelease(line) {
             } else {
                 exeJudge(note.lazy);
             }
+        } else {
+            exeJudge(note.lazy);
         }
         note.executed = true;
     }

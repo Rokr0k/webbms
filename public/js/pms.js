@@ -238,7 +238,7 @@ function update() {
                         keyRelease(note.line);
                     } else {
                         keyPress(note.line);
-                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.time > note.time && !n.executed)[0];
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
                         if (!next || !next.end) {
                             keyRelease(note.line);
                         }
@@ -247,11 +247,10 @@ function update() {
                     if (note.end && note.lazy != -1) {
                         exeJudge(note.lazy);
                         note.executed = true;
-                    }
-                    if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
+                    } else if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
                         note.executed = true;
                         exeJudge(1);
-                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.time > note.time && !n.executed)[0];
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
                         if (next && next.end) {
                             next.executed = true;
                         }
@@ -305,13 +304,13 @@ function keyPress(line) {
             }
         }
         if (judge != -1) {
-            const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction, !n.executed)[0];
+            const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
             if (next && next.end) {
                 if (judge > 2) {
                     next.lazy = judge;
                 } else {
-                    exeJudge(judge, line);
                     next.executed = true;
+                    exeJudge(judge, line);
                 }
             } else {
                 exeJudge(judge, line);
@@ -345,6 +344,8 @@ function keyRelease(line) {
             } else {
                 exeJudge(note.lazy, line);
             }
+        } else {
+            exeJudge(note.lazy, line);
         }
         note.executed = true;
     }
