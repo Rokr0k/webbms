@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require('express');
+const fs = require('fs');
 const app = express();
 const router = require('./router/router');
 const init = require('./js/init');
@@ -16,9 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 router.route(app);
 
-const server = app.listen(port);
-process.on('SIGTERM', () => server.close());
-console.log(`Listening on port ${port}.`);
+require('http').createServer(app).listen(port);
 
 (async () => {
     console.time(`reading BMS files`);
