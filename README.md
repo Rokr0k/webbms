@@ -5,7 +5,7 @@ BMS streaming application based on Web Audio API and HTML5 Canvas.
 
 # How to run
 
-Put BMS files in `public/bms/` directory (symlinks available), and type
+Put BMS files in `public/bms/` directory (symlinks available on unix), and type
 ```sh
 npm start
 ```
@@ -16,6 +16,23 @@ If you want to open the server on different port, create a file named `.env` and
 PORT=[Port Number]
 ```
 inside it.
+
+For HTTPS connection, add
+```env
+SIGNATURE=[Certification Method]
+DOMAIN=[Domain]
+```
+to `.env`.
+For now, only `letsencrypt` is available.
+
+To refresh the list, you can simply
+```sh
+./refresh.sh  # Unix
+```
+or
+```posh
+.\refresh.ps1  # Windows
+```
 
 ## Warning
 
