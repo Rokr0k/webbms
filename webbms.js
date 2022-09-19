@@ -30,8 +30,16 @@ switch (process.env.SECURITY) {
         break;
 }
 
-(async () => {
+async function readBMS() {
     console.time(`reading BMS files`);
     router.setBMS(await init.parseBMS());
     console.timeEnd(`reading BMS files`);
-})();
+}
+
+readBMS();
+
+fs.watch("refresh", (eventType, filename) => {
+    if (eventType == "change") {
+        readBMS();
+    }
+});
