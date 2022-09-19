@@ -18,6 +18,17 @@ app.use(express.urlencoded({ extended: true }));
 router.route(app);
 
 require('http').createServer(app).listen(port);
+switch (process.env.SECURITY) {
+    case 'letsencrypt':
+        if (process.env.DOMAIN) {
+            require('https').createServer({
+                ca: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN}/fullchain.pem`),
+                key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN}/privkey.pem`),
+                cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN}/cert.pem`),
+            }, app).listen(443);
+        }
+        break;
+}
 
 (async () => {
     console.time(`reading BMS files`);
