@@ -38,8 +38,20 @@ async function readBMS() {
 
 readBMS();
 
-fs.watch("refresh", (eventType, filename) => {
-    if (eventType == "change") {
-        readBMS();
+fs.access("refresh", fs.constants.F_OK, error => {
+    if (error) {
+        fs.open("refresh", "w", () => {
+            fs.watch("refresh", eventType => {
+                if (eventType == "change") {
+                    readBMS();
+                }
+            });
+        });
+    } else {
+        fs.watch("refresh", eventType => {
+            if (eventType == "change") {
+                readBMS();
+            }
+        });
     }
 });

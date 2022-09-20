@@ -1,1 +1,1 @@
-echo "" > refresh
+(ls refresh).LastWriteTime = Get-Date
