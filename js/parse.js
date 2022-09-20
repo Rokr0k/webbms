@@ -77,7 +77,7 @@ module.exports = function (filename) {
                 return;
             }
             bms.rank = parseInt(match[1]);
-        }).when(/^#TOTAL (\d+)$/i, match => {
+        }).when(/^#TOTAL (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;
             }
