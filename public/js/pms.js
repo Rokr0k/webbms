@@ -37,7 +37,6 @@ let volumeNode;
 let analyserNode;
 let playing = false;
 let startTime;
-let speedcoreIdx;
 const bmpC = { 0: undefined, 1: undefined };
 let poorBmpC;
 
@@ -132,8 +131,7 @@ loadBMS(bmsC).then(bms => {
     ctx.fillText("Press Space to Start", cvs.width / 2, cvs.height / 2);
     ctx.strokeText("Press Space to Start", cvs.width / 2, cvs.height / 2);
     bmsC = bms;
-    speedcoreIdx = 0;
-    poorBmpC = bmsC.bmps['00'];
+    poorBmpC = bmsC.bmpV['00'];
 
     window.addEventListener('keydown', e => {
         if (!playing && e.code == 'Space') {
@@ -238,7 +236,7 @@ function update() {
                         keyRelease(note.line);
                     } else {
                         keyPress(note.line);
-                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos > note.pos && !n.executed)[0];
                         if (!next || !next.end) {
                             keyRelease(note.line);
                         }
@@ -250,7 +248,7 @@ function update() {
                     } else if (currentTime - note.time > judgeRange[bmsC.rank][2]) {
                         note.executed = true;
                         exeJudge(1);
-                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
+                        const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos > note.pos && !n.executed)[0];
                         if (next && next.end) {
                             next.executed = true;
                         }
@@ -267,9 +265,9 @@ function update() {
                 break;
             case 'bmp':
                 if (note.layer < 0) {
-                    poorBmpC = bmsC.bmps[note.bmp];
+                    poorBmpC = bmsC.bmpV[note.key];
                 } else {
-                    bmpC[note.layer] = bmsC.bmps[note.bmp];
+                    bmpC[note.layer] = bmsC.bmpV[note.key];
                     if (bmpC[note.layer] instanceof HTMLVideoElement) {
                         bmpC[note.layer].play();
                     }
@@ -304,7 +302,7 @@ function keyPress(line) {
             }
         }
         if (judge != -1) {
-            const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction > note.fraction && !n.executed)[0];
+            const next = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos > note.pos && !n.executed)[0];
             if (next && next.end) {
                 if (judge > 2) {
                     next.lazy = judge;
@@ -321,7 +319,7 @@ function keyPress(line) {
         const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
         if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
             note.executed = true;
-            gauge = Math.max(2, gauge - note.damage / 1296 * 100);
+            gauge = Math.max(2, gauge - parseInt(note.key, 36) / 1296 * 100);
         } else {
             const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
             if (note) {
@@ -428,7 +426,6 @@ const colorScheme = {
 
 let scrollSpeedVar = parseInt(localStorage["speed"]);
 
-
 const pressIndicateDuration = 0.1;
 
 function draw() {
@@ -439,11 +436,8 @@ function draw() {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     window.requestAnimationFrame(draw);
     const currentTime = audioCtx.currentTime - startTime;
-    while (speedcoreIdx + 1 < bmsC.speedcore.length && bmsC.speedcore[speedcoreIdx + 1].time < currentTime) {
-        speedcoreIdx++;
-    }
-    const fraction = timeToFraction(currentTime);
-    const bpmC = bmsC.speedcore[speedcoreIdx].bpm == 0 && speedcoreIdx > 0 ? bmsC.speedcore[speedcoreIdx - 1].bpm : bmsC.speedcore[speedcoreIdx].bpm;
+    const pos = timeToPos(currentTime);
+    const bpmC = (bmsC.speedcore.filter(core => core.bpm != 0 && (core.time < currentTime || core.inclusive && core.time <= currentTime)).at(-1) || bmsC.speedcore[0]).bpm;
     const bgaSize = cvs.width / 6;
     const bgaRatio = [0, 0];
     if (bmpC[0] instanceof HTMLVideoElement) {
@@ -490,8 +484,8 @@ function draw() {
 
     ctx.fillStyle = colorScheme.gear;
     ctx.fillRect(cvs.width / 4, cvs.height - noteWidth / 2, cvs.width / 2, noteWidth / 2);
-    for (let i = 0; i <= Math.ceil(bmsC.notes[bmsC.notes.length - 1].fraction); i++) {
-        const y = (fractionDiff(0, i) - fraction) * cvs.height * scrollSpeedVar / 10;
+    for (let i = 0; i < 1000; i++) {
+        const y = (f2p(i) - pos) * cvs.height * scrollSpeedVar / 40;
         ctx.fillRect(cvs.width / 4, cvs.height - y, cvs.width / 2, 5);
     }
 
@@ -549,7 +543,7 @@ function draw() {
             }
             for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.end && !note.executed) || (note.type == 'bom' && !note.executed))) {
                 if (note.type == 'not') {
-                    const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
                     const y2 = y1 + noteWidth / 2;
                     if (y1 > cvs.height) {
                         break;
@@ -603,7 +597,7 @@ function draw() {
                     }
                 }
                 else if (note.type == 'bom') {
-                    const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
                     const y2 = y1 + noteWidth / 2;
                     if (y1 > cvs.height) {
                         break;
@@ -641,8 +635,9 @@ function draw() {
                 }
             }
             for (const note of bmsC.notes.filter(n => n.type == 'not' && n.end && !n.executed)) {
-                const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10 + noteWidth / 2;
-                const y2 = Math.max(0, (fractionDiff(0, (bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction < note.fraction).reverse()[0] || { fraction: 0 }).fraction) - fraction) * cvs.height * scrollSpeedVar / 10) + noteWidth / 2;
+                const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
+                const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40 + noteWidth / 2;
+                const y2 = Math.max(0, (start.pos - pos) * cvs.height * scrollSpeedVar / 40) + noteWidth / 2;
                 if (y2 > cvs.height) {
                     continue;
                 }
@@ -764,7 +759,7 @@ function draw() {
             }
             for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.end && !note.executed) || (note.type == 'bom' && !note.executed))) {
                 if (note.type == 'not') {
-                    const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
                     const y2 = y1 + noteWidth / 2;
                     if (y1 > cvs.height) {
                         break;
@@ -818,7 +813,7 @@ function draw() {
                     }
                 }
                 else if (note.type == 'bom') {
-                    const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10;
+                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
                     const y2 = y1 + noteWidth / 2;
                     if (y1 > cvs.height) {
                         break;
@@ -856,8 +851,9 @@ function draw() {
                 }
             }
             for (const note of bmsC.notes.filter(n => n.type == 'not' && n.end && !n.executed)) {
-                const y1 = (fractionDiff(0, note.fraction) - fraction) * cvs.height * scrollSpeedVar / 10 + noteWidth / 2;
-                const y2 = Math.max(0, (fractionDiff(0, (bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.fraction < note.fraction).reverse()[0] || { fraction: 0 }).fraction) - fraction) * cvs.height * scrollSpeedVar / 10) + noteWidth / 2;
+                const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
+                const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40 + noteWidth / 2;
+                const y2 = Math.max(0, (start.pos - pos) * cvs.height * scrollSpeedVar / 40) + noteWidth / 2;
                 if (y2 > cvs.height) {
                     continue;
                 }
@@ -1093,20 +1089,20 @@ function gamepadInput() {
 
 function loadBMS(bms) {
     return new Promise(resolve => {
-        for (const key of Object.keys(bms.bmps)) {
-            switch (bms.bmps[key].split('.').pop()) {
+        for (const key of Object.keys(bms.bmpV)) {
+            switch (bms.bmpV[key].split('.').pop()) {
                 case 'mp4':
                 case 'webm': {
-                    const video = bms.bmps[key];
-                    bms.bmps[key] = document.createElement('video');
-                    bms.bmps[key].src = video;
-                    document.getElementById('bga').appendChild(bms.bmps[key]);
+                    const video = bms.bmpV[key];
+                    bms.bmpV[key] = document.createElement('video');
+                    bms.bmpV[key].src = video;
+                    document.getElementById('bga').appendChild(bms.bmpV[key]);
                     break;
                 }
                 case 'png':
                 case 'jpg': {
                     const image = document.createElement('img');
-                    image.src = bms.bmps[key];
+                    image.src = bms.bmpV[key];
                     image.addEventListener('load', () => {
                         const buffer = document.createElement('canvas');
                         buffer.width = image.width;
@@ -1120,32 +1116,32 @@ function loadBMS(bms) {
                             }
                         }
                         bufferCtx.putImageData(imageData, 0, 0);
-                        bms.bmps[key] = document.createElement('img');
+                        bms.bmpV[key] = document.createElement('img');
                         console.log(buffer.toDataURL());
-                        bms.bmps[key].src = buffer.toDataURL();
-                        document.getElementById('bga').appendChild(bms.bmps[key]);
+                        bms.bmpV[key].src = buffer.toDataURL();
+                        document.getElementById('bga').appendChild(bms.bmpV[key]);
                     });
                     break;
                 }
             }
         }
-        Promise.all(Object.keys(bms.bmps).filter(key => bms.bmps[key] instanceof HTMLVideoElement).map(key => {
+        Promise.all(Object.keys(bms.bmpV).filter(key => bms.bmpV[key] instanceof HTMLVideoElement).map(key => {
             new Promise(res => {
                 (function wait(key) {
-                    if (bms.bmps[key].readyState == bms.bmps[key].HAVE_ENOUGH_DATA) {
+                    if (bms.bmpV[key].readyState == bms.bmpV[key].HAVE_ENOUGH_DATA) {
                         res();
                     } else {
                         setTimeout(wait, 0, key);
                     }
                 })(key);
             });
-        })).then(() => Promise.all(Object.keys(bms.wavs).map(wav => {
+        })).then(() => Promise.all(Object.keys(bms.wavV).map(wav => {
             if (wav.length > 0) {
                 return new Promise(res => {
-                    fetch(bms.wavs[wav]).then(response => response.arrayBuffer()).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
+                    fetch(bms.wavV[wav]).then(response => response.arrayBuffer()).then(buffer => res({ key: wav, buffer: buffer })).catch(_ => res({}));
                 });
             }
-        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => bms.wavs = wavs).then(() => bms.notes = bms.notes.map(note => note.end ? { ...note, lazy: -1 } : note)).then(() => resolve(bms));
+        }))).then(wavs => wavs.reduce((prev, wav) => (prev[wav.key] = wav.buffer, prev), {})).then(wavs => bms.wavV = wavs).then(() => bms.notes = bms.notes.map(note => note.end ? { ...note, lazy: -1 } : note)).then(() => resolve(bms));
     });
 }
 
@@ -1155,50 +1151,31 @@ function readyBMS() {
         volumeNode = new GainNode(audioCtx, { gain: 1 });
         analyserNode = new AnalyserNode(audioCtx, { fftSize: 512 });
         analyserNode.connect(volumeNode).connect(audioCtx.destination);
-        Promise.all(Object.keys(bmsC.wavs).filter(wav => bmsC.wavs[wav]).map(wav => audioCtx.decodeAudioData(bmsC.wavs[wav]).then(buffer => bmsC.wavs[wav] = buffer))).then(() => resolve());
+        Promise.all(Object.keys(bmsC.wavV).filter(wav => bmsC.wavV[wav]).map(wav => audioCtx.decodeAudioData(bmsC.wavV[wav]).then(buffer => bmsC.wavV[wav] = buffer))).then(() => resolve());
     });
 }
 
-function fractionDiff(a, b) {
-    let negative = false;
-    if (a > b) {
-        [a, b] = [b, a];
-        negative = true;
-    }
-    const aM = Math.floor(a);
-    const bM = Math.floor(b);
-    const aF = a - aM;
-    const bF = b - bM;
-    let sum;
-    if (aM == bM) {
-        sum = (bF - aF) * bmsC.signatures[aM];
-    } else {
-        sum = (1 - aF) * bmsC.signatures[aM] + bF * bmsC.signatures[bM];
-        for (let i = aM + 1; i < bM; i++) {
-            sum += bmsC.signatures[i];
-        }
-    }
-    if (negative) {
-        sum = -sum;
-    }
-    return sum;
+function f2p(f) {
+    const measure = Math.floor(f);
+    return [...new Array(measure).keys()].reduce((p, m) => p + (bmsC.signatures[m] || 1), (f - measure) * (bmsC.signatures[measure] || 1)) * 4;
 }
 
-function timeToFraction(time) {
-    return (time - bmsC.speedcore[speedcoreIdx].time) * bmsC.speedcore[speedcoreIdx].bpm / 240 + fractionDiff(0, bmsC.speedcore[speedcoreIdx].fraction);
+function timeToPos(time) {
+    const core = bmsC.speedcore.filter(core => core.time < time || core.inclusive && core.time <= time).at(-1) || bmsC.speedcore[0];
+    return core.pos + (time - core.time) * core.bpm / 60;
 }
 
 const nodes = {};
 
 function playWav(key) {
-    if (bmsC.wavs[key]) {
+    if (bmsC.wavV[key]) {
         if (nodes[key]) {
             nodes[key].stop();
         }
-        nodes[key] = new AudioBufferSourceNode(audioCtx, { buffer: bmsC.wavs[key] });
+        nodes[key] = new AudioBufferSourceNode(audioCtx, { buffer: bmsC.wavV[key] });
         nodes[key].connect(analyserNode);
         nodes[key].start();
-        setTimeout(node => node.disconnect(), bmsC.wavs[key].duration * 1000, nodes[key]);
+        setTimeout(node => node.disconnect(), bmsC.wavV[key].duration * 1000, nodes[key]);
     }
 }
 

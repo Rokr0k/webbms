@@ -19,28 +19,29 @@ module.exports = function (filename) {
         total: 0,
         noteCnt: 0,
         rank: 2,
-        wavs: {},
-        bmps: {},
-        signatures: Array(1000).fill(1),
+        wavV: {},
+        bmpV: {},
+        signatures: {},
         notes: [],
-        speedcore: [{ fraction: 0, time: 0, bpm: 130, inclusive: true }],
+        speedcore: [],
     };
     if (filename.match(/^.*\.pms$/i)) {
         bms.game = 1;
     }
     let lnobj = [];
-    const bpms = {};
-    const stops = {};
-    const lastObj = {
-        '51': false, '52': false, '53': false, '54': false, '55': false, '56': false, '57': false, '58': false, '59': false,
-        '61': false, '62': false, '63': false, '64': false, '65': false, '66': false, '67': false, '68': false, '69': false,
-    };
+    const bpmV = {};
+    const stopV = {};
     const wavProc = [".wav", ".mp3", ".ogg", ".webm", ".flac"];
     const bmpProc = [".png", ".jpg", ".mp4", ".webm"];
     let randomGenerated = 0;
     const ifStack = [false];
+    const bgms = [];
+    const bmps = [];
+    let startBPM = 130;
     const speedcore = [];
     const notes = [];
+    const longs = [];
+    const miscs = [];
     text.split(/\r?\n/g).forEach(line => {
         const skipped = ifStack[ifStack.length - 1];
         matchCascade(line).when(/^#RANDOM (\d+)$/i, match => {
@@ -139,7 +140,7 @@ module.exports = function (filename) {
                 path = wavProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
             }
             if (path) {
-                bms.wavs[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
+                bms.wavV[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
             }
         }).when(/^#BMP([0-9A-Z]{2}) (.*)$/i, match => {
             if (skipped) {
@@ -150,23 +151,23 @@ module.exports = function (filename) {
                 path = bmpProc.map(ext => path.substring(0, path.lastIndexOf('.')) + ext).filter(path => fs.existsSync('public/' + path))[0];
             }
             if (path) {
-                bms.bmps[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
+                bms.bmpV[match[1]] = encodeURIComponent(path).replace(/%2F/ig, '/');
             }
         }).when(/^#BPM (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;
             }
-            bms.speedcore[0].bpm = parseFloat(match[1]);
+            startBPM = parseFloat(match[1]);
         }).when(/^#BPM([0-9A-Z]{2}) (\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;
             }
-            bpms[match[1]] = parseFloat(match[2]);
+            bpmV[match[1]] = parseFloat(match[2]);
         }).when(/^#STOP([0-9A-Z]{2}) (\d+)$/i, match => {
             if (skipped) {
                 return;
             }
-            stops[match[1]] = parseInt(match[2]) / 192;
+            stopV[match[1]] = parseInt(match[2]) / 192;
         }).when(/^#(\d{3})02:(\d+(\.\d+)?(E\+\d+)?)$/i, match => {
             if (skipped) {
                 return;
@@ -179,167 +180,106 @@ module.exports = function (filename) {
             const measure = parseInt(match[1]);
             const length = Math.floor(match[3].length / 2);
             for (let i = 0; i < length; i++) {
-                const fraction = i / length;
+                const fraction = measure + i / length;
                 const key = match[3].substring(i * 2, i * 2 + 2);
-                switch (match[2]) {
-                    case '01':
-                        if (key == '00') {
-                            break;
+                if (key == '00') {
+                    continue;
+                }
+                switch (match[2][0]) {
+                    case '0':
+                        switch (match[2][1]) {
+                            case '1':
+                                bgms.push({ fraction, key });
+                                break;
+                            case '3':
+                                speedcore.push({ fraction, type: 'bpm', bpm: parseInt(key, 16) });
+                                break;
+                            case '4':
+                                bmps.push({ fraction, key, layer: 0 });
+                                break;
+                            case '6':
+                                bmps.push({ fraction, key, layer: -1 });
+                                break;
+                            case '7':
+                                bmps.push({ fraction, key, layer: 1 });
+                                break;
+                            case '8':
+                                speedcore.push({ fraction, type: 'bpm', bpm: bpmV[key] });
+                                break;
+                            case '9':
+                                speedcore.push({ fraction, type: 'stp', stop: stopV[key] });
+                                break;
                         }
-                        notes.push({ fraction: measure + fraction, type: 'bgm', key: key });
                         break;
-                    case '03':
-                        if (key == '00') {
-                            break;
-                        }
-                        speedcore.push({ fraction: measure + fraction, type: 'bpm', bpm: parseInt(key, 16) });
+                    case '1':
+                    case '2':
+                        notes.push({ fraction, line: match[2], key });
                         break;
-                    case '04':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'bmp', bmp: key, layer: 0 });
+                    case '3':
+                    case '4':
+                        miscs.push({ fraction, type: 'inv', line: match[2][0] - 2 + match[2][1], key });
                         break;
-                    case '06':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'bmp', bmp: key, layer: -1 });
+                    case '5':
+                    case '6':
+                        longs.push({ fraction, line: match[2][0] - 4 + match[2][1], key });
                         break;
-                    case '07':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'bmp', bmp: key, layer: 1 });
-                        break;
-                    case '08':
-                        if (key == '00') {
-                            break;
-                        }
-                        speedcore.push({ fraction: measure + fraction, type: 'bpm', bpm: bpms[key] });
-                        break;
-                    case '09':
-                        if (key == '00') {
-                            break;
-                        }
-                        speedcore.push({ fraction: measure + fraction, type: 'stp', stop: stops[key] });
-                        break;
-                    case '11':
-                    case '12':
-                    case '13':
-                    case '14':
-                    case '15':
-                    case '16':
-                    case '17':
-                    case '18':
-                    case '19':
-                    case '21':
-                    case '22':
-                    case '23':
-                    case '24':
-                    case '25':
-                    case '26':
-                    case '27':
-                    case '28':
-                    case '29':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'not', line: match[2], key: key, end: lnobj.includes(key) });
-                        break;
-                    case '31':
-                    case '32':
-                    case '33':
-                    case '34':
-                    case '35':
-                    case '36':
-                    case '37':
-                    case '38':
-                    case '39':
-                    case '41':
-                    case '42':
-                    case '43':
-                    case '44':
-                    case '45':
-                    case '46':
-                    case '47':
-                    case '48':
-                    case '49':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'inv', line: match[2][0] - 2 + match[2][1], key: key });
-                        break;
-                    case '51':
-                    case '52':
-                    case '53':
-                    case '54':
-                    case '55':
-                    case '56':
-                    case '57':
-                    case '58':
-                    case '59':
-                    case '61':
-                    case '62':
-                    case '63':
-                    case '64':
-                    case '65':
-                    case '66':
-                    case '67':
-                    case '68':
-                    case '69':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'not', line: match[2][0] - 4 + match[2][1], key: key, end: lastObj[match[2]] });
-                        lastObj[match[2]] = !lastObj[match[2]];
-                        break;
-                    case 'D1':
-                    case 'D2':
-                    case 'D3':
-                    case 'D4':
-                    case 'D5':
-                    case 'D6':
-                    case 'D7':
-                    case 'D8':
-                    case 'D9':
-                    case 'E1':
-                    case 'E2':
-                    case 'E3':
-                    case 'E4':
-                    case 'E5':
-                    case 'E6':
-                    case 'E7':
-                    case 'E8':
-                    case 'E9':
-                        if (key == '00') {
-                            break;
-                        }
-                        notes.push({ fraction: measure + fraction, type: 'bom', line: String.fromCharCode(match[2][0].charCodeAt() - 19) + match[2][1], damage: parseInt(key, 36) });
+                    case 'D':
+                    case 'E':
+                        miscs.push({ fraction, type: 'bom', line: String.fromCharCode(match[2][0].charCodeAt() - 19) + match[2][1], key });
                         break;
                 }
             }
         });
     });
-    speedcore.sort((a, b) => a.fraction - b.fraction);
-    for (const core of speedcore) {
-        const last = bms.speedcore.filter(s => s.fraction < core.fraction || (s.inclusive && s.fraction == core.fraction)).reverse()[0];
+    bms.speedcore = speedcore.sort((a, b) => a.fraction - b.fraction).reduce((speedcore, core) => {
+        const last = speedcore.at(-1);
+        const pos = f2p(bms.signatures, core.fraction);
+        const time = last.time + (last.bpm > 0 ? (pos - last.pos) * 60 / last.bpm : 0);
         switch (core.type) {
             case 'bpm':
-                bms.speedcore.push({ fraction: core.fraction, time: fractionDiff(bms.signatures, last.fraction, core.fraction) * (last.bpm == 0 ? 0 : 240 / last.bpm) + last.time, bpm: core.bpm, inclusive: true });
-                break;
+                return [...speedcore, { pos, time, bpm: core.bpm, inclusive: true }];
             case 'stp':
-                bms.speedcore.push({ fraction: core.fraction, time: fractionDiff(bms.signatures, last.fraction, core.fraction) * (last.bpm == 0 ? 0 : 240 / last.bpm) + last.time, bpm: 0, inclusive: true });
-                bms.speedcore.push({ fraction: core.fraction, time: (fractionDiff(bms.signatures, last.fraction, core.fraction) + core.stop) * (last.bpm == 0 ? 0 : 240 / last.bpm) + last.time, bpm: last.bpm, inclusive: false });
-                break;
+                return [...speedcore, { pos, time, bpm: 0, inclusive: true }, { pos, time: time + (last.bpm > 0 ? core.stop * 240 / last.bpm : 0), bpm: last.bpm, inclusive: false }];
         }
-    }
-    notes.sort((a, b) => a.fraction - b.fraction);
-    for (const note of notes) {
-        const core = bms.speedcore.filter(s => s.fraction < note.fraction || (s.inclusive && s.fraction == note.fraction)).reverse()[0];
-        bms.notes.push({ ...note, time: fractionDiff(bms.signatures, core.fraction, note.fraction) * (core.bpm == 0 ? 0 : 240 / core.bpm) + core.time, executed: false });
-    }
-    bms.noteCnt = bms.notes.filter(note => note.type == 'not' && !note.end).length;
+    }, [{ pos: 0, time: 0, bpm: startBPM, inclusive: true }]);
+    bms.notes = [
+        ...bgms.map(bgm => {
+            const pos = f2p(bms.signatures, bgm.fraction);
+            const core = bms.speedcore.filter(core => core.pos < pos || core.inclusive && core.pos <= pos).at(-1) || bms.speedcore[0];
+            const time = core.time + (core.bpm > 0 ? (pos - core.pos) * 60 / core.bpm : 0);
+            return { pos, time, type: 'bgm', key: bgm.key };
+        }),
+        ...bmps.map(bmp => {
+            const pos = f2p(bms.signatures, bmp.fraction);
+            const core = bms.speedcore.filter(core => core.pos < pos || core.inclusive && core.pos <= pos).at(-1) || bms.speedcore[0];
+            const time = core.time + (core.bpm > 0 ? (pos - core.pos) * 60 / core.bpm : 0);
+            return { pos, time, type: 'bmp', key: bmp.key, layer: bmp.layer };
+        }),
+        ...miscs.map(misc => {
+            const pos = f2p(bms.signatures, misc.fraction);
+            const core = bms.speedcore.filter(core => core.pos < pos || core.inclusive && core.pos <= pos).at(-1) || bms.speedcore[0];
+            const time = core.time + (core.bpm > 0 ? (pos - core.pos) * 60 / core.bpm : 0);
+            return { pos, time, type: misc.type, line: misc.line, key: misc.key };
+        }),
+        ...notes.sort((a, b) => a.fraction - b.fraction).map(note => {
+            const pos = f2p(bms.signatures, note.fraction);
+            const core = bms.speedcore.filter(core => core.pos < pos || core.inclusive && core.pos <= pos).at(-1) || bms.speedcore[0];
+            const time = core.time + (core.bpm > 0 ? (pos - core.pos) * 60 / core.bpm : 0);
+            return { pos, time, type: 'not', line: note.line, key: note.key, end: lnobj.includes(note.key) };
+        }),
+        ...longs.sort((a, b) => a.fraction - b.fraction).reduce((longs, long) => {
+            const pos = f2p(bms.signatures, long.fraction);
+            const core = bms.speedcore.filter(core => core.pos < pos || core.inclusive && core.pos <= pos).at(-1) || bms.speedcore[0];
+            const time = core.time + (core.bpm > 0 ? (pos - core.pos) * 60 / core.bpm : 0);
+            const last = longs.filter(n => n.line == long.line).at(-1);
+            if (last) {
+                return [...longs, { pos, time, type: 'not', line: long.line, key: long.key, end: !last.end }];
+            } else {
+                return [...longs, { pos, time, type: 'not', line: long.line, key: long.key, end: false }];
+            }
+        }, []),
+    ].sort((a, b) => a.pos - b.pos);
+    bms.noteCnt = bms.notes.filter(note => note.type == 'not').length;
     return bms;
 }
 
@@ -366,27 +306,7 @@ function matchCascade(text) {
     }
 }
 
-function fractionDiff(signatures, a, b) {
-    let negative = false;
-    if (a > b) {
-        [a, b] = [b, a];
-        negative = true;
-    }
-    const aM = Math.floor(a);
-    const bM = Math.floor(b);
-    const aF = a - aM;
-    const bF = b - bM;
-    let sum;
-    if (aM == bM) {
-        sum = (bF - aF) * signatures[aM];
-    } else {
-        sum = (1 - aF) * signatures[aM] + bF * signatures[bM];
-        for (let i = aM + 1; i < bM; i++) {
-            sum += signatures[i];
-        }
-    }
-    if (negative) {
-        sum = -sum;
-    }
-    return sum;
+function f2p(signatures, f) {
+    const measure = Math.floor(f);
+    return [...new Array(measure).keys()].reduce((p, m) => p + (signatures[m] || 1), (f - measure) * (signatures[measure] || 1)) * 4;
 }
