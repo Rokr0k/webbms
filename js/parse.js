@@ -279,7 +279,7 @@ module.exports = function (filename) {
             }
         }, []),
     ].sort((a, b) => a.pos - b.pos);
-    bms.noteCnt = bms.notes.filter(note => note.type == 'not').length;
+    bms.noteCnt = bms.notes.filter(note => note.type == 'not' && !note.end).length;
     return bms;
 }
 

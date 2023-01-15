@@ -380,14 +380,14 @@ function keyPress(line) {
             note.executed = true;
         }
     } else {
-        const note = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
-        if (note && Math.abs(currentTime - note.time) < judgeRange[bmsC.rank][3]) {
-            note.executed = true;
-            gauge = Math.max(2, gauge - parseInt(note.key, 36) / 1296 * 100);
+        const bomb = bmsC.notes.filter(n => n.type == 'bom' && n.line == line && !n.executed)[0];
+        if (bomb && Math.abs(currentTime - bomb.time) < judgeRange[bmsC.rank][3]) {
+            bomb.executed = true;
+            gauge = Math.max(2, gauge - parseInt(bomb.key, 36) / 1296 * 100);
         } else {
-            const note = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
-            if (note) {
-                playWav(note.key);
+            const inv = bmsC.notes.filter(n => n.type == 'inv' && n.line == line && !n.executed)[0];
+            if (inv) {
+                playWav(inv.key);
             }
         }
     }
@@ -541,10 +541,12 @@ function draw() {
     ctx.lineTo(cvs.width, 0);
     ctx.fill();
     ctx.closePath();
+    const p2c = p => (p - pos) * cvs.height * scrollSpeedVar / 40;
+    const limit = cvs.height / p2c(pos + 1) + pos;
     ctx.fillStyle = colorScheme.gear;
     ctx.fillRect(0, cvs.height - noteSize, gearWidth, noteSize);
-    for (let i = 0; i < 1000; i++) {
-        const y = (f2p(i) - pos) * cvs.height * scrollSpeedVar / 40;
+    for (let i = Math.max(0, Math.ceil(p2f(pos))); f2p(i) < Math.min(limit, bmsC.notes.at(-1).pos); i++) {
+        const y = p2c(f2p(i));
         ctx.fillRect(0, cvs.height - y, gearWidth, 5);
     }
     Object.keys(linesData).filter(line => bmsC.player == 3 || line[0] == '1').map(line => linesData[line].x).forEach(x => ctx.fillRect(x - 5 / 2, 0, 5, cvs.height));
@@ -566,27 +568,30 @@ function draw() {
             ctx.fillRect(linesData[line].x, cvs.height - height, linesData[line].w, height);
         }
     });
-    for (const note of bmsC.notes.filter(note => (note.type == 'not' || note.type == 'bom') && !note.executed)) {
-        const y = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
-        if (y > cvs.height) {
-            break;
-        }
+    bmsC.notes.filter(note => (note.type == 'not' || note.type == 'bom') && note.pos < limit && !note.executed).forEach(note => {
+        const y = p2c(note.pos);
         if (note.type == 'not') {
             ctx.fillStyle = linesData[note.line].c;
         } else if (note.type == 'bom') {
             ctx.fillStyle = colorScheme.mine;
         }
         ctx.fillRect(linesData[note.line].x, cvs.height - y, linesData[note.line].w, -noteSize);
-    }
+    });
+    const lastEnd = {};
     bmsC.notes.filter(note => note.type == 'not' && note.end && !note.executed).forEach(note => {
-        const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
-        const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
-        const y2 = Math.max(0, (start.pos - pos) * cvs.height * scrollSpeedVar / 40);
-        if (y2 > cvs.height) {
+        if (lastEnd[note.line]) {
             return;
         }
+        lastEnd[note.line] = note.pos >= limit;
+        const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
+        if (!start.executed && start.pos >= limit) {
+            return;
+        }
+        const y1 = p2c(note.pos);
+        const y2 = start.executed ? 0 : p2c(start.pos);
         ctx.fillStyle = linesData[note.line].c;
         ctx.fillRect(linesData[note.line].x + longNotePadding, cvs.height - y2, linesData[note.line].w - longNotePadding * 2, y2 - y1);
+        ctx.fillRect(linesData[note.line].x, cvs.height - y1, linesData[note.line].w, -noteSize);
     });
     if (bmsC.notes.filter(note => (note.type == 'bom' || note.type == 'not') && !note.executed).length == 0) {
         const r = result[Math.floor(exScore / bmsC.noteCnt / 2 * 9)];
@@ -785,6 +790,18 @@ function readyBMS() {
 function f2p(f) {
     const measure = Math.floor(f);
     return [...new Array(measure).keys()].reduce((p, m) => p + (bmsC.signatures[m] || 1), (f - measure) * (bmsC.signatures[measure] || 1)) * 4;
+}
+
+function p2f(p) {
+    p /= 4;
+    let measure = 0;
+    while (p > 0) {
+        p -= bmsC.signatures[measure++] || 1;
+    }
+    while (p < 0) {
+        p += bmsC.signatures[--measure] || 1;
+    }
+    return measure + p / (bmsC.signatures[measure] || 1);
 }
 
 function timeToPos(time) {

@@ -428,6 +428,22 @@ let scrollSpeedVar = parseInt(localStorage["speed"]);
 
 const pressIndicateDuration = 0.1;
 
+const linesData = {
+    '11': { i: 0, c: colorScheme.k0 },
+    '12': { i: 1, c: colorScheme.k1 },
+    '13': { i: 2, c: colorScheme.k2 },
+    '14': { i: 3, c: colorScheme.k3 },
+    '15': { i: 4, c: colorScheme.k4 },
+    '18': { i: 5, c: colorScheme.k3 },
+    '19': { i: 6, c: colorScheme.k2 },
+    '16': { i: 7, c: colorScheme.k1 },
+    '17': { i: 8, c: colorScheme.k0 },
+    '22': { i: 5, c: colorScheme.k3 },
+    '23': { i: 6, c: colorScheme.k2 },
+    '24': { i: 7, c: colorScheme.k1 },
+    '25': { i: 8, c: colorScheme.k0 },
+};
+
 function draw() {
     gamepadInput();
     cvs.width = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
@@ -467,464 +483,64 @@ function draw() {
 
     ctx.lineWidth = noteWidth / 20;
 
-    ctx.fillStyle = colorScheme.k0 + '50';
-    ctx.fillRect(cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillRect(noteWidth * 8 + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillStyle = colorScheme.k1 + '50';
-    ctx.fillRect(noteWidth + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillRect(noteWidth * 7 + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillStyle = colorScheme.k2 + '50';
-    ctx.fillRect(noteWidth * 2 + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillRect(noteWidth * 6 + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillStyle = colorScheme.k3 + '50';
-    ctx.fillRect(noteWidth * 3 + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillRect(noteWidth * 5 + cvs.width / 4, 0, noteWidth, cvs.height);
-    ctx.fillStyle = colorScheme.k4 + '50';
-    ctx.fillRect(noteWidth * 4 + cvs.width / 4, 0, noteWidth, cvs.height);
+    Object.keys(linesData).filter(line => line[0] == '1').forEach(line => {
+        ctx.fillStyle = linesData[line].c + '50';
+        ctx.fillRect(noteWidth * linesData[line].i + cvs.width / 4, 0, noteWidth, cvs.height);
+    });
+
+    const p2c = p => (p - pos) * cvs.height * scrollSpeedVar / 40;
+    const limit = cvs.height / p2c(pos + 1) + pos;
 
     ctx.fillStyle = colorScheme.gear;
     ctx.fillRect(cvs.width / 4, cvs.height - noteWidth / 2, cvs.width / 2, noteWidth / 2);
-    for (let i = 0; i < 1000; i++) {
-        const y = (f2p(i) - pos) * cvs.height * scrollSpeedVar / 40;
+    for (let i = Math.max(0, Math.ceil(p2f(pos))); f2p(i) < limit; i++) {
+        const y = p2c(f2p(i));
         ctx.fillRect(cvs.width / 4, cvs.height - y, cvs.width / 2, 5);
     }
 
     ctx.strokeStyle = colorScheme.background;
 
-    switch (bmsC.player) {
-        case 1:
-            for (const line of Object.keys(pressC)) {
-                let fill = 0;
-                if (pressC[line].pressed) {
-                    fill = 1;
-                } else if (currentTime < pressC[line].time + pressIndicateDuration) {
-                    fill = (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
-                }
-                if (fill > 0) {
-                    switch (line) {
-                        case '11':
-                            ctx.fillStyle = colorScheme.k0 + 'AC';
-                            ctx.fillRect(cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '12':
-                            ctx.fillStyle = colorScheme.k1 + 'AC';
-                            ctx.fillRect(noteWidth + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '13':
-                            ctx.fillStyle = colorScheme.k2 + 'AC';
-                            ctx.fillRect(noteWidth * 2 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '14':
-                            ctx.fillStyle = colorScheme.k3 + 'AC';
-                            ctx.fillRect(noteWidth * 3 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '15':
-                            ctx.fillStyle = colorScheme.k4 + 'AC';
-                            ctx.fillRect(noteWidth * 4 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '18':
-                            ctx.fillStyle = colorScheme.k3 + 'AC';
-                            ctx.fillRect(noteWidth * 5 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '19':
-                            ctx.fillStyle = colorScheme.k2 + 'AC';
-                            ctx.fillRect(noteWidth * 6 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '16':
-                            ctx.fillStyle = colorScheme.k1 + 'AC';
-                            ctx.fillRect(noteWidth * 7 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '17':
-                            ctx.fillStyle = colorScheme.k0 + 'AC';
-                            ctx.fillRect(noteWidth * 8 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                    }
-                }
-            }
-            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.end && !note.executed) || (note.type == 'bom' && !note.executed))) {
-                if (note.type == 'not') {
-                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
-                    const y2 = y1 + noteWidth / 2;
-                    if (y1 > cvs.height) {
-                        break;
-                    }
-                    switch (note.line) {
-                        case '11':
-                            ctx.fillStyle = colorScheme.k0;
-                            ctx.fillRect(cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '12':
-                            ctx.fillStyle = colorScheme.k1;
-                            ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '13':
-                            ctx.fillStyle = colorScheme.k2;
-                            ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '14':
-                            ctx.fillStyle = colorScheme.k3;
-                            ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '15':
-                            ctx.fillStyle = colorScheme.k4;
-                            ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '18':
-                            ctx.fillStyle = colorScheme.k3;
-                            ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '19':
-                            ctx.fillStyle = colorScheme.k2;
-                            ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '16':
-                            ctx.fillStyle = colorScheme.k1;
-                            ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '17':
-                            ctx.fillStyle = colorScheme.k0;
-                            ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                    }
-                }
-                else if (note.type == 'bom') {
-                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
-                    const y2 = y1 + noteWidth / 2;
-                    if (y1 > cvs.height) {
-                        break;
-                    }
-                    ctx.fillStyle = colorScheme.mine;
-                    switch (note.line) {
-                        case '11':
-                            ctx.fillRect(cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '12':
-                            ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '13':
-                            ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '14':
-                            ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '15':
-                            ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '18':
-                            ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '19':
-                            ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '16':
-                            ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '17':
-                            ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                    }
-                }
-            }
-            for (const note of bmsC.notes.filter(n => n.type == 'not' && n.end && !n.executed)) {
-                const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
-                const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40 + noteWidth / 2;
-                const y2 = Math.max(0, (start.pos - pos) * cvs.height * scrollSpeedVar / 40) + noteWidth / 2;
-                if (y2 > cvs.height) {
-                    continue;
-                }
-                switch (note.line) {
-                    case '11':
-                        ctx.fillStyle = colorScheme.k0;
-                        ctx.fillRect(cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '12':
-                        ctx.fillStyle = colorScheme.k1;
-                        ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '13':
-                        ctx.fillStyle = colorScheme.k2;
-                        ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 2 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '14':
-                        ctx.fillStyle = colorScheme.k3;
-                        ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 3 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '15':
-                        ctx.fillStyle = colorScheme.k4;
-                        ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 4 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '18':
-                        ctx.fillStyle = colorScheme.k3;
-                        ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 5 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '19':
-                        ctx.fillStyle = colorScheme.k2;
-                        ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 6 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '16':
-                        ctx.fillStyle = colorScheme.k1;
-                        ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 7 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '17':
-                        ctx.fillStyle = colorScheme.k0;
-                        ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 8 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                }
-            }
-            break;
-        case 3:
-            for (const line of Object.keys(pressC)) {
-                let fill = 0;
-                if (pressC[line].pressed) {
-                    fill = 1;
-                } else if (currentTime < pressC[line].time + pressIndicateDuration) {
-                    fill = (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
-                }
-                if (fill > 0) {
-                    switch (line) {
-                        case '11':
-                            ctx.fillStyle = colorScheme.k0 + 'AC';
-                            ctx.fillRect(cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '12':
-                            ctx.fillStyle = colorScheme.k1 + 'AC';
-                            ctx.fillRect(noteWidth + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '13':
-                            ctx.fillStyle = colorScheme.k2 + 'AC';
-                            ctx.fillRect(noteWidth * 2 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '14':
-                            ctx.fillStyle = colorScheme.k3 + 'AC';
-                            ctx.fillRect(noteWidth * 3 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '15':
-                            ctx.fillStyle = colorScheme.k4 + 'AC';
-                            ctx.fillRect(noteWidth * 4 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '22':
-                            ctx.fillStyle = colorScheme.k3 + 'AC';
-                            ctx.fillRect(noteWidth * 5 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '23':
-                            ctx.fillStyle = colorScheme.k2 + 'AC';
-                            ctx.fillRect(noteWidth * 6 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '24':
-                            ctx.fillStyle = colorScheme.k1 + 'AC';
-                            ctx.fillRect(noteWidth * 7 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                        case '25':
-                            ctx.fillStyle = colorScheme.k0 + 'AC';
-                            ctx.fillRect(noteWidth * 8 + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
-                            break;
-                    }
-                }
-            }
-            for (const note of bmsC.notes.filter(note => (note.type == 'not' && !note.end && !note.executed) || (note.type == 'bom' && !note.executed))) {
-                if (note.type == 'not') {
-                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
-                    const y2 = y1 + noteWidth / 2;
-                    if (y1 > cvs.height) {
-                        break;
-                    }
-                    switch (note.line) {
-                        case '11':
-                            ctx.fillStyle = colorScheme.k0;
-                            ctx.fillRect(cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '12':
-                            ctx.fillStyle = colorScheme.k1;
-                            ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '13':
-                            ctx.fillStyle = colorScheme.k2;
-                            ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '14':
-                            ctx.fillStyle = colorScheme.k3;
-                            ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '15':
-                            ctx.fillStyle = colorScheme.k4;
-                            ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '22':
-                            ctx.fillStyle = colorScheme.k3;
-                            ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '23':
-                            ctx.fillStyle = colorScheme.k2;
-                            ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '24':
-                            ctx.fillStyle = colorScheme.k1;
-                            ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '25':
-                            ctx.fillStyle = colorScheme.k0;
-                            ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            ctx.strokeRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                    }
-                }
-                else if (note.type == 'bom') {
-                    const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40;
-                    const y2 = y1 + noteWidth / 2;
-                    if (y1 > cvs.height) {
-                        break;
-                    }
-                    ctx.fillStyle = colorScheme.mine;
-                    switch (note.line) {
-                        case '11':
-                            ctx.fillRect(cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '12':
-                            ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '13':
-                            ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '14':
-                            ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '15':
-                            ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '22':
-                            ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '23':
-                            ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '24':
-                            ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                        case '25':
-                            ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
-                            break;
-                    }
-                }
-            }
-            for (const note of bmsC.notes.filter(n => n.type == 'not' && n.end && !n.executed)) {
-                const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
-                const y1 = (note.pos - pos) * cvs.height * scrollSpeedVar / 40 + noteWidth / 2;
-                const y2 = Math.max(0, (start.pos - pos) * cvs.height * scrollSpeedVar / 40) + noteWidth / 2;
-                if (y2 > cvs.height) {
-                    continue;
-                }
-                switch (note.line) {
-                    case '11':
-                        ctx.fillStyle = colorScheme.k0;
-                        ctx.fillRect(cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '12':
-                        ctx.fillStyle = colorScheme.k1;
-                        ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '13':
-                        ctx.fillStyle = colorScheme.k2;
-                        ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 2 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 2 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '14':
-                        ctx.fillStyle = colorScheme.k3;
-                        ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 3 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 3 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '15':
-                        ctx.fillStyle = colorScheme.k4;
-                        ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 4 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 4 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '22':
-                        ctx.fillStyle = colorScheme.k3;
-                        ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 5 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 5 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '23':
-                        ctx.fillStyle = colorScheme.k2;
-                        ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 6 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 6 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '24':
-                        ctx.fillStyle = colorScheme.k1;
-                        ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 7 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 7 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                    case '25':
-                        ctx.fillStyle = colorScheme.k0;
-                        ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.strokeRect(noteWidth * 8 + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
-                        ctx.fillRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        ctx.strokeRect(noteWidth * 8 + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
-                        break;
-                }
-            }
-            break;
-    }
+    Object.keys(pressC).forEach(line => {
+        let fill = 0;
+        if (pressC[line].pressed) {
+            fill = 1;
+        } else if (currentTime < pressC[line].time + pressIndicateDuration) {
+            fill = (pressC[line].time + pressIndicateDuration - currentTime) / pressIndicateDuration;
+        }
+        if (fill > 0) {
+            ctx.fillStyle = linesData[line].c + 'AC';
+            ctx.fillRect(noteWidth * linesData[line].i + cvs.width / 4 + noteWidth * (1 - fill) / 2, 0, noteWidth * fill, cvs.height);
+        }
+    });
+    bmsC.notes.filter(note => (note.type == 'not' && !note.end || note.type == 'bom') && note.pos < limit && !note.executed).forEach(note => {
+        const y1 = p2c(note.pos);
+        const y2 = y1 + noteWidth / 2;
+        if (note.type == 'not') {
+            ctx.fillStyle = linesData[note.line].c;
+            ctx.fillRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
+            ctx.strokeRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
+        }
+        else if (note.type == 'bom') {
+            ctx.fillStyle = colorScheme.mine;
+            ctx.fillRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y2, noteWidth, y2 - y1);
+        }
+    });
+    const lastEnd = {};
+    bmsC.notes.filter(n => n.type == 'not' && n.end && !n.executed).forEach(note => {
+        if (lastEnd[note.line]) {
+            return;
+        }
+        lastEnd[note.line] = note.pos >= limit;
+        const start = bmsC.notes.filter(n => n.type == 'not' && n.line == note.line && n.pos < note.pos).at(-1) || { pos: 0 };
+        if (start.pos >= limit) {
+            return;
+        }
+        ctx.fillStyle = linesData[note.line].c;
+        ctx.fillRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
+        ctx.strokeRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y1, noteWidth, y1 - y2);
+        ctx.fillRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
+        ctx.strokeRect(noteWidth * linesData[note.line].i + cvs.width / 4, cvs.height - y2, noteWidth, noteWidth / 2);
+    });
     ctx.lineWidth = 5;
     if (bmsC.notes.filter(note => (note.type == 'bom' || note.type == 'not') && !note.executed).length == 0) {
         const r = result[Math.floor(exScore / bmsC.noteCnt / 2 * 9)];
@@ -1158,6 +774,18 @@ function readyBMS() {
 function f2p(f) {
     const measure = Math.floor(f);
     return [...new Array(measure).keys()].reduce((p, m) => p + (bmsC.signatures[m] || 1), (f - measure) * (bmsC.signatures[measure] || 1)) * 4;
+}
+
+function p2f(p) {
+    p /= 4;
+    let measure = 0;
+    while (p > 0) {
+        p -= bmsC.signatures[measure++] || 1;
+    }
+    while (p < 0) {
+        p += bmsC.signatures[--measure] || 1;
+    }
+    return measure + p / (bmsC.signatures[measure] || 1);
 }
 
 function timeToPos(time) {
